@@ -1,21 +1,19 @@
-# Demo — 10 minutes
+# Samay — 10-minute demo script
 
-Before: `streamlit run app.py`, roster 1,000, 60 days, preset Recommended, agents on. Open tabs once so they're cached.
+**Start:** `cd submissions/samay && streamlit run app.py` → opens the sign-in page.
 
-| Min | Show | Say |
-|---|---|---|
-| 0:00–1:00 | Title + KPI row (sample docket, 3,000 cases) | "One judge, cheque-bounce cases, the court's real day: start 10:30–11, lunch 12:30–1:30, rise at 5, two minutes between hearings. Today's court lists 60, reaches ~12, moves ~8 — our simulator reproduces that from your data. Samay: ~21 listed, ~15 heard, ~14 move forward — and 3.3× as many cases finished in 60 days (419 vs 127), with a seventh of the wasted trips." |
-| 1:00–2:30 | Sidebar → Upload Excel / CSV → `samples/sample_docket_3000.xlsx` (a 3,000-case docket; `sample_cases.xlsx` is the 100-row template); Workflow tab | "The court master uploads the cases. Samay validates them, reads every last order, holds back what's waiting on a summons, mediation or a higher court, ranks the rest and lists tomorrow." Point at before/after and the 'why listed' column ("first at stage" / "repeat #4"). |
-| 2:30–3:30 | Calendar tab | "Tomorrow as time blocks — fresh matters before lunch, oldest after. Below, the same day simulated: late start, changeovers, lunch as a hard break, what moved and what didn't." |
-| 3:30–4:30 | Why hearings fail | "Adjournments aren't one thing — accused absent, sought time, summons not back, court didn't sit. Each gets a different next date: court-side → tomorrow, absence → sooner, summons → when it's back." |
-| 4:30–5:30 | Case brief (10-year-old part-heard matter) | Aditi's point: "Later stages fail because nobody remembers the case — so every old or late-stage case gets a one-page brief." Stage table: gate fixes early, brief + readiness check move the late stages and the 5+ backlog. |
-| 5:15–5:45 | Rankers tab | "Our first ranker maximised hearings that move; our teammate's 0-100 score maximised cases finished. The tuned hybrid finishes the most cases with the fewest wasted trips — and every score explains itself: age, readiness, near the end, churn, urgency." |
-| 5:45–6:30 | Edit & approve, then Three judges (toggle on); sidebar personal leave | Joshi without the guardrail: most hearings, 0% of 5+ year cases moved; with it, a floor. Add a leave day → everything re-plans around it. |
-| 6:30–7:30 | Advocates (L3) + adjournment-cost toggle | "Advocates are agents: they decide whether to turn up, be ready, or own up two days early — and learn from what it cost them." |
-| 7:30–9:00 | SUBMISSION §6 | "Input is DRISTI's roster and order text as-is, Excel or CSV; output a causelist CSV; one nightly call per judge. The classifier already reads real order text." |
-| 9:00–10:00 | Close | "Assumptions are named constants in the write-up. Next: calibrate on real order sheets and run the readiness check over WhatsApp." |
+1. **The problem (30 s).** Today's court lists ~60 cases, reaches a third, moves ~9; the rest get a flat 60-day date.
+2. **Court master → Files (1 min).** Upload the judge's Excel (`samples/sample_cases.xlsx`, the real 100 cases). Messy headers and dates are cleaned; a wrong file gets a clear message. Set the judge's leave.
+3. **Court master → Judges (30 s).** Each bench's numbers: reached, moved, disposed vs today's rules.
+4. **Sign in as Justice Sehgal → Today (2 min).** Timeline of the day; each row has time, 1st/2nd/deferred listing, 0–100 score, advocate and *why it is listed*. Bail first, old cases protected in the afternoon. Remove a case, approve, download the causelist.
+5. **Cases (1.5 min).** Open ST/1261/2017: score 91.3 = age 35 + readiness 25 + disposal 13.5 + churn 9.8 + urgency 8. Status Eligible/Conditional and flags exactly as the scoring spec (100/100 cases match).
+6. **Priority (1 min).** Drag the weights: scores re-rank live; age can never go below 20.
+7. **Calendar (30 s).** Holidays and leave are non-sitting days; cases move to the next day with room.
+8. **Insight (1 min).** Real 100 cases, 60 days: reached 49% → 97%; moving hearings/day 0.5 → 4.3; 5+ year cases moved 13% → 73%; disposed 5 → 54. At 3,000 cases: 3.2× disposals, wasted trips −87%.
+9. **Court master → Run a day (1 min).** Record "A party absent": the next date follows the rule (shorter gap), never 60 days.
+10. **Close (30 s).** One command, open source, only the court's own data; per-judge rules in config; L3 advocate agents in the analytics dashboard.
 
-Likely questions:
-- *Where do the brief's effects come from?* Stated assumption (halves "not prepared", saves 20% time); the ablation shows the result is robust in direction, and it's the first thing to measure in a live court.
-- *Is the 3,000 roster real?* Bootstrap of the 100 real-shape cases; advocate IDs redrawn, so clustering at 3,000 is synthetic — said in the write-up.
-- *Why greedy, not a solver?* Explainability: every listing carries a reason a judge can read. A solver is listed as next step for multi-court conflicts.
+**Likely questions**
+- *Why list fewer cases?* Listing what is ready and fits gives more hearings that move cases, and fewer wasted trips.
+- *Won't old cases be ignored?* A protected share of each day (guardrail floor 30%), age weight ≥ 20, overdue 30+ days forced in.
+- *Where do the numbers come from?* `data/` only; the score is the documented formula, verified case by case.
