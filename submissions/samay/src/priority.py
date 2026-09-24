@@ -8,7 +8,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from model import outcome_probs_df
+from model import LATE_STAGES, outcome_probs_df
 
 WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
@@ -24,7 +24,12 @@ def rank(state: pd.DataFrame, day: pd.Timestamp, cfg: dict) -> pd.DataFrame:
 
     probs = outcome_probs_df(elig, cfg, ready)
     p_heard = probs["substantive"] + probs["preparation"]
-    exp_min = p_heard * elig["est_minutes"] + (1 - p_heard) * cfg["mention_minutes"]
+    est = elig["est_minutes"].astype(float)
+    if cfg.get("summary_mandate"):
+        brief = elig["is_old"] | elig["next_purpose"].isin(LATE_STAGES)
+        est = est.where(~brief, est * (1 - cfg.get("brief_time_saving", 0.0)))
+    elig["est_minutes"] = est
+    exp_min = p_heard * est + (1 - p_heard) * cfg["mention_minutes"]
     age_factor = np.maximum(0.1, 1 + cfg["age_weight"] * elig["age_years"])
     boost_purposes = set(cfg.get("purpose_days", {}).get(WEEKDAYS[day.weekday()], []))
     boost = np.where(elig["next_purpose"].isin(boost_purposes), cfg["purpose_day_boost"], 1.0)

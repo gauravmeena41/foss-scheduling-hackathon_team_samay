@@ -14,7 +14,7 @@ import pandas as pd
 
 import agents
 from baseline import BASELINE, baseline_causelist
-from model import DATA_DIR, OUTCOMES, SIDE_TYPES, advance, happens, load_reference, outcome_probs
+from model import DATA_DIR, OUTCOMES, SIDE_TYPES, advance, happens, load_reference, needs_brief, outcome_probs
 from next_date import Calendar, next_date
 from packer import _mins, build_causelist
 from priority import rank
@@ -37,7 +37,39 @@ def init_state(cases: pd.DataFrame, start: pd.Timestamp, ref: pd.DataFrame, rng)
     s["times_listed"] = 0
     s["stages_advanced"] = 0
     s["disposed_on"] = pd.NaT
+    s["times_declined"] = 0
     return s
+
+
+def _draw(s, cid, day, sim_cfg, rng, mult=1.0):
+    probs = outcome_probs(s.loc[cid], sim_cfg, s.at[cid, "ready_date"] <= day, attendance_mult=mult)
+    return rng.choice(OUTCOMES, p=[probs[o] for o in OUTCOMES])
+
+
+def confirm_readiness(ranked, s, day, cfg, sim_cfg, rng):
+    """Two days before: advocates of the top candidates say 'ready' or 'need time'.
+
+    Outcomes are drawn now (the same draw is used on the day, so nothing is double-counted).
+    A would-be 'not prepared' failure is owned up to with P = confirm_reveals_prep, a would-be
+    no-show with P = confirm_reveals_absence. Those cases drop out and the next-best case
+    takes the slot. Returns (ranked_without_declined, predrawn_outcomes, declined[(cid, why)]).
+    """
+    window = 2 * cfg["day_minutes"] * cfg["overbook_factor"]
+    predrawn, declined, seen = {}, [], 0.0
+    for cid, em in zip(ranked.index, ranked["exp_minutes"]):
+        if seen > window:
+            break
+        seen += em
+        mult = agents.attendance_multiplier(rng, True, 1, bool(cfg.get("cluster_by_advocate"))) \
+            if cfg.get("agents") else 1.0
+        out = _draw(s, cid, day, sim_cfg, rng, mult)
+        if out == "preparation" and rng.random() < cfg["confirm_reveals_prep"]:
+            declined.append((cid, "need time (not prepared)"))
+        elif out == "attendance" and rng.random() < cfg["confirm_reveals_absence"]:
+            declined.append((cid, "need time (party unavailable)"))
+        else:
+            predrawn[cid] = out
+    return ranked.drop(index=[c for c, _ in declined]), predrawn, declined
 
 
 def _set_purpose(s, cid, purpose, stage, ref):
@@ -63,12 +95,29 @@ def run(cases: pd.DataFrame, policy: str, cfg: dict, start: str = "2026-09-24", 
     hearings, daily, lists = [], [], []
     workdays = [d for d in cal.days if d >= start_ts][:days]
     for day in workdays:
+        predrawn, declined = {}, []
         if policy == "baseline":
             cl = baseline_causelist(s, day, cfg)
         else:
-            cl = build_causelist(rank(s, day, cfg), day, cfg)
+            ranked = rank(s, day, cfg)
+            if cfg.get("readiness_confirmation"):
+                ranked, predrawn, declined = confirm_readiness(ranked, s, day, cfg, sim_cfg, rng)
+            cl = build_causelist(ranked, day, cfg)
         lists.append(cl)
         used, clock, n = 0.0, None, dict.fromkeys(["listed", "reached", "happened", "substantive"], 0)
+        n["declined"] = len(declined)
+        for cid, why in declined:                       # slot freed 2 days ahead, no trip made
+            s.at[cid, "times_declined"] += 1
+            if s.at[cid, "times_declined"] >= 2:
+                s.at[cid, "repeat_adj"] = True
+            nd = cal.after(day, cfg["declined_gap_days"])
+            s.at[cid, "due_date"] = nd
+            hearings.append({"date": day.date(), "case_id": cid, "purpose": s.at[cid, "next_purpose"],
+                             "block": None, "est_start": None, "actual_start": None, "listed": False,
+                             "reached": False, "happened": False, "substantive": False, "minutes_used": 0.0,
+                             "failure_reason": why, "is_old": bool(s.at[cid, "is_old"]),
+                             "age_years": float(s.at[cid, "age_years"]), "next_date": nd.date(),
+                             "next_gap_days": None, "ref_gap_days": None})
         adv_count = cl["advocate_id"].value_counts().to_dict() if len(cl) else {}
         for _, row in cl.iterrows():
             cid = row["case_id"]
@@ -87,15 +136,15 @@ def run(cases: pd.DataFrame, policy: str, cfg: dict, start: str = "2026-09-24", 
             if used >= cfg["day_minutes"]:
                 outcome = "unreached"
             else:
-                ready = s.at[cid, "ready_date"] <= day
                 mult = 1.0
                 if cfg.get("agents"):
                     mult = agents.attendance_multiplier(
                         rng, has_slot=(policy == "samay"), same_advocate_today=adv_count.get(row["advocate_id"], 1),
                         clustered=bool(cfg.get("cluster_by_advocate")) and policy == "samay")
-                probs = outcome_probs(s.loc[cid], sim_cfg, ready, attendance_mult=mult)
-                outcome = rng.choice(OUTCOMES, p=[probs[o] for o in OUTCOMES])
+                outcome = predrawn[cid] if cid in predrawn else _draw(s, cid, day, sim_cfg, rng, mult)
                 est = s.at[cid, "est_minutes"]
+                if sim_cfg.get("summary_mandate") and needs_brief(s.loc[cid]):
+                    est *= 1 - cfg.get("brief_time_saving", 0.0)   # judge isn't re-reading the file
                 mins = est * float(np.exp(rng.normal(-DURATION_SIGMA ** 2 / 2, DURATION_SIGMA))) \
                     if happens(outcome) else cfg["mention_minutes"]
                 rec.update(reached=True, happened=happens(outcome), substantive=outcome == "substantive",

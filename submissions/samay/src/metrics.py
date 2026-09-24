@@ -15,6 +15,8 @@ def _mins(hhmm):
 
 def compute(hearings: pd.DataFrame, daily: pd.DataFrame, state: pd.DataFrame, cfg: dict) -> dict:
     n_days = max(1, len(daily))
+    declined = int((~hearings["listed"]).sum())
+    hearings = hearings[hearings["listed"]]
     listed = len(hearings)
     reached = int(hearings["reached"].sum())
     happened = int(hearings["happened"].sum())
@@ -48,6 +50,7 @@ def compute(hearings: pd.DataFrame, daily: pd.DataFrame, state: pd.DataFrame, cf
         "Heard / day": happened / n_days,
         "Effective / day": substantive / n_days,
         "Wasted trips": listed - happened,
+        "Declined in advance": declined,
         "Disposed": int(state["disposed_on"].notna().sum()),
     }
 

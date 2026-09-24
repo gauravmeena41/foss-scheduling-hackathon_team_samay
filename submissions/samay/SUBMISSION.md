@@ -20,6 +20,8 @@ Samay lists only the hearings that are ready to happen and likely to move the ca
   2. *Rank* — score = age factor × P(moves forward | listed) ÷ expected minutes. Cases whose process hasn't returned aren't eligible (prerequisite gate).
   3. *Pack* — capacity = 420 min × overbooking factor, in **expected** minutes (a no-show costs a 2-min mention, not the full slot). First fill the guardrail share with 4+ yr cases, then the best of the rest. Assign to time blocks, cluster each advocate's matters back to back, give every case an estimated start time.
   4. *Next date* — reference gap for the next purpose, shortened after an absence, set to the process-return date after a process failure, next working day if unreached.
+  5. *Readiness check (all stages)* — two days before, advocates of the top candidates confirm "ready" or "need time". Admitted unpreparedness / unavailability frees the slot a day early; the next-best case takes it. Two "need time" answers flag the case as repeatedly adjourned.
+  6. *Case brief (middle and late stages)* — a one-page summary per case (journey through the stages, last order, who was absent, what must be done before this hearing) for every 4+ yr or evidence/arguments/judgement case. Modelled as halving "not prepared" failures and cutting 20% of hearing time on those cases (assumptions).
 - **Key decisions:** expected-minutes packing (airline-style overbooking); guardrail as a floor the judge can raise but not lower; greedy over a solver so the judge can see *why* each case was listed (`reason` column).
 - **Assumptions:** durations lognormal around the reference minutes (σ = 0.35); outcome of a listing drawn from P(substantive) + failure-reason shares per hearing type; once process has returned, process failures drop out and the rest renormalise; process return time ~ Exponential(mean 1.5 × reference gap); substantive hearing advances to the next lifecycle stage (appearance/warrant → plea; side applications return to the main stage); no judge leave unless configured.
 
@@ -29,6 +31,17 @@ Samay lists only the hearings that are ready to happen and likely to move the ca
 - **L3-lite:** `src/agents.py` — advocates who may have a matter in another courtroom; a real slot and clustering change whether they turn up. _TODO(Dev 2): describe final agent._
 
 ## 5. Results
+
+**Why the levers differ by stage** (`python ablation.py`, 3,000 cases, effective hearings/day):
+
+| Scenario | Early | Middle | Late | 5+ yr advanced |
+|---|---|---|---|---|
+| Baseline | 2.7 | 3.5 | 3.9 | 23% |
+| + Packing & process gate | 10.4 | 4.2 | 5.7 | 40% |
+| + Readiness check + case brief | 10.0 | 5.2 | 6.5 | 59% |
+
+The prerequisite gate fixes early stages (waiting for summons/warrants dominates their failures). Evidence and arguments fail for a different reason — counsel not prepared, the bench re-reading the file — which the readiness check and the case brief target.
+
 
 _3,000 cases, 60 working days, seed 42, Recommended preset — replace with final Monte Carlo means._
 

@@ -11,6 +11,7 @@ import streamlit as st
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE / "src"))
 
+from brief import build_brief  # noqa: E402
 from config import GUARDRAILS, PRESETS, make_config  # noqa: E402
 from metrics import PERCENT, compute  # noqa: E402
 from model import DATA_DIR, load_cases  # noqa: E402
@@ -65,14 +66,18 @@ with st.sidebar:
     gate = st.toggle("Don't list until prerequisites are met", base["gate_prerequisites"])
     cluster = st.toggle("Cluster by advocate", base["cluster_by_advocate"])
     weekly = st.toggle("Carry unreached cases to same weekday next week", base["carry_forward_weekly"])
-    summary = st.toggle("Mandatory case summary for old cases", base["summary_mandate"])
+    summary = st.toggle("Case brief for old / late-stage cases", base["summary_mandate"],
+                        help="Auto-drafted one-page summary; both counsel confirm agreed facts and disputed points.")
+    confirm = st.toggle("Readiness check 2 days before", base["readiness_confirmation"],
+                        help="Advocates confirm 'ready' or 'need time'; freed slots go to the next case.")
     agents = st.toggle("L3: advocate agents", False)
     enforce = st.toggle("Enforce ageing-case guardrail", True,
                         help=f"Floor: {GUARDRAILS['old_case_min_share_floor']:.0%}. Turn off only to see its cost.")
 
 cfg = make_config(preset, enforce_guardrails=enforce, overbook_factor=overbook, old_case_min_share=old_share,
                   age_weight=age_w, gate_prerequisites=gate, cluster_by_advocate=cluster,
-                  carry_forward_weekly=weekly, summary_mandate=summary, agents=agents)
+                  carry_forward_weekly=weekly, summary_mandate=summary, readiness_confirmation=confirm,
+                  agents=agents)
 path = roster_path(n_cases)
 key = freeze(cfg)
 bh, bd, bl, bs, bm = simulate(path, "baseline", key, days, int(seed))
@@ -97,7 +102,8 @@ for i, k in enumerate(KEY):
     inverse = k in ("Predictability (days to hearing)", "Wasted trips")
     cols[i % 4].metric(k, fmt(sm[k]), f"{dfmt} vs baseline", delta_color="inverse" if inverse else "normal")
 
-tab1, tab2, tab3, tab4 = st.tabs(["Backlog over time", "Today's causelist", "At-risk cases", "All metrics"])
+tab1, tab2, tab5, tab3, tab4 = st.tabs(["Backlog over time", "Today's causelist", "Case brief", "At-risk cases",
+                                        "All metrics"])
 
 with tab1:
     trend = pd.concat([bd.assign(policy="Baseline"), sd.assign(policy="Samay")])
@@ -113,6 +119,16 @@ with tab2:
     st.caption(f"{len(today)} listed · expected {today['exp_minutes'].sum():.0f} of {cfg['day_minutes']} min")
     st.dataframe(today[["block", "est_start", "case_id", "purpose", "advocate_id", "age_years", "p_sub_eff",
                         "reason"]], hide_index=True, width="stretch")
+
+with tab5:
+    initial = load_cases(path).set_index("case_id", drop=False)
+    pick_day = st.selectbox("Causelist day", sorted(sl["date"].unique()), key="brief_day")
+    options = sl[sl["date"] == pick_day]["case_id"].tolist()
+    if options:
+        cid = st.selectbox("Case", options)
+        st.markdown(build_brief(initial.loc[cid]))
+    declined = sh[~sh["listed"]]
+    st.caption(f"{len(declined)} hearings declined 2 days ahead across the run — slots refilled, no wasted trip.")
 
 with tab3:
     open_ = ss[ss["next_purpose"] != "DISPOSED"]

@@ -43,8 +43,15 @@ CASE_COLUMNS = [
     "stage", "next_purpose", "hearings_in_stage", "total_hearings", "est_minutes",
     "p_substantive", "fail_attendance", "fail_preparation", "fail_process", "fail_other",
     "p_happen", "prereq_ok", "prereq_reason", "is_old", "is_stuck", "repeat_adj",
-    "first_scheduled", "last_heard",
+    "first_scheduled", "last_heard", "last_summary", "history",
 ]
+
+# Stages where the judge needs the file re-read -> the case brief pays off here
+LATE_STAGES = {"EVIDENCE_COMPLAINANT", "EVIDENCE_ACCUSED", "ARGUMENTS", "JUDGEMENT"}
+
+
+def needs_brief(case) -> bool:
+    return bool(case["is_old"]) or case["next_purpose"] in LATE_STAGES
 
 
 def norm(purpose: str) -> str:
@@ -120,6 +127,13 @@ def load_cases(roster_path: Path | str | None = None, as_of: str = "2026-09-24",
         df["hearings_in_stage"] >= 2 * per["median_hearings"].values)
     df["first_scheduled"] = pd.NaT
     df["last_heard"] = pd.NaT
+    df["last_summary"] = summary
+    order = LIFECYCLE + sorted(SIDE_TYPES)
+    df["history"] = [
+        "|".join(f"{p}:{int(r.at[i, 'hearings_' + p.lower()])}" for p in order
+                 if f"hearings_{p.lower()}" in r.columns and r.at[i, f"hearings_{p.lower()}"] > 0)
+        for i in range(len(r))
+    ]
     return df[CASE_COLUMNS]
 
 
@@ -131,7 +145,7 @@ def outcome_probs(case, cfg: dict, prereq_ready: bool, attendance_mult: float = 
 
     - prerequisites not ready -> the hearing fails on process, full stop
     - prerequisites ready     -> process failures drop out, the rest renormalise
-    - summary_mandate         -> prep failures on old cases cut by summary_prep_reduction
+    - summary_mandate         -> case brief: prep failures on old / late-stage cases cut
     - attendance_mult         -> hook for L3 agents / incentives (1.0 = observed data)
     """
     if not prereq_ready:
@@ -141,7 +155,7 @@ def outcome_probs(case, cfg: dict, prereq_ready: bool, attendance_mult: float = 
     att = q * case["fail_attendance"] * attendance_mult
     prep = q * case["fail_preparation"]
     other = q * case["fail_other"]
-    if cfg.get("summary_mandate") and case["is_old"]:
+    if cfg.get("summary_mandate") and needs_brief(case):
         moved = prep * cfg.get("summary_prep_reduction", 0.5)
         prep, ps = prep - moved, ps + moved
     total = ps + att + prep + other
@@ -157,7 +171,8 @@ def outcome_probs_df(df: pd.DataFrame, cfg: dict, ready: pd.Series) -> pd.DataFr
     prep = q * df["fail_preparation"]
     other = q * df["fail_other"]
     if cfg.get("summary_mandate"):
-        moved = prep * cfg.get("summary_prep_reduction", 0.5) * df["is_old"].astype(float)
+        mask = (df["is_old"] | df["next_purpose"].isin(LATE_STAGES)).astype(float)
+        moved = prep * cfg.get("summary_prep_reduction", 0.5) * mask
         prep, ps = prep - moved, ps + moved
     total = ps + att + prep + other
     out = pd.DataFrame({"substantive": ps / total, "attendance": att / total,

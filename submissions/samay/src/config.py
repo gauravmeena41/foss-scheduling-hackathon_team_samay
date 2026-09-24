@@ -23,8 +23,13 @@ DEFAULT_CONFIG = {
     "carry_forward_weekly": False,    # Sehgal: unreached case -> same weekday next week
     "purpose_days": {},               # {"Mon": ["ARGUMENTS"], ...} -> score boost on that day
     "purpose_day_boost": 1.5,
-    "summary_mandate": False,         # Dimakar: cover-page summary halves prep failures on old cases
-    "summary_prep_reduction": 0.5,
+    "summary_mandate": True,          # case brief for old / late-stage cases (Dimakar's cover page, auto-drafted)
+    "summary_prep_reduction": 0.5,    # ...halves "not prepared" failures on those cases (assumption)
+    "brief_time_saving": 0.2,         # ...and cuts their hearing time 20%: no re-reading the file (assumption)
+    "readiness_confirmation": True,   # advocates confirm ready / need time 2 days before
+    "confirm_reveals_prep": 0.7,      # share of would-be "not prepared" failures they own up to in advance
+    "confirm_reveals_absence": 0.4,   # share of would-be no-shows they flag in advance
+    "declined_gap_days": 7,           # "need time" -> relisted after this many days
     "blocks": [                       # time blocks; filter picks which cases go where
         {"name": "Fresh & short", "start": "10:30", "end": "13:30", "filter": "not_old"},
         {"name": "Old matters", "start": "14:30", "end": "18:30", "filter": "old"},
