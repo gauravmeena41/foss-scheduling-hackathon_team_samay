@@ -83,7 +83,8 @@ def fmt(k, v):
 # ---------------------------------------------------------------- sidebar
 with st.sidebar:
     st.header("Docket")
-    n_cases = st.select_slider("Roster size", [100, 500, 1000, 3000], value=1000)
+    n_cases = st.select_slider("Roster size", [100, 500, 1000, 3000], value=3000,
+                               help="3,000 = the case study's docket. Smaller rosters leave the baseline court idle for weeks.")
     days = st.slider("Working days to simulate", 10, 83, 60)
     seed = int(st.number_input("Seed", value=42, step=1))
     efiling_on = st.toggle("E-filing signals (synthetic)", False,

@@ -105,6 +105,7 @@ def build_brief(case) -> str:
         f"advocate {case['advocate_id']}",
         "",
         "**Flags:** " + (" · ".join(flags) if flags else "none"),
+        "",
         f"**Waiting on:** {case.get('waiting_on', 'none')} · last order classified as "
         f"*{str(case.get('last_event', 'listed')).replace('_', ' ')}* · "
         f"≈{case.get('remaining_hearings_est', 0):.0f} hearings to disposal",
@@ -114,7 +115,7 @@ def build_brief(case) -> str:
         f"**Last hearing** — present: {present}; absent: {absent}",
         f"> {order}",
         "",
-        f"**Before this hearing** (readiness {readiness(case):.0%})",
+        f"**Before this hearing** — checklist {sum(st == 'done' for _, st in items)}/{len(items)} done",
         *[f"- {icon[s]} {label}" for label, s in items],
     ]
     if purpose in LATE_STAGES or case["is_old"]:
