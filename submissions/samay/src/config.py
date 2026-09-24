@@ -20,6 +20,7 @@ DEFAULT_CONFIG = {
     "day_minutes": 315,                   # expected sitting minutes (derived in make_config)
     "overbook_factor": 1.15,          # list up to 115% of the day's EXPECTED minutes
     "mention_minutes": 2,             # time a non-happening listing still costs the court
+    "changeover_minutes": 2,          # average gap between hearings: calling the case, parties stepping up
     "old_case_min_share": 0.50,       # clamped to GUARDRAILS floor (tuned: beats baseline on 4+ and 5+)
     "age_weight": 0.35,               # score multiplier per year of age
     "gate_prerequisites": True,       # don't list cases whose process hasn't returned

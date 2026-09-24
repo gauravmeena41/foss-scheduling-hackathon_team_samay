@@ -14,7 +14,7 @@ import pandas as pd
 
 import agents
 from baseline import BASELINE, baseline_causelist
-from model import ATT_MAX, ATT_MIN, DATA_DIR, OUTCOMES, SIDE_TYPES, advance, happens, load_reference, needs_brief, outcome_probs
+from model import ATT_MAX, ATT_MIN, DATA_DIR, OUTCOMES, load_reason_shares, SIDE_TYPES, advance, happens, load_reference, needs_brief, outcome_probs
 from next_date import Calendar, next_date
 from packer import _mins, build_causelist
 from priority import rank
@@ -108,6 +108,14 @@ def run(cases: pd.DataFrame, policy: str, cfg: dict, start: str = "2026-09-24", 
     """policy: 'samay' | 'baseline'. Returns (hearings_log, daily_log, causelists, final_state)."""
     rng = np.random.default_rng(seed)
     ref = load_reference(data_dir)
+    reasons = load_reason_shares(data_dir)
+
+    def detail_of(purpose, outcome):
+        """Specific reason behind a non-substantive outcome, drawn from the failure table's own mix."""
+        if outcome in ("substantive", "unreached") or purpose not in reasons:
+            return None
+        opts = reasons[purpose][outcome]
+        return opts[int(rng.choice(len(opts), p=[w for _, w in opts]))][0]
     cal = Calendar(data_dir / "court_calendar.csv", cfg.get("leave_dates", []))
     start_ts = cal.on_or_after(pd.Timestamp(start))
     s = init_state(cases, start_ts, ref, rng, cfg)
@@ -134,7 +142,7 @@ def run(cases: pd.DataFrame, policy: str, cfg: dict, start: str = "2026-09-24", 
                 ranked, predrawn, declined = confirm_readiness(ranked, s, day, cfg, sim_cfg, rng, pool)
             cl = build_causelist(ranked, day, cfg)
         lists.append(cl)
-        used, n = 0.0, dict.fromkeys(["listed", "reached", "happened", "substantive"], 0)
+        used, changeover, n = 0.0, 0.0, dict.fromkeys(["listed", "reached", "happened", "substantive"], 0)
         # the bench sits somewhere in the start window; lunch is a hard break; the court rises at the end
         w0, w1 = (_mins(t) for t in cfg["start_window"])
         (m_start, m_end), (a_start, a_end) = [(_mins(a), _mins(b)) for a, b in cfg["court_sittings"]]
@@ -166,6 +174,7 @@ def run(cases: pd.DataFrame, policy: str, cfg: dict, start: str = "2026-09-24", 
             purpose = s.at[cid, "next_purpose"]
             promised = s.at[cid, "due_date"]
             rec = {"date": day.date(), "case_id": cid, "purpose": purpose, "block": row["block"],
+                   "visit": row.get("visit", ""), "failure_detail": None,
                    "promised_date": promised.date(), "slippage_days": (day - promised).days,
                    "est_start": row["est_start"], "actual_start": None, "listed": True, "reached": False,
                    "happened": False, "substantive": False, "minutes_used": 0.0, "failure_reason": "unreached",
@@ -191,10 +200,14 @@ def run(cases: pd.DataFrame, policy: str, cfg: dict, start: str = "2026-09-24", 
                     est *= 1 - cfg.get("brief_time_saving", 0.0)   # judge isn't re-reading the file
                 mins = est * float(np.exp(rng.normal(-DURATION_SIGMA ** 2 / 2, DURATION_SIGMA))) \
                     if happens(outcome) else cfg["mention_minutes"]
+                detail = detail_of(purpose, outcome)
                 rec.update(reached=True, happened=happens(outcome), substantive=outcome == "substantive",
-                           minutes_used=round(mins, 1), failure_reason=outcome, actual_start=f"{int(clock)//60:02d}:{int(clock)%60:02d}")
+                           minutes_used=round(mins, 1), failure_reason=outcome, failure_detail=detail,
+                           actual_start=f"{int(clock)//60:02d}:{int(clock)%60:02d}")
+                co = float(rng.uniform(0, 2 * cfg.get("changeover_minutes", 0.0)))   # mean = changeover_minutes
                 used += mins
-                clock += mins
+                changeover += co
+                clock += mins + co
                 if m_end <= clock < a_start:
                     clock = a_start
                 n["reached"] += 1
@@ -236,7 +249,7 @@ def run(cases: pd.DataFrame, policy: str, cfg: dict, start: str = "2026-09-24", 
             else:
                 need = 0.6 * s.at[cid, "est_minutes"]      # rough expected minutes of the next listing
                 nd = next_date(nxt_purpose, outcome, day, cal, ref, cfg, s.at[cid, "ready_est"],
-                               load=booked, need=need)
+                               load=booked, need=need, detail=rec.get("failure_detail"))
                 if outcome == "substantive" and nxt_purpose in PROCESS_PURPOSES:
                     nd = max(nd, cal.on_or_after(s.at[cid, "ready_est"]))   # not before process is expected back
                 booked[nd] = booked.get(nd, 0.0) + need
@@ -247,7 +260,7 @@ def run(cases: pd.DataFrame, policy: str, cfg: dict, start: str = "2026-09-24", 
             hearings.append(rec)
 
         open_ = s[s["next_purpose"] != "DISPOSED"]
-        daily.append({"date": day.date(), **n, "minutes_used": round(used, 1),
+        daily.append({"date": day.date(), **n, "minutes_used": round(used, 1), "changeover_minutes": round(changeover, 1),
                       "open_cases": len(open_), "open_4plus": int(open_["is_old"].sum()),
                       "open_5plus": int((open_["age_years"] >= 5).sum()),
                       "disposed_total": int((s["next_purpose"] == "DISPOSED").sum())})

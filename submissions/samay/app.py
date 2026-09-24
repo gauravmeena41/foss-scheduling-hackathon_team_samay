@@ -1,16 +1,19 @@
 """Samay dashboard (Set G).   streamlit run app.py
 
-A live picture of the court for the judge and court master: what the rules cost,
-what today looks like, which cases are drifting - not just a causelist.
+One judge's docket. Upload the cases (Excel/CSV) or use the sample docket; Samay reads each
+case, holds back what isn't ready, ranks and packs tomorrow's day into the court's sittings,
+and shows the judge what their rules cost.
 """
 from __future__ import annotations
 
 import ast
+import hashlib
 import importlib.util
 import sys
 import tempfile
 from pathlib import Path
 
+import altair as alt
 import numpy as np
 import pandas as pd
 import streamlit as st
@@ -22,15 +25,21 @@ from brief import build_brief  # noqa: E402
 from config import GUARDRAILS, PRESETS, make_config  # noqa: E402
 from efiling import enrich  # noqa: E402
 from metrics import PERCENT, compute  # noqa: E402
-from model import DATA_DIR, load_cases  # noqa: E402
+from model import DATA_DIR, load_cases, validate_cases  # noqa: E402
+from next_date import Calendar  # noqa: E402
 from simulate import DURATION_SIGMA, run  # noqa: E402
 
 st.set_page_config(page_title="Samay — court scheduler", layout="wide")
 
+REQUIRED_INPUT = ["case_number", "filing_date", "advocate_id", "party_id", "current_stage",
+                  "last_hearing_summary", "purpose_of_next_hearing", "total_hearings_held"]
+SAMPLE_XLSX = HERE / "samples" / "sample_cases.xlsx"
+START = "2026-09-24"
 
-# ---------------------------------------------------------------- data + cached runs
+
+# ---------------------------------------------------------------- inputs
 @st.cache_data(show_spinner=False)
-def roster_path(n_cases: int, efiling: bool) -> str:
+def sample_roster(n_cases: int, efiling: bool) -> str:
     base = DATA_DIR / "roster_sample_100.csv"
     if n_cases == 100:
         df = pd.read_csv(base)
@@ -46,6 +55,33 @@ def roster_path(n_cases: int, efiling: bool) -> str:
     return str(out)
 
 
+def uploaded_roster(file, efiling: bool) -> tuple[str | None, list[str]]:
+    """Save an uploaded .xlsx/.csv as a roster CSV. Returns (path, problems)."""
+    raw = file.getvalue()
+    try:
+        df = pd.read_csv(file) if file.name.lower().endswith(".csv") else pd.read_excel(file)
+    except Exception as e:  # noqa: BLE001
+        return None, [f"Couldn't read the file: {e}"]
+    missing = [c for c in REQUIRED_INPUT if c not in df.columns]
+    if missing:
+        return None, [f"Missing column(s): {', '.join(missing)} — use the sample Excel as the template."]
+    for col in [c for c in df.columns if c.startswith("hearings_")] + ["total_hearings_held"]:
+        df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0).astype(int)
+    for c in [c for c in pd.read_csv(DATA_DIR / "roster_sample_100.csv", nrows=1).columns if c.startswith("hearings_")]:
+        if c not in df.columns:
+            df[c] = 0
+    df["filing_number"] = df.get("filing_number", df["case_number"])
+    if efiling:
+        df = enrich(df)
+    out = Path(tempfile.gettempdir()) / f"samay_upload_{hashlib.md5(raw).hexdigest()[:10]}_{int(efiling)}.csv"
+    df.to_csv(out, index=False)
+    try:
+        problems = validate_cases(load_cases(str(out), as_of=START))
+    except Exception as e:  # noqa: BLE001
+        problems = [f"Couldn't build the case model: {e}"]
+    return str(out), problems
+
+
 def freeze(cfg: dict) -> tuple:
     return tuple((k, repr(v) if isinstance(v, (list, dict)) else v) for k, v in sorted(cfg.items()))
 
@@ -57,7 +93,7 @@ def thaw(items: tuple) -> dict:
 @st.cache_data(show_spinner="Simulating the court…", max_entries=64)
 def simulate(path: str, policy: str, cfg_items: tuple, days: int, seed: int):
     cfg = thaw(cfg_items)
-    h, d, lists, s = run(load_cases(path), policy, cfg, days=days, seed=seed)
+    h, d, lists, s = run(load_cases(path, as_of=START), policy, cfg, start=START, days=days, seed=seed)
     pool = s.attrs.get("agents")
     agents_df = None
     if pool is not None:
@@ -71,7 +107,7 @@ def simulate(path: str, policy: str, cfg_items: tuple, days: int, seed: int):
 
 @st.cache_data(show_spinner=False)
 def initial_cases(path: str) -> pd.DataFrame:
-    return load_cases(path).set_index("case_id", drop=False)
+    return load_cases(path, as_of=START).set_index("case_id", drop=False)
 
 
 def fmt(k, v):
@@ -80,15 +116,39 @@ def fmt(k, v):
     return f"{v:,.1f}" if isinstance(v, float) else f"{v:,}"
 
 
+def hm(minutes: float) -> pd.Timestamp:
+    return pd.Timestamp("2026-01-01") + pd.Timedelta(minutes=float(minutes))
+
+
+def to_min(hhmm: str) -> int:
+    h, m = str(hhmm).split(":")
+    return int(h) * 60 + int(m)
+
+
 # ---------------------------------------------------------------- sidebar
 with st.sidebar:
-    st.header("Docket")
-    n_cases = st.select_slider("Roster size", [100, 500, 1000, 3000], value=3000,
-                               help="3,000 = the case study's docket. Smaller rosters leave the baseline court idle for weeks.")
-    days = st.slider("Working days to simulate", 10, 83, 60)
-    seed = int(st.number_input("Seed", value=42, step=1))
+    st.header("Docket — one judge")
+    source = st.radio("Cases", ["Sample docket", "Upload Excel / CSV"], horizontal=True)
     efiling_on = st.toggle("E-filing signals (synthetic)", False,
-                           help="Addresses, contact known, prepaid summons/e-post, jurisdiction — predict process-return dates")
+                           help="Addresses, contact known, prepaid summons/e-post, jurisdiction")
+    path, problems = None, []
+    if source == "Upload Excel / CSV":
+        up = st.file_uploader("Cases file (.xlsx or .csv)", type=["xlsx", "xls", "csv"])
+        if SAMPLE_XLSX.exists():
+            st.download_button("Download the sample Excel template", SAMPLE_XLSX.read_bytes(),
+                               file_name="sample_cases.xlsx")
+        if up is not None:
+            path, problems = uploaded_roster(up, efiling_on)
+    else:
+        n_cases = st.select_slider("Roster size", [100, 500, 1000, 3000], value=3000,
+                                   help="3,000 = the case study's docket. Smaller rosters leave the baseline court idle.")
+        path = sample_roster(n_cases, efiling_on)
+    days = st.slider("Working days to simulate", 10, 80, 60)
+    seed = int(st.number_input("Seed", value=42, step=1))
+    cal_all = Calendar(DATA_DIR / "court_calendar.csv")
+    horizon = [d for d in cal_all.days if d >= pd.Timestamp(START)][:days + 10]
+    leave = st.multiselect("Judge's leave days", [d.date() for d in horizon],
+                           help="The court doesn't sit; hearings and next dates move to working days.")
 
     st.header("Judge's rules")
     preset = st.selectbox("Preset", list(PRESETS))
@@ -97,6 +157,7 @@ with st.sidebar:
                          help="Listed expected minutes ÷ sitting minutes (~315). Above 1 = planned no-shows.")
     old_share = st.slider("Share of day for 4+ yr cases", 0.0, 0.9, float(base["old_case_min_share"]), 0.05)
     age_w = st.slider("Age weight in ranking", -0.3, 1.0, float(base["age_weight"]), 0.05)
+    changeover = st.slider("Changeover between hearings (min)", 0.0, 10.0, float(base["changeover_minutes"]), 0.5)
     gate = st.toggle("Don't list until prerequisites are met", base["gate_prerequisites"])
     cluster = st.toggle("Cluster by advocate", base["cluster_by_advocate"])
     weekly = st.toggle("Unreached → same weekday next week", base["carry_forward_weekly"])
@@ -110,21 +171,29 @@ with st.sidebar:
     reminders = st.toggle("Reminders to advocates", base["reminders"], disabled=not agents_on)
     cost = st.toggle("Cost for on-the-day adjournment", base["adjournment_cost"], disabled=not agents_on)
 
+st.title("Samay — a court day that runs to plan")
+if path is None:
+    st.info("Upload the judge's cases as an Excel or CSV file (sidebar) — or switch to the sample docket. "
+            "The sample Excel shows the expected columns.")
+    st.stop()
+if problems:
+    st.error("The file needs fixing before Samay can schedule it:\n\n" + "\n".join(f"- {p}" for p in problems))
+    st.stop()
+
 cfg = make_config(preset, enforce_guardrails=enforce, overbook_factor=overbook, old_case_min_share=old_share,
                   age_weight=age_w, gate_prerequisites=gate, cluster_by_advocate=cluster,
                   carry_forward_weekly=weekly, summary_mandate=summary, readiness_confirmation=confirm,
-                  agents=agents_on, reminders=reminders, adjournment_cost=cost)
-path = roster_path(n_cases, efiling_on)
+                  agents=agents_on, reminders=reminders, adjournment_cost=cost, changeover_minutes=changeover,
+                  leave_dates=[str(d) for d in leave])
 key = freeze(cfg)
 bh, bd, bl, bs, bm, _ = simulate(path, "baseline", key, days, seed)
 sh, sd, sl, ss, sm, agents_df = simulate(path, "samay", key, days, seed)
 initial = initial_cases(path)
 
-# ---------------------------------------------------------------- header
-st.title("Samay — a court day that runs to plan")
-st.caption(f"{n_cases:,} cases · {len(sd)} working days · sittings 10:30–11:00 start → 12:30, lunch, 13:30 → 17:00 "
-           f"(≈{cfg['day_minutes'] / 60:.2f} h) · preset **{preset}** · "
-           "baseline = list 60 a day, whatever gets listed gets attempted, flat 60-day next date")
+st.caption(f"One judge · {len(initial):,} cases · {len(sd)} sitting days"
+           + (f" ({len(leave)} on leave)" if leave else "")
+           + f" · sits 10:30–11:00 → 12:30, lunch, 13:30 → 17:00 (≈{cfg['day_minutes'] / 60:.2f} h) · "
+           f"{cfg['changeover_minutes']:g}-min changeover · preset **{preset}** · baseline = list 60 a day, flat 60-day next date")
 if cfg["guardrail_clamped"]:
     st.warning(f"Guardrail: ageing-case share raised to {cfg['old_case_min_share']:.0%}. "
                "Old cases can't be deprioritised below the floor.")
@@ -140,21 +209,92 @@ for i, (k, lower_better) in enumerate(KEY):
     d = f"{delta:+.0%}" if k in PERCENT else f"{delta:+,.1f}"
     cols[i % 4].metric(k, fmt(k, sm[k]), f"{d} vs baseline", delta_color="inverse" if lower_better else "normal")
 
-tabs = st.tabs(["Three judges", "Backlog & drift", "Today's causelist", "Case brief", "At-risk cases",
-                "Advocates (L3)", "All metrics"])
+tabs = st.tabs(["Workflow", "Calendar", "Three judges", "Backlog & drift", "Why hearings fail",
+                "Causelist what-if", "Case brief", "At-risk cases", "Advocates (L3)", "All metrics"])
 
-# ---------------------------------------------------------------- 1. three judges
+# ---------------------------------------------------------------- workflow
 with tabs[0]:
+    st.subheader("From the uploaded cases to tomorrow's causelist")
+    first_day = sl["date"].min() if len(sl) else None
+    active = initial[initial["next_purpose"] != "DISPOSED"]
+    blocked = active[~active["prereq_ok"].astype(bool)]
+    ready = active[active["prereq_ok"].astype(bool)]
+    day1 = sl[sl["date"] == first_day]
+    steps = pd.DataFrame({
+        "step": ["1. Cases loaded & validated", "2. Case model: last order read",
+                 "3. Held back — prerequisite pending", "4. Eligible and ranked", "5. Listed for day 1"],
+        "cases": [len(initial), len(active), len(blocked), len(ready), len(day1)],
+        "what happens": [
+            "Every row checked against the case schema (validate_cases).",
+            f"{initial['last_event'].nunique()} kinds of order recognised; {int((initial['next_purpose'] == 'DISPOSED').sum())} already disposed.",
+            "Waiting on: " + ", ".join(f"{k} {v}" for k, v in blocked["waiting_on"].value_counts().items()),
+            "Score = age × P(moves forward) ÷ expected minutes (+ part-heard, purpose-day boosts).",
+            f"Packed into the sittings at ~{day1['exp_minutes'].sum():.0f} expected minutes; "
+            f"{int(day1['is_old'].sum())} are 4+ years old.",
+        ]})
+    st.dataframe(steps, hide_index=True, width="stretch")
+    c1, c2 = st.columns(2)
+    c1.markdown("**Before — as uploaded**")
+    raw = pd.read_csv(path)
+    c1.dataframe(raw[["case_number", "filing_date", "purpose_of_next_hearing"]].head(20)
+                 .rename(columns={"case_number": "case", "purpose_of_next_hearing": "next purpose"}),
+                 hide_index=True, width="stretch")
+    c2.markdown(f"**After — Samay's causelist for {first_day}**")
+    c2.dataframe(day1[["est_start", "case_id", "purpose", "visit", "reason"]].head(20)
+                 .rename(columns={"est_start": "starts ~", "case_id": "case", "reason": "why listed"}),
+                 hide_index=True, width="stretch")
+    st.download_button("Download the proposed schedule (CSV)", sl.to_csv(index=False).encode(),
+                       file_name="proposed_schedule.csv")
+
+# ---------------------------------------------------------------- calendar
+with tabs[1]:
+    cday = st.selectbox("Day", sorted(sl["date"].unique()), key="cal_day")
+    plan = sl[sl["date"] == cday].copy()
+    plan["start"] = plan["est_start"].map(lambda t: hm(to_min(t)))
+    plan["end"] = [hm(to_min(t) + m) for t, m in zip(plan["est_start"], plan["exp_minutes"])]
+    plan["lane"] = plan["block"]
+    lunch = pd.DataFrame({"start": [hm(750)], "end": [hm(810)], "label": ["Lunch"]})
+    x = alt.X("start:T", title=None, axis=alt.Axis(format="%H:%M"), scale=alt.Scale(domain=[hm(630), hm(1030)]))
+    band = alt.Chart(lunch).mark_rect(opacity=0.15, color="gray").encode(x=x, x2="end:T")
+    bars = alt.Chart(plan).mark_bar(cornerRadius=2, stroke="white", strokeWidth=0.5).encode(
+        x=x, x2="end:T", y=alt.Y("lane:N", title=None),
+        color=alt.Color("purpose:N", legend=alt.Legend(orient="bottom", columns=4)),
+        tooltip=["case_id", "purpose", "visit", "est_start", alt.Tooltip("exp_minutes", format=".0f"), "reason"])
+    st.markdown("**Planned** — each case's expected slot (hover for details)")
+    st.altair_chart(band + bars, use_container_width=True)
+    ran = sh[(sh["date"] == cday) & sh["listed"] & sh["reached"]].copy()
+    if len(ran):
+        ran["start"] = ran["actual_start"].map(lambda t: hm(to_min(t)))
+        ran["end"] = [s + pd.Timedelta(minutes=max(float(m), 1.0)) for s, m in zip(ran["start"], ran["minutes_used"])]
+        ran["result"] = np.select([ran["substantive"], ran["happened"]], ["moved forward", "heard, didn't move"],
+                                  "adjourned (mention)")
+        ran["why"] = ran["failure_detail"].fillna("")
+        ran["lane"] = "Simulated day"
+        bars2 = alt.Chart(ran).mark_bar(cornerRadius=2, stroke="white", strokeWidth=0.5).encode(
+            x=x, x2="end:T", y=alt.Y("lane:N", title=None),
+            color=alt.Color("result:N", scale=alt.Scale(domain=["moved forward", "heard, didn't move", "adjourned (mention)"],
+                                                        range=["#2a9d5c", "#e9a23b", "#c0392b"]),
+                            legend=alt.Legend(orient="bottom")),
+            tooltip=["case_id", "purpose", "visit", "actual_start", alt.Tooltip("minutes_used", format=".0f"), "result", "why"])
+        st.markdown("**What happened (simulated)** — actual start between 10:30 and 11:00, "
+                    f"{cfg['changeover_minutes']:g}-min changeovers, lunch as a hard break")
+        st.altair_chart(band + bars2, use_container_width=True)
+        unreached = int((sh["date"] == cday).sum() - len(ran) - (~sh.loc[sh["date"] == cday, "listed"]).sum())
+        st.caption(f"{len(ran)} reached · {unreached} not reached before 17:00")
+
+# ---------------------------------------------------------------- three judges
+with tabs[2]:
     st.subheader("Same docket, each judge's rules — and what they cost")
     rows = []
+    shared = dict(agents=agents_on, changeover_minutes=changeover, leave_dates=[str(d) for d in leave])
     for name in PRESETS:
         for guarded in ([True, False] if "Joshi" in name else [True]):
-            c = make_config(name, enforce_guardrails=guarded, agents=agents_on)
+            c = make_config(name, enforce_guardrails=guarded, **shared)
             _, _, _, _, m, _ = simulate(path, "samay", freeze(c), days, seed)
-            label = name + ("" if guarded else " — guardrail off")
-            rows.append({"rules": label, **{k: m[k] for k in
-                         ["Effective / day", "Reach rate", "Backlog 5+ advanced", "Backlog 4+ heard",
-                          "Date slippage (days)", "Started within slot", "Wasted trips"]}})
+            rows.append({"rules": name + ("" if guarded else " — guardrail off"),
+                         **{k: m[k] for k in ["Effective / day", "Reach rate", "Backlog 5+ advanced",
+                                              "Backlog 4+ heard", "Date slippage (days)", "Started within slot",
+                                              "Wasted trips"]}})
     rows.append({"rules": "Baseline court", **{k: bm[k] for k in rows[0] if k != "rules"}})
     comp = pd.DataFrame(rows).set_index("rules")
     c1, c2 = st.columns(2)
@@ -163,19 +303,17 @@ with tabs[0]:
     c2.caption("5+ year cases that moved at least one stage")
     c2.bar_chart(comp["Backlog 5+ advanced"], horizontal=True)
     st.dataframe(comp.style.format({k: "{:.0%}" for k in comp.columns if k in PERCENT} |
-                                   {k: "{:,.1f}" for k in comp.columns if k not in PERCENT}),
-                 width="stretch")
+                                   {k: "{:,.1f}" for k in comp.columns if k not in PERCENT}), width="stretch")
     st.caption("Fresh-first (Joshi) buys throughput with the old backlog; the guardrail puts a floor under that trade.")
 
-# ---------------------------------------------------------------- 2. backlog & drift
-with tabs[1]:
+# ---------------------------------------------------------------- backlog & drift
+with tabs[3]:
     trend = pd.concat([bd.assign(policy="Baseline"), sd.assign(policy="Samay")])
     c1, c2 = st.columns(2)
     c1.caption("Open 5+ year cases")
     c1.line_chart(trend.pivot(index="date", columns="policy", values="open_5plus"))
     c2.caption("Effective hearings per day")
     c2.line_chart(trend.pivot(index="date", columns="policy", values="substantive"))
-    c3, c4 = st.columns(2)
     order = ["<1", "1-2", "2-3", "3-4", "4-5", "5+"]
 
     def open_by_age(state):
@@ -185,42 +323,65 @@ with tabs[1]:
     ages = pd.DataFrame({"Start": initial[initial["next_purpose"] != "DISPOSED"]["age_bucket"]
                          .value_counts().reindex(order, fill_value=0),
                          "Baseline end": open_by_age(bs), "Samay end": open_by_age(ss)})
+    c3, c4 = st.columns(2)
     c3.caption("Open cases by age bucket")
     c3.bar_chart(ages, stack=False)
-    work = pd.DataFrame({"hours of work left": [initial["remaining_minutes_est"].sum() / 60,
-                                                ss[ss["next_purpose"] != "DISPOSED"]["remaining_minutes_est"].sum() / 60]},
-                        index=["Start", "Samay end (estimate at start of run)"])
-    c4.caption("Why the docket can't be 'cleared': median hearing-hours left to disposal vs court hours available")
+    c4.caption("Why the docket can't be 'cleared'")
     c4.metric("Median hearing-hours left in the docket", f"{initial['remaining_minutes_est'].sum() / 60:,.0f} h",
-              f"court has {len(sd) * cfg['day_minutes'] / 60:,.0f} h in {len(sd)} days", delta_color="off")
+              f"court sits {len(sd) * cfg['day_minutes'] / 60:,.0f} h in {len(sd)} days", delta_color="off")
 
-# ---------------------------------------------------------------- 3. causelist + what-if
-with tabs[2]:
+# ---------------------------------------------------------------- why hearings fail
+with tabs[4]:
+    st.subheader("Why listed hearings didn't move the case — per sitting day")
+
+    def reasons(h, d, label):
+        L = h[h["listed"]]
+        r = L["failure_detail"].where(L["reached"], "Not reached before 17:00").dropna()
+        return (r.value_counts() / max(1, len(d))).rename(label)
+
+    early = (sh.loc[~sh["listed"], "failure_reason"].value_counts() / max(1, len(sd))).rename("Samay")
+    fail = pd.concat([reasons(bh, bd, "Baseline"), reasons(sh, sd, "Samay")], axis=1).fillna(0)
+    fail = fail.sort_values("Baseline", ascending=False)
+    st.bar_chart(fail, horizontal=True, stack=False)
+    st.caption("Detailed reasons are drawn from the organisers' failure table for each hearing type. "
+               "Court-side reasons (holiday, administrative) bring the case back the next working day; "
+               "an absence brings it back sooner; a pending summons/warrant waits for the return.")
+    if len(early):
+        st.markdown("**Admitted two days early at the readiness check (slot refilled, no trip):** "
+                    + ", ".join(f"{k} {v:.1f}/day" for k, v in early.items()))
+    vis = sh[sh["listed"] & sh["reached"]].assign(first=lambda x: x["visit"].eq("first at stage"))
+    if len(vis):
+        g = vis.groupby("first")["substantive"].mean()
+        st.markdown(f"**First-time vs repeat hearings:** first at stage move forward "
+                    f"{g.get(True, float('nan')):.0%} of the time, repeat hearings {g.get(False, float('nan')):.0%}.")
+
+# ---------------------------------------------------------------- causelist what-if
+with tabs[5]:
     day = st.selectbox("Day", sorted(sl["date"].unique()))
     today = sl[sl["date"] == day].copy()
     today = today.join(initial[["waiting_on", "readiness", "last_event"]], on="case_id")
     today.insert(0, "keep", True)
     st.caption("Untick cases to see what moving them does to the day. Expected figures from the case model.")
-    view = today[["keep", "block", "est_start", "case_id", "purpose", "advocate_id", "age_years",
-                  "p_sub_eff", "exp_minutes", "waiting_on", "reason"]]
+    view = today[["keep", "block", "est_start", "case_id", "purpose", "visit", "advocate_id", "age_years",
+                  "p_sub_eff", "exp_minutes", "reason"]]
     edited = st.data_editor(
         view, hide_index=True, width="stretch", disabled=[c for c in view.columns if c != "keep"],
         column_config={"est_start": "starts ~", "age_years": st.column_config.NumberColumn("age (yrs)", format="%.1f"),
                        "p_sub_eff": st.column_config.ProgressColumn("P(moves forward)", min_value=0, max_value=1,
                                                                     format="percent"),
                        "exp_minutes": st.column_config.NumberColumn("exp. min", format="%.0f"),
-                       "waiting_on": "last waited on", "reason": "why listed"})
+                       "reason": "why listed"})
     kept = today[edited["keep"].values]
 
     def day_stats(df):
         if df.empty:
             return 0.0, 0.0, 1.0, 0
         rng = np.random.default_rng(0)
-        mention = cfg["mention_minutes"]
-        p_heard = ((df["exp_minutes"] - mention) / (df["est_minutes"] - mention).clip(lower=0.1)).clip(0, 1).values
+        mention, co = cfg["mention_minutes"], cfg["changeover_minutes"]
+        p_heard = ((df["exp_minutes"] - co - mention) / (df["est_minutes"] - mention).clip(lower=0.1)).clip(0, 1).values
         heard = rng.random((2000, len(df))) < p_heard
         dur = df["est_minutes"].values * np.exp(rng.normal(-DURATION_SIGMA ** 2 / 2, DURATION_SIGMA, (2000, len(df))))
-        total = np.where(heard, dur, mention).sum(axis=1)
+        total = np.where(heard, dur, mention).sum(axis=1) + co * len(df)
         return df["exp_minutes"].sum(), df["p_sub_eff"].sum(), float((total <= cfg["day_minutes"] + 10).mean()), int(df["is_old"].sum())
 
     b = day_stats(today)
@@ -231,17 +392,16 @@ with tabs[2]:
     m3.metric("P(everyone listed is reached)", f"{a[2]:.0%}", f"{a[2] - b[2]:+.0%}")
     m4.metric("4+ yr cases today", a[3], a[3] - b[3])
 
-# ---------------------------------------------------------------- 4. case brief
-with tabs[3]:
+# ---------------------------------------------------------------- case brief
+with tabs[6]:
     bday = st.selectbox("Causelist day", sorted(sl["date"].unique()), key="brief_day")
     options = sl[sl["date"] == bday]["case_id"].tolist()
     if options:
         cid = st.selectbox("Case", options)
         st.markdown(build_brief(initial.loc[cid]))
-    st.caption(f"{int((~sh['listed']).sum()):,} hearings declined 2 days ahead across the run — slots refilled, no wasted trip.")
 
-# ---------------------------------------------------------------- 5. at-risk
-with tabs[4]:
+# ---------------------------------------------------------------- at-risk
+with tabs[7]:
     o = ss[ss["next_purpose"] != "DISPOSED"]
     risk = o[(o["is_old"] & o["first_heard"].isna()) | o["repeat_adj"] | o["is_stuck"]].copy()
     risk["why"] = (np.where(risk["is_old"] & risk["first_heard"].isna(), "old & not heard; ", "")
@@ -252,8 +412,8 @@ with tabs[4]:
                        "adjournments_est", "remaining_hearings_est", "times_listed", "due_date"]]
                  .sort_values("age_years", ascending=False), hide_index=True, width="stretch")
 
-# ---------------------------------------------------------------- 6. advocates
-with tabs[5]:
+# ---------------------------------------------------------------- advocates
+with tabs[8]:
     if agents_df is None:
         st.info("Turn on L3 advocate agents in the sidebar.")
     else:
@@ -267,8 +427,8 @@ with tabs[5]:
         early = int((~sh["listed"]).sum())
         st.metric("'Not prepared' discovered on the day vs admitted early", f"{on_day:,} vs {early:,}")
 
-# ---------------------------------------------------------------- 7. all metrics
-with tabs[6]:
+# ---------------------------------------------------------------- all metrics
+with tabs[9]:
     st.dataframe(pd.DataFrame({"metric": list(sm), "baseline": [fmt(k, bm[k]) for k in sm],
                                "samay": [fmt(k, sm[k]) for k in sm]}), hide_index=True, width="stretch")
     res = HERE / "results.md"

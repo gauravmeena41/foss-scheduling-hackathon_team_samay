@@ -7,6 +7,10 @@ from __future__ import annotations
 import pandas as pd
 
 # multiplier on the reference gap, by today's outcome
+# detailed reasons that aren't the case's fault -> back at the top of the next working day
+COURT_SIDE = {"Court Holiday / No Sitting", "Court Administrative Issue"}
+DETAIL_GAP = {"Unclear": 0.5, "External Dependency": 1.0, "Both Parties Unready / Absent": 0.75}
+
 OUTCOME_GAP = {
     "substantive": 1.0,   # moved forward -> ideal gap for the NEW purpose
     "preparation": 1.0,   # heard, unprepared -> same purpose, standard gap (+ summary nudge)
@@ -53,7 +57,7 @@ def least_loaded(target: pd.Timestamp, cal: Calendar, load: dict | None, cap: fl
 
 def next_date(purpose: str, outcome: str, day: pd.Timestamp, cal: Calendar, ref: pd.DataFrame,
               cfg: dict, ready_date: pd.Timestamp | None = None, load: dict | None = None,
-              need: float = 0.0) -> pd.Timestamp:
+              need: float = 0.0, detail: str | None = None) -> pd.Timestamp:
     """Recommended next hearing date for a case whose NEXT purpose is `purpose`.
 
     `load` = {date: expected minutes already booked}; when given, the date slides forward
@@ -68,5 +72,8 @@ def next_date(purpose: str, outcome: str, day: pd.Timestamp, cal: Calendar, ref:
         # nothing useful can happen until the process returns
         base = ready_date if ready_date is not None and ready_date > day else day + pd.Timedelta(days=7)
         return least_loaded(cal.on_or_after(base), cal, load, cap, need)
+    if detail in COURT_SIDE:
+        return cal.after(day, 1)                # the court didn't sit / couldn't hear it: not the parties' fault
     gap = ref.at[purpose, "gap_days"] if purpose in ref.index else 14
-    return least_loaded(cal.after(day, gap * OUTCOME_GAP.get(outcome, 1.0)), cal, load, cap, need)
+    mult = DETAIL_GAP.get(detail, OUTCOME_GAP.get(outcome, 1.0))
+    return least_loaded(cal.after(day, gap * mult), cal, load, cap, need)

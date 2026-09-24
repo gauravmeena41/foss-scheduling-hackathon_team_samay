@@ -68,7 +68,7 @@ CASE_COLUMNS = [
     "first_scheduled", "last_heard", "last_summary", "history",
     "last_event", "waiting_on", "readiness", "prep_mult", "part_heard", "last_chance", "non_compliance",
     "absent_parties", "adjournments_est", "remaining_hearings_est", "remaining_minutes_est", "data_note",
-    "process_wait_mult", "has_efiling",
+    "process_wait_mult", "has_efiling", "visit",
 ]
 
 CASE_SCHEMA = {
@@ -95,6 +95,7 @@ CASE_SCHEMA = {
     "data_note": "data-quality note (e.g. verdict already recorded)",
     "process_wait_mult": "case-specific multiplier on summons/warrant return time from e-filing signals (1 = no signals)",
     "has_efiling": "True when the roster carries e-filing columns (efiling.EFILING_COLUMNS)",
+    "visit": "'first at stage' or 'repeat #N' - how many times this purpose has been heard before",
 }
 
 # Stages every case passes through (delay condonation and warrant are conditional)
@@ -111,6 +112,25 @@ def needs_brief(case) -> bool:
 def norm(purpose: str) -> str:
     """'Examination Under S351 Bnss' -> 'EXAMINATION_UNDER_S351_BNSS'."""
     return re.sub(r"\s+", "_", str(purpose).strip()).upper()
+
+
+def load_reason_shares(data_dir: Path = DATA_DIR) -> dict:
+    """{hearing type: {group: [(detailed reason, share within the group), ...]}} from the failure table."""
+    fail = pd.read_csv(data_dir / "hearing_failure_reasons.csv").set_index("hearingType")
+    out = {}
+    for ht, row in fail.iterrows():
+        out[ht] = {}
+        for group, cols in FAILURE_GROUPS.items():
+            counts = [(c, float(row[c])) for c in cols]
+            total = sum(n for _, n in counts)
+            out[ht][group] = [(c, n / total) for c, n in counts] if total > 0 else [(cols[0], 1.0)]
+    return out
+
+
+def visit_label(hearings_in_stage) -> pd.Series:
+    """'first at stage' or 'repeat #N' (N = this hearing's number at the current stage)."""
+    n = pd.Series(hearings_in_stage).fillna(0).astype(int)
+    return pd.Series(np.where(n == 0, "first at stage", "repeat #" + (n + 1).astype(str)), index=n.index)
 
 
 def load_reference(data_dir: Path = DATA_DIR) -> pd.DataFrame:
@@ -210,6 +230,7 @@ def load_cases(roster_path: Path | str | None = None, as_of: str = "2026-09-24",
     df["first_scheduled"] = pd.NaT
     df["last_heard"] = pd.NaT
     df["last_summary"] = summary
+    df["visit"] = visit_label(df["hearings_in_stage"]).values
     stages_done = (r[[c for c in r.columns if c.startswith("hearings_")]] > 0).sum(axis=1)
     df["adjournments_est"] = (df["total_hearings"] - stages_done).clip(lower=0).values
     rem = [remaining_work(p, st, n, ref) for p, st, n in zip(df["next_purpose"], df["stage"], df["hearings_in_stage"])]

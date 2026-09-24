@@ -54,6 +54,7 @@ def compute(hearings: pd.DataFrame, daily: pd.DataFrame, state: pd.DataFrame, cf
         "Wasted trips": listed - happened,
         "Declined in advance": declined,
         "Disposed": int(state["disposed_on"].notna().sum()),
+        "Changeover / day (min)": float(daily["changeover_minutes"].mean()) if "changeover_minutes" in daily else 0.0,
     }
 
 

@@ -29,7 +29,8 @@ def rank(state: pd.DataFrame, day: pd.Timestamp, cfg: dict) -> pd.DataFrame:
         brief = elig["is_old"] | elig["next_purpose"].isin(LATE_STAGES)
         est = est.where(~brief, est * (1 - cfg.get("brief_time_saving", 0.0)))
     elig["est_minutes"] = est
-    exp_min = p_heard * est + (1 - p_heard) * cfg["mention_minutes"]
+    # every listing also costs the changeover between hearings (calling the case, parties stepping up)
+    exp_min = p_heard * est + (1 - p_heard) * cfg["mention_minutes"] + cfg.get("changeover_minutes", 0.0)
     age_factor = np.maximum(0.1, 1 + cfg["age_weight"] * elig["age_years"])
     boost_purposes = set(cfg.get("purpose_days", {}).get(WEEKDAYS[day.weekday()], []))
     boost = np.where(elig["next_purpose"].isin(boost_purposes), cfg["purpose_day_boost"], 1.0)
@@ -39,8 +40,11 @@ def rank(state: pd.DataFrame, day: pd.Timestamp, cfg: dict) -> pd.DataFrame:
     part_heard = elig["part_heard"].astype(bool) if "part_heard" in elig else False
     continuity = np.where(part_heard, cfg.get("part_heard_boost", 1.3), 1.0)   # bench still remembers it
     elig["score"] = age_factor * probs["substantive"] / exp_min * boost * continuity
+    n_here = elig["hearings_in_stage"].fillna(0).astype(int)
+    elig["visit"] = np.where(n_here == 0, "first at stage", "repeat #" + (n_here + 1).astype(str))
     elig["reason"] = (
-        np.where(elig["is_old"], elig["age_years"].round().astype(int).astype(str) + "y old; ", "")
+        elig["visit"] + "; "
+        + np.where(elig["is_old"], elig["age_years"].round().astype(int).astype(str) + "y old; ", "")
         + np.where(elig["repeat_adj"], "repeat adjournment; ", "")
         + np.where(boost > 1, "purpose day; ", "")
         + np.where(continuity > 1, "part-heard; ", "")

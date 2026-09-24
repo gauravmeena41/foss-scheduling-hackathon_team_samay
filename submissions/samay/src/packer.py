@@ -12,7 +12,7 @@ import pandas as pd
 
 from config import GUARDRAILS
 
-CAUSELIST_COLUMNS = ["date", "block", "slot", "est_start", "case_id", "purpose", "est_minutes",
+CAUSELIST_COLUMNS = ["date", "block", "slot", "est_start", "case_id", "purpose", "visit", "est_minutes",
                      "exp_minutes", "advocate_id", "age_years", "is_old", "p_sub_eff", "reason"]
 
 
@@ -83,6 +83,7 @@ def build_causelist(ranked: pd.DataFrame, day: pd.Timestamp, cfg: dict) -> pd.Da
             rows.append({
                 "date": day.date(), "block": block["name"], "slot": f"{block['start']}-{block['end']}",
                 "est_start": _hhmm(t), "case_id": c["case_id"], "purpose": c["next_purpose"],
+                "visit": c.get("visit", ""),
                 "est_minutes": c["est_minutes"], "exp_minutes": round(c["exp_minutes"], 1),
                 "advocate_id": c["advocate_id"], "age_years": round(c["age_years"], 1),
                 "is_old": c["is_old"], "p_sub_eff": round(c["p_sub_eff"], 2), "reason": c["reason"],
