@@ -113,7 +113,8 @@ def run(cases: pd.DataFrame, policy: str, cfg: dict, start: str = "2026-09-24", 
     s = init_state(cases, start_ts, ref, rng, cfg)
     if policy == "samay":   # blocked cases get a tentative date at the expected process return
         blocked = ~s["prereq_ok"].astype(bool)
-        s.loc[blocked, "due_date"] = [cal.on_or_after(d) for d in s.loc[blocked, "ready_est"]]
+        s.loc[blocked, "due_date"] = pd.to_datetime([cal.on_or_after(d) for d in s.loc[blocked, "ready_est"]]) \
+            .as_unit(s["due_date"].dt.unit)
     # the baseline court has none of our levers (the agents, if on, exist in both worlds)
     sim_cfg = cfg if policy == "samay" else {**cfg, "summary_mandate": False, "reminders": False,
                                              "adjournment_cost": False, "readiness_confirmation": False}

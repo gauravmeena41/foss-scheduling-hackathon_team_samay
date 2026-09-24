@@ -25,6 +25,7 @@ class Calendar:
         self.last = self.days[-1]
 
     def on_or_after(self, day: pd.Timestamp) -> pd.Timestamp:
+        day = pd.Timestamp(day).normalize()   # dates, not times (sampled waits carry fractions of a day)
         for d in self.days:
             if d >= day:
                 return d
