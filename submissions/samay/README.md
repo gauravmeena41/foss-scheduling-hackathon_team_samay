@@ -1,68 +1,44 @@
-# Team Samay — working guide
+# Samay — scheduling layer for a High Court judge's docket
 
-Everything runs end to end already (v0). Each owner improves their own files; wire-up changes happen only at the 2:00 and 3:15 syncs.
+Team **samay**. The write-up for reviewers is [`SUBMISSION.md`](SUBMISSION.md); headline numbers are in [`results.md`](results.md); the 10-minute demo is [`DEMO.md`](DEMO.md).
 
 ```bash
 pip install -r requirements.txt
-python run.py                          # 100 cases, baseline vs Samay, writes proposed_schedule.csv
-python run.py --roster <3000.csv>      # scale test (~12s)
-python ablation.py --roster <3000.csv>  # what each lever adds, by stage (early / middle / late)
-python run.py --efiling                 # same, with synthetic e-filing signals added to the roster
-streamlit run app.py                   # dashboard
+python run.py                          # 100 cases: baseline vs Samay, writes proposed_schedule.csv
+python run.py --roster <3000.csv> --agents --efiling
+python results.py --roster <3000.csv> --seeds 10    # mean ± sd over seeds -> results.md
+python ablation.py --roster <3000.csv>              # what each lever adds, by stage
+python agents_study.py --roster <3000.csv>          # L3: how advocates respond to incentives
+streamlit run app.py                                # dashboard
 ```
 
-## Who owns what
+Make a 3,000-case roster with `cd ../../scripts && python generate_roster.py --num-cases 3000 --seed 42 --out /tmp/roster_3000.csv`.
 
-| File | Set | Owner | v0 does | Your TODO |
-|---|---|---|---|---|
-| `src/model.py` + `src/orders.py` | A | Dev 1 | **Done.** Roster + reference tables → one row per case (`CASE_SCHEMA` documents every field). Order-sheet classifier (11 events, who the case waits on, last-chance / non-compliance), readiness, case-level no-show and unpreparedness multipliers, part-heard, adjournments, work left to disposal, data-quality notes, `validate_cases()` | — |
-| `src/efiling.py` | A | Dev 1 | Synthetic e-filing columns (addresses, contact known, prepaid summons/e-post, in-jurisdiction, ADR, complainant type) → per-case process-return time and no-show multipliers | — |
-| `src/priority.py` | B | Dev 1 | Score = age factor × P(moves) ÷ expected min; prereq gate; purpose-day boost | Tune weights; urgency (bail, custody) |
-| `src/packer.py` | C | Dev 1 | Guardrail quota for 4+ yr cases, fill to expected capacity, blocks, advocate clustering, est. start times | Short-first within block; party clustering |
-| `src/next_date.py` | D | Dev 1 | Gap by next purpose × today's outcome; process → return date; weekly carry-forward | Load-aware dates (skip full days) |
-| `src/config.py` | E | Dev 3 | Defaults, guardrail floor, presets: Recommended / Sehgal / Dimakar / Joshi | Tune presets; leave dates in UI |
-| `src/simulate.py`, `baseline.py`, `metrics.py` | F | Dev 2 | Day-by-day sim, lognormal durations, outcomes drawn from the failure data, 13 metrics | Monte Carlo over seeds (mean ± spread); utilisation overrun cap |
-| `src/agents.py` + `agents_study.py` | L3 | — | **Done.** Advocate agents (diligent / overloaded / dilatory) decide to appear, be prepared, admit "need time"; respond to slots, clustering, reminders, on-the-day adjournment cost; learn from outcomes | — |
-| `src/brief.py` | Aditi's steer | Dev 1 → Dev 3 | One-page case brief: journey, last order, who was absent, per-stage readiness checklist | Seed from e-filing synopsis fields; "agreed / disputed" section |
-| `simulate.confirm_readiness` | Aditi's steer | Dev 2 | Advocates confirm ready / need time 2 days before; freed slots refilled | Make it the L3 agent's decision (personality, incentives) |
-| `app.py` | G | Dev 3 | KPI deltas vs baseline, backlog trend, causelist, at-risk list, all rule toggles | "Move these cases" what-if, 3-judge side-by-side, polish |
-| `SUBMISSION.md` | — | Dev 3 | Draft | Fill numbers from final run at 4:00 |
+## Module map
 
-## Contracts (don't change without telling the others)
+| File | What it does |
+|---|---|
+| `src/model.py` | Case model: roster + reference tables → one row per case (`CASE_SCHEMA`, `validate_cases`), outcome probabilities |
+| `src/orders.py` | Classifies the last order sheet: 11 events, who the case is waiting on, last-chance / non-compliance |
+| `src/efiling.py` | Optional DRISTI e-filing signals (synthetic) → process-return and no-show multipliers |
+| `src/priority.py` | Ranks eligible cases: age × P(moves forward) ÷ expected minutes, part-heard / purpose-day boosts |
+| `src/packer.py` | Builds the causelist: guardrail quota for 4+ yr cases (own ranking), expected-minutes capacity, blocks, advocate clustering, start times |
+| `src/next_date.py` | Next date by purpose and outcome, process-return aware, slides past full days |
+| `src/brief.py` | One-page case brief with the readiness checklist for this hearing |
+| `src/config.py` | Defaults, fixed guardrails, presets (Recommended / Sehgal / Dimakar / Joshi) |
+| `src/simulate.py` | Day-by-day court simulation: readiness check, hearings until the court rises, outcomes, next dates |
+| `src/agents.py` | L3 advocate agents: personalities, decisions, incentives, learning |
+| `src/baseline.py` | The case study's court: list 60, flat 60-day gap |
+| `src/metrics.py` | The five scoring dimensions and supporting metrics |
+| `app.py` | Streamlit dashboard |
 
-- **Case** columns: `model.CASE_COLUMNS` (meanings in `model.CASE_SCHEMA`; check any roster with `model.validate_cases`)
-- **Causelist** columns: `packer.CAUSELIST_COLUMNS`
-- **Hearing log** keys: see `simulate.run` (`rec` dict)
-- **Config** keys: `config.DEFAULT_CONFIG`
+## Headline (3,000 cases, 60 working days, 10 seeds)
 
-## v0 numbers (3,000-case roster, 60 working days, seed 42, Recommended preset)
-
-| Metric | Baseline | Samay |
+| | Baseline | Samay |
 |---|---|---|
-| Heard / day | 18.2 | 28.3 |
-| Effective / day | 12.3 | 25.3 |
-| Reach rate | 53% | 92% |
-| 4+ yr cases heard | 40% | 47% |
-| 5+ yr cases advanced | 23% | 40% |
-| Started within slot | 10% | 95% |
-| Next-date sensible | 8% | 74% |
-| Wasted trips | 2,506 | 1,116 |
-| Disposed | 213 | 344 |
-
-The baseline lands close to the case study's 60 → 20 → 10, which is a useful sanity check to show the panel.
-
-## Levers by stage (3,000 cases, `python ablation.py`)
-
-Effective hearings per day:
-
-| Scenario | Early | Middle | Late | Total | 5+ yr advanced |
-|---|---|---|---|---|---|
-| Baseline | 3.0 | 3.4 | 3.7 | 12.3 | 19% |
-| + Packing & process gate | 10.7 | 4.9 | 4.8 | 25.3 | 35% |
-| + Readiness check | 11.4 | 5.6 | 4.8 | 26.7 | 34% |
-| + Case brief | 9.1 | 4.6 | 6.5 | 25.2 | 52% |
-| All levers | 9.9 | 5.0 | 6.6 | 26.4 | 53% |
-
-The process gate fixes the early stages; the readiness check lifts the middle; the case brief is what moves late-stage and 5+ year cases.
-
-**E-filing signals** (`--efiling`, synthetic): all levers 26.6 vs 26.2 effective/day without them, wasted trips 1,046 vs 1,061. Small in simulation, because the prerequisite gate already stops unready cases being listed; the real value is operational: flag cases with no known contact for alternative service early, and give parties a realistic tentative date.
+| Effective hearings / day | 12.9 | 25.8 |
+| Reach rate | 56% | 89% |
+| 5+ yr cases advanced | 18% | 50% |
+| Started within slot | 10% | 89% |
+| Next date sensible | 8% | 81% |
+| Wasted trips | 2,472 | 1,069 |
