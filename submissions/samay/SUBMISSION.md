@@ -101,6 +101,11 @@ Early stages fail on process (summons/warrants not back) — the gate fixes them
 - *Causelist what-if* — untick cases, see expected minutes, effective hearings and P(everyone reached) change.
 - *Case brief*, *At-risk cases*, *Advocates (L3)*, *All metrics*.
 
+| | |
+|---|---|
+| ![Upload workflow](docs/1_upload_workflow.png) | ![Calendar](docs/2_calendar.png) |
+| ![Why hearings fail](docs/3_why_hearings_fail.png) | ![Three judges](docs/4_three_judges.png) |
+
 ## 6. Specs for integration
 
 - **Input schema:** the roster exactly as in `data/` — as CSV or Excel (`case_number, filing_number, filing_date, advocate_id, party_id, current_stage, last_hearing_summary, purpose_of_next_hearing, hearings_<type>…, total_hearings_held`) — plus the reference CSVs and the court calendar. Missing `hearings_<type>` columns default to 0. Optional e-filing columns: `accused_addresses, contact_known, summons_rounds_prepaid, epost_prepaid, accused_in_jurisdiction, adr_opt_in, complainant_type`. `model.validate_cases()` returns a list of problems (empty = OK); the dashboard shows them instead of scheduling.
