@@ -1,0 +1,19 @@
+# Samay look: the printed cause list. Ink on cool paper, a serif for headings, a clean sans for data.
+[theme]
+base = "light"
+primaryColor = "#1B2A41"
+backgroundColor = "#F5F6F3"
+secondaryBackgroundColor = "#E5E9EF"
+textColor = "#111925"
+borderColor = "#C9D3E3"
+font = "Noto Sans:https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap"
+headingFont = "Spectral:https://fonts.googleapis.com/css2?family=Spectral:wght@500;600;700&display=swap"
+baseRadius = "small"
+showWidgetBorder = true
+showSidebarBorder = true
+
+[theme.sidebar]
+backgroundColor = "#ECEEEA"
+
+[client]
+toolbarMode = "minimal"
