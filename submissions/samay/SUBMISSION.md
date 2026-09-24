@@ -8,7 +8,7 @@
 
 ## 2. One-line summary
 
-For one judge's cheque-bounce docket, Samay lists only hearings that are ready to happen and likely to move the case forward, packs them into the court's real sittings with time slots, guarantees ageing cases a share of every day, and matches each next date to the work the next step needs — turning a 60 → 12 → 8 day into 23 → 17 → 16, with a seventh of the wasted trips.
+For one judge's cheque-bounce docket, Samay lists only hearings that are ready to happen and likely to move the case forward, packs them into the court's real sittings with time slots, guarantees ageing cases a share of every day, and matches each next date to the work the next step needs — turning a 60 → 12 → 8 day into 22 → 15 → 14, finishing 3.2× as many cases (407 vs 127 in 60 days) with a seventh of the wasted trips.
 
 ## 3. The approach
 
@@ -21,7 +21,7 @@ For one judge's cheque-bounce docket, Samay lists only hearings that are ready t
 **Core logic — a greedy, explainable pipeline run every evening:**
 
 1. **Case model** (`model.py`, `orders.py`). One row per case. The last order sheet is classified into 11 events (process awaiting / served, mediation or higher-court order pending, objections pending, not ready, absent, part-heard, heard for judgment, progressed, verdict recorded) and *who the case is waiting on*. From that: a prerequisite gate, readiness, case-level no-show and unpreparedness multipliers, part-heard priority, **first-time vs repeat hearing at the stage** ("repeat #4"), adjournments so far, and hearings/minutes left to disposal. `CASE_SCHEMA` documents every field; `validate_cases()` checks any roster or upload.
-2. **Rank** (`priority.py`). Score = age factor × P(moves forward | listed) ÷ expected minutes (including the changeover), × part-heard and purpose-day boosts. Cases still waiting on a summons, warrant, mediation or a higher court are not eligible. Every case carries a plain-language reason, starting with whether it is a first or repeat hearing.
+2. **Rank** (`priority.py`, `score100.py`). Every case gets a **0-100 priority** (our teammate's model): age 35 + hearing readiness 25 (P(progress) × who the hearing needs was present) + closeness to disposal 15 + churn beyond the normal number of hearings 15 + court-set urgency ("last chance", "for judgment") 10 — added, not multiplied, so readiness can't veto an old case, and stored factor by factor so every score explains itself. Judges may re-weight; age never drops below 20%. The day is ranked by the **hybrid**: priority × P(moves forward) ÷ expected minutes (including the changeover) — the priority actually delivered per minute of court time. Two rules sit outside the score: **bail is always listed first** (personal liberty), and **no case waits forever** (30+ days overdue → forced onto the list, up to 20% of the day). Cases still waiting on a summons, warrant, mediation or a higher court are not eligible. Every case carries a plain-language reason (first/repeat hearing, score breakdown, why).
 3. **Pack** (`packer.py`). Capacity = expected sitting minutes × overbooking factor, in *expected* minutes (a no-show costs a 2-minute mention, not the slot). The **guardrail** fills its share of the day first with 4+ year cases using its *own* oldest-weighted ranking, so no judge's rules can starve them; the rest goes to the judge's ranking. Morning block (fresh, short) and afternoon block (oldest matters); each advocate's matters back to back; an estimated start time for every case.
 4. **Readiness check** (`simulate.confirm_readiness`). Two days before, advocates confirm "ready" or "need time"; freed slots go to the next case. Two "need time"s flag the case.
 5. **Case brief** (`brief.py`). One page for 4+ year and evidence / arguments / judgement matters: journey through the stages, last order, who was absent, what it waits on, the checklist for this hearing, work left to disposal.
@@ -50,29 +50,39 @@ For one judge's cheque-bounce docket, Samay lists only hearings that are ready t
   | Scenario | Effective / day | On-the-day "not prepared" | Admitted early | Wasted trips |
   |---|---|---|---|---|
   | Baseline court | 9.0 | 195 | 0 | 2,867 |
-  | Samay, no incentives | 16.1 | 38 | 102 | 397 |
-  | + reminders | 16.4 | 29 | 90 | 405 |
-  | + cost for on-the-day adjournment | 16.4 | 22 | 102 | 396 |
-  | + both | 16.7 | 13 | 111 | 382 |
+  | Samay, no incentives | 14.6 | 59 | 36 | 385 |
+  | + reminders | 14.9 | 42 | 21 | 386 |
+  | + cost for on-the-day adjournment | 14.8 | 47 | 38 | 381 |
+  | + both | 14.8 | 37 | 25 | 399 |
 
 ## 5. Results
 
-**3,000 cases, 60 sitting days, 10 seeds (mean ± sd), Recommended rules, real court day** — `python results.py`, full table in `results.md`:
+**3,000 cases, 60 sitting days, 10 seeds (mean ± sd), Recommended rules, hybrid ranking, real court day** — `python results.py`, full table in `results.md`:
 
 | Metric | Baseline (60/day, flat 60-day gap) | Samay |
 |---|---|---|
-| Listed / heard / effective per day | 60 / 12.3 / 8.4 | 23.5 / 16.8 / 16.2 |
-| Reach rate | 37% ± 1% | 87% ± 1% |
-| Substantiveness (effective ÷ heard) | 69% ± 2% | 96% ± 1% |
-| Utilisation (hearing minutes ÷ sitting minutes; changeover is the rest) | 89% ± 1% | 86% ± 1% |
-| 4+ yr cases heard at least once | 24% ± 1% | 43% ± 0% |
-| 5+ yr cases advanced ≥ 1 stage | 12% ± 1% | 39% ± 1% |
-| Days from first listing to hearing | 9.1 ± 0.7 | 1.9 ± 0.1 |
-| Date slippage (heard vs date given) | 33.1 ± 0.4 | 20.0 ± 0.3 |
-| Started within slot (± 30 min) | 9% ± 1% | 80% ± 4% |
-| Next date within 0.5–2× procedural gap | 8% ± 0% | 93% ± 1% |
-| Wasted trips (listed, not heard) | 2,862 | 401 |
-| Disposed in 60 days | 127 | 333 |
+| Listed / heard / effective per day | 60 / 12.3 / 8.4 | 22.1 / 15.2 / 14.3 |
+| **Cases disposed in 60 days** | 127 | **407** |
+| Reach rate | 37% ± 1% | 86% ± 1% |
+| Substantiveness (effective ÷ heard) | 69% ± 2% | 94% ± 1% |
+| Utilisation (hearing minutes ÷ sitting minutes; changeover is the rest) | 89% ± 1% | 87% ± 0% |
+| 4+ yr cases heard at least once | 24% ± 1% | 44% ± 1% |
+| 5+ yr cases advanced ≥ 1 stage | 12% ± 1% | 37% ± 1% |
+| Days from first listing to hearing | 9.1 ± 0.7 | 2.6 ± 0.2 |
+| Date slippage (heard vs date given) | 33.1 ± 0.4 | 22.6 ± 0.5 |
+| Started within slot (± 30 min) | 9% ± 1% | 77% ± 2% |
+| Next date within 0.5–2× procedural gap | 8% ± 0% | 95% ± 1% |
+| Wasted trips (listed, not heard) | 2,862 | 415 |
+
+**Three rankers, same docket** (`python compare_rankers.py`, 4 seeds, `rankers.md`):
+
+| Ranker | Effective / day | 5+ yr advanced | Disposed | Wasted trips |
+|---|---|---|---|---|
+| Value per minute (ours, v1) | **16.0** | 37% | 313 | 468 |
+| 0-100 priority (teammate) | 12.7 | **46%** | **417** | 496 |
+| **Hybrid (default)** | 14.4 | 37% | 408 | **408** |
+
+Value per minute maximises hearings that move a case; the 0-100 priority maximises cases finished and old-case movement; the hybrid keeps almost all of the disposals with the fewest wasted trips. The judge can switch rankers in the dashboard.
 
 The baseline reproduces the case study's day — 60 listed, ~12 heard, ~8–10 effective — our calibration check.
 
@@ -81,14 +91,14 @@ The baseline reproduces the case study's day — 60 listed, ~12 heard, ~8–10 e
 | Scenario | Early | Middle | Late | 5+ yr advanced |
 |---|---|---|---|---|
 | Baseline | 2.3 | 2.1 | 2.4 | 13% |
-| + Packing & prerequisite gate | 4.5 | 2.5 | 4.6 | 26% |
-| + Readiness check | 4.6 | 2.6 | 4.7 | 27% |
-| + Case brief | 3.5 | 1.8 | 5.7 | 38% |
-| All levers | 3.6 | 2.0 | 5.8 | 39% |
+| + Packing & prerequisite gate | 1.5 | 0.8 | 5.9 | 27% |
+| + Readiness check | 1.3 | 0.8 | 6.0 | 27% |
+| + Case brief | 1.3 | 1.3 | 6.6 | 35% |
+| All levers | 1.3 | 1.2 | 6.8 | 37% |
 
-Early stages fail on process (summons/warrants not back) — the gate fixes them. Evidence and arguments fail because counsel aren't prepared and the bench re-reads the file — the readiness check and the case brief move those, and the 5+ year backlog with them.
+With the hybrid ranking, the day shifts towards cases near judgment (closeness to disposal is a priority factor) — late-stage effective hearings nearly triple. Early stages fail on process (summons/warrants not back) — the gate fixes them. Evidence and arguments fail because counsel aren't prepared and the bench re-reads the file — the readiness check and the case brief move those, and the 5+ year backlog with them.
 
-**Three judges, one engine:** fresh-first rules (Justice Joshi) reach 22.2 effective hearings a day but advance **0%** of 5+ year cases; with the guardrail, 20.9 a day and 23%.
+**Three judges, one engine:** fresh-first rules (Justice Joshi re-weights the priority towards readiness and disposal, age at its 20% floor) reach 15.7 effective hearings a day; with the guardrail on, 14.6 a day and 30% of 5+ year cases moved. Two protections stack: the guardrail's share of the day and the age-weight floor inside the score.
 
 **E-filing signals** (synthetic): no measurable gain in this simulation, because the prerequisite gate already keeps unready cases off the list. Their value is operational — flagging cases with no known contact for alternative service early, and giving parties realistic tentative dates.
 
@@ -99,7 +109,8 @@ Early stages fail on process (summons/warrants not back) — the gate fixes them
 - *Backlog & drift* — open 5+ year cases over time; hearing-hours left vs court hours available.
 - *Why hearings fail* — specific reasons per day, baseline vs Samay, and first-time vs repeat hearings.
 - *Causelist what-if* — untick cases, see expected minutes, effective hearings and P(everyone reached) change.
-- *Case brief*, *At-risk cases*, *Advocates (L3)*, *All metrics*.
+- *Rankers* — the three rankers side by side on the current docket.
+- *Case brief* (with the 0-100 breakdown), *At-risk cases*, *Advocates (L3)*, *All metrics*.
 
 | | |
 |---|---|
@@ -111,7 +122,7 @@ Early stages fail on process (summons/warrants not back) — the gate fixes them
 - **Input schema:** the roster exactly as in `data/` — as CSV or Excel (`case_number, filing_number, filing_date, advocate_id, party_id, current_stage, last_hearing_summary, purpose_of_next_hearing, hearings_<type>…, total_hearings_held`) — plus the reference CSVs and the court calendar. Missing `hearings_<type>` columns default to 0. Optional e-filing columns: `accused_addresses, contact_known, summons_rounds_prepaid, epost_prepaid, accused_in_jurisdiction, adr_opt_in, complainant_type`. `model.validate_cases()` returns a list of problems (empty = OK); the dashboard shows them instead of scheduling.
 - **Output:** `proposed_schedule.csv` — `date, block, slot, est_start, case_id, purpose, visit, est_minutes, exp_minutes, advocate_id, age_years, is_old, p_sub_eff, reason`. Case table: `model.CASE_COLUMNS`, documented in `model.CASE_SCHEMA`.
 - **Interfaces:** Python package (`src/`), CLIs (`run.py`, `results.py`, `ablation.py`, `agents_study.py`), Streamlit dashboard (`app.py`). Nightly call: `build_causelist(rank(state, day, cfg), day, cfg)`; after each hearing: `next_date(purpose, outcome, day, calendar, ref, cfg, detail=reason)`; per case: `build_brief(case)`.
-- **Configuration:** `config.DEFAULT_CONFIG` + `PRESETS` (Recommended, Sehgal, Dimakar, Joshi): sittings, start window, changeover, leave days, blocks, overbooking, clustering, weekly carry-forward, levers. The guardrail in `config.GUARDRAILS` cannot be overridden by a preset or the UI.
+- **Configuration:** `config.DEFAULT_CONFIG` + `PRESETS` (Recommended, Sehgal, Dimakar, Joshi): ranking mode and score weights, sittings, start window, changeover, leave days, blocks, overbooking, clustering, weekly carry-forward, bail lane, max overdue days, levers. The guardrail in `config.GUARDRAILS` cannot be overridden by a preset or the UI.
 - **One judge → many:** state and config are per judge; a court complex runs one instance per courtroom. Cross-courtroom advocate conflicts are the next step (§8).
 - **Dependencies:** Python 3.11, pandas, numpy, streamlit, altair, openpyxl. No external services, no network.
 - **Real vs modelled:** real — case model, order-sheet classifier, ranking, packing, guardrail, readiness-check logic, next date, case brief, upload and validation, calendar, metrics. Modelled — outcomes and reasons (drawn from the failure tables), start times, changeovers, process-return times, agent behaviour, e-filing values.
@@ -128,7 +139,8 @@ python run.py --roster /tmp/roster_3000.csv --agents
 python results.py --roster /tmp/roster_3000.csv --seeds 10
 python ablation.py --roster /tmp/roster_3000.csv
 python agents_study.py --roster /tmp/roster_3000.csv
-pip install pytest && python -m pytest tests -q   # 6 engine checks
+python compare_rankers.py --roster /tmp/roster_3000.csv --seeds 4
+pip install pytest && python -m pytest tests -q   # 8 engine checks
 streamlit run app.py                            # then: Upload Excel / CSV -> samples/sample_docket_3000.xlsx
 ```
 
