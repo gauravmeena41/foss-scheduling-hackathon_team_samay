@@ -30,6 +30,7 @@ For one judge's cheque-bounce docket, Samay lists only hearings that are ready t
 **Key decisions.** Expected-minutes packing (airline-style overbooking) over counting cases. A guardrail the judge can raise but not lower, with its own ranking. Greedy over a solver, so every listing carries a reason a judge can read. Stage-specific fixes, because hearings fail for different reasons at different stages.
 
 **Assumptions (named constants in code):**
+
 - Bench start uniform in 10:30–11:00; lunch a hard break (a hearing that won't finish before lunch is taken after it); court rises at 17:00. The plan assumes a 10:45 start.
 - Changeover between hearings uniform 0–4 min (mean 2).
 - Hearing durations lognormal around the reference minutes (σ = 0.35).
@@ -89,18 +90,19 @@ The baseline reproduces the case study's day — 60 listed, ~12 heard, ~8–10 e
 | Scenario | Early | Middle | Late | 5+ yr advanced |
 |---|---|---|---|---|
 | Baseline | 2.3 | 2.1 | 2.4 | 13% |
-| + Packing & prerequisite gate | 1.5 | 0.8 | 5.9 | 27% |
-| + Readiness check | 1.3 | 0.8 | 6.0 | 27% |
-| + Case brief | 1.3 | 1.3 | 6.6 | 35% |
-| All levers | 1.3 | 1.2 | 6.8 | 37% |
+| + Packing & prerequisite gate | 1.2 | 0.7 | 5.9 | 29% |
+| + Readiness check | 1.2 | 0.9 | 6.0 | 30% |
+| + Case brief | 1.0 | 1.3 | 7.0 | 38% |
+| All levers | 0.8 | 1.3 | 7.0 | 39% |
 
-With the hybrid ranking, the day shifts towards cases near judgment (closeness to disposal is a priority factor) — late-stage effective hearings nearly triple. Early stages fail on process (summons/warrants not back) — the gate fixes them. Evidence and arguments fail because counsel aren't prepared and the bench re-reads the file — the readiness check and the case brief move those, and the 5+ year backlog with them.
+With the hybrid ranking, the day shifts towards cases near judgment (closeness to disposal is a priority factor) — late-stage effective hearings nearly triple, and the case brief is what lifts the 5+ year backlog from 30% to 39%. Early stages fail on process (summons/warrants not back) — the gate fixes them. Evidence and arguments fail because counsel aren't prepared and the bench re-reads the file — the readiness check and the case brief move those, and the 5+ year backlog with them.
 
-**Three judges, one engine:** fresh-first rules (Justice Joshi re-weights the priority towards readiness and disposal, age at its 20% floor) reach 15.7 effective hearings a day; with the guardrail on, 14.6 a day and 30% of 5+ year cases moved. Two protections stack: the guardrail's share of the day and the age-weight floor inside the score.
+**Three judges, one engine:** fresh-first rules (Justice Joshi re-weights the priority towards readiness and disposal, age at its 20% floor) reach 15.3 effective hearings a day with 26% of 5+ year cases moved; with the guardrail on, 14.9 a day and 31%. Two protections stack: the guardrail's share of the day and the age-weight floor inside the score.
 
 **E-filing signals** (synthetic): no measurable gain in this simulation, because the prerequisite gate already keeps unready cases off the list. Their value is operational — flagging cases with no known contact for alternative service early, and giving parties realistic tentative dates.
 
 **What a judge does with the dashboard** (`streamlit run app.py`) — screenshots in `docs/`:
+
 - *Workflow* — upload the day's cases (Excel/CSV); see each step (validated → last order read → held back and why → scored and ranked, with the full scoring table → listed) and the before/after order; download the schedule.
 - *Calendar* — the day as time blocks with the changeover gaps and lunch marked: the plan, and a simulated run with the random start.
 - *Three judges* — what their own rules cost the old backlog before adopting them.
