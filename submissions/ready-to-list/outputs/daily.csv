@@ -1,0 +1,721 @@
+day,date,listed,called,reached,heard,minutes_used,type_switches,leave,arm
+1,2026-10-01,60,22,22,12,318.9248125707931,12,False,Today's rules
+2,2026-10-05,60,30,30,11,327.65521728008616,12,False,Today's rules
+3,2026-10-06,60,22,22,12,321.84992177191225,12,False,Today's rules
+4,2026-10-07,60,19,19,11,317.5412330962541,13,False,Today's rules
+5,2026-10-08,60,30,30,11,330.0,11,False,Today's rules
+6,2026-10-09,0,0,0,0,0.0,0,True,Today's rules
+7,2026-10-12,60,26,26,13,330.0,11,False,Today's rules
+8,2026-10-13,60,24,24,14,321.03550753507017,15,False,Today's rules
+9,2026-10-14,60,18,18,11,330.0,9,False,Today's rules
+10,2026-10-15,60,28,28,11,330.0,15,False,Today's rules
+11,2026-10-16,60,29,29,11,316.25588434160943,13,False,Today's rules
+12,2026-10-19,60,26,26,13,330.0,15,False,Today's rules
+13,2026-10-21,60,31,31,16,330.0,18,False,Today's rules
+14,2026-10-22,60,24,24,12,322.1230650988856,9,False,Today's rules
+15,2026-10-23,60,26,26,12,330.0,16,False,Today's rules
+16,2026-10-26,60,25,25,12,330.0,11,False,Today's rules
+17,2026-10-27,60,34,34,12,321.4916101195797,12,False,Today's rules
+18,2026-10-28,60,29,29,12,324.2050187839124,11,False,Today's rules
+19,2026-10-29,60,34,34,14,330.0,18,False,Today's rules
+20,2026-10-30,60,33,33,11,330.0,20,False,Today's rules
+21,2026-11-02,60,28,28,12,330.0,12,False,Today's rules
+22,2026-11-03,60,33,33,14,330.0,18,False,Today's rules
+23,2026-11-04,60,25,25,13,330.0,14,False,Today's rules
+24,2026-11-05,60,28,28,16,330.0,15,False,Today's rules
+25,2026-11-06,60,25,25,13,330.0,15,False,Today's rules
+26,2026-11-10,60,32,32,12,330.0,19,False,Today's rules
+27,2026-11-11,60,24,24,14,327.5755108426325,10,False,Today's rules
+28,2026-11-12,60,30,30,11,317.9625895535056,17,False,Today's rules
+29,2026-11-13,0,0,0,0,0.0,0,True,Today's rules
+30,2026-11-16,60,23,23,13,330.0,13,False,Today's rules
+31,2026-11-17,60,16,16,10,330.0,6,False,Today's rules
+32,2026-11-18,60,21,21,11,321.0909783264161,11,False,Today's rules
+33,2026-11-19,60,27,27,13,330.0,15,False,Today's rules
+34,2026-11-20,60,28,28,11,330.0,14,False,Today's rules
+35,2026-11-23,60,26,26,18,330.0,12,False,Today's rules
+36,2026-11-24,60,26,26,12,318.54560210134724,10,False,Today's rules
+37,2026-11-25,60,22,22,11,329.2257627181911,10,False,Today's rules
+38,2026-11-26,60,29,29,13,330.0,11,False,Today's rules
+39,2026-11-27,60,19,19,13,321.39220384754987,6,False,Today's rules
+40,2026-11-30,60,28,28,11,330.0,12,False,Today's rules
+41,2026-12-01,60,27,27,14,319.15742347459775,12,False,Today's rules
+42,2026-12-02,60,21,21,11,327.475284497326,10,False,Today's rules
+43,2026-12-03,60,22,22,11,330.0,10,False,Today's rules
+44,2026-12-04,0,0,0,0,0.0,0,True,Today's rules
+45,2026-12-07,56,23,23,12,330.0,12,False,Today's rules
+46,2026-12-08,60,20,20,12,327.1420127147306,9,False,Today's rules
+47,2026-12-09,58,28,28,10,330.0,16,False,Today's rules
+48,2026-12-10,60,28,28,13,330.0,20,False,Today's rules
+49,2026-12-11,60,24,24,14,330.0,10,False,Today's rules
+50,2026-12-14,60,31,31,15,330.0,14,False,Today's rules
+51,2026-12-15,60,24,24,10,323.4831635193365,13,False,Today's rules
+52,2026-12-16,60,34,34,13,320.6831771326781,16,False,Today's rules
+53,2026-12-17,60,22,22,13,330.0,14,False,Today's rules
+54,2026-12-18,60,25,25,13,330.0,10,False,Today's rules
+55,2026-12-21,60,27,27,11,320.89267964607893,10,False,Today's rules
+56,2026-12-22,60,33,33,13,330.0,16,False,Today's rules
+57,2026-12-23,60,37,37,13,317.96675598104247,17,False,Today's rules
+58,2026-12-24,60,27,27,13,330.0,15,False,Today's rules
+59,2026-12-25,60,35,35,18,330.0,16,False,Today's rules
+60,2026-12-28,60,28,28,13,330.0,17,False,Today's rules
+1,2026-10-01,19,19,19,14,330.0,6,False,Samay
+2,2026-10-05,16,15,15,15,330.0,1,False,Samay
+3,2026-10-06,17,16,16,16,330.0,1,False,Samay
+4,2026-10-07,20,20,20,14,330.0,7,False,Samay
+5,2026-10-08,17,16,16,15,316.7630456777784,3,False,Samay
+6,2026-10-09,0,0,0,0,0.0,0,True,Samay
+7,2026-10-12,18,18,18,15,330.0,3,False,Samay
+8,2026-10-13,17,16,16,15,330.0,2,False,Samay
+9,2026-10-14,20,20,20,15,330.0,3,False,Samay
+10,2026-10-15,24,24,24,15,330.0,3,False,Samay
+11,2026-10-16,18,17,17,16,330.0,2,False,Samay
+12,2026-10-19,18,17,17,15,329.4926440503009,4,False,Samay
+13,2026-10-21,20,19,19,15,330.0,3,False,Samay
+14,2026-10-22,19,19,19,17,330.0,2,False,Samay
+15,2026-10-23,17,16,16,13,330.0,3,False,Samay
+16,2026-10-26,23,23,23,15,330.0,4,False,Samay
+17,2026-10-27,21,21,21,14,330.0,5,False,Samay
+18,2026-10-28,19,19,19,15,326.9528329672513,3,False,Samay
+19,2026-10-29,18,18,18,16,330.0,2,False,Samay
+20,2026-10-30,19,18,18,15,330.0,4,False,Samay
+21,2026-11-02,26,26,26,13,330.0,5,False,Samay
+22,2026-11-03,20,19,19,17,330.0,4,False,Samay
+23,2026-11-04,19,19,19,15,326.9738295140026,4,False,Samay
+24,2026-11-05,20,19,19,15,330.0,4,False,Samay
+25,2026-11-06,22,22,22,17,330.0,3,False,Samay
+26,2026-11-10,21,20,20,13,317.5899262627663,5,False,Samay
+27,2026-11-11,18,18,18,16,330.0,3,False,Samay
+28,2026-11-12,21,21,21,17,328.0786304854041,3,False,Samay
+29,2026-11-13,0,0,0,0,0.0,0,True,Samay
+30,2026-11-16,17,16,16,15,330.0,4,False,Samay
+31,2026-11-17,21,21,21,14,330.0,4,False,Samay
+32,2026-11-18,18,17,17,15,330.0,2,False,Samay
+33,2026-11-19,19,19,19,17,330.0,3,False,Samay
+34,2026-11-20,18,18,18,17,330.0,2,False,Samay
+35,2026-11-23,20,17,17,15,330.0,2,False,Samay
+36,2026-11-24,20,20,20,15,330.0,4,False,Samay
+37,2026-11-25,19,18,18,15,330.0,3,False,Samay
+38,2026-11-26,21,21,21,16,330.0,3,False,Samay
+39,2026-11-27,20,18,18,14,330.0,4,False,Samay
+40,2026-11-30,21,21,21,15,330.0,4,False,Samay
+41,2026-12-01,18,18,18,14,330.0,4,False,Samay
+42,2026-12-02,19,19,19,16,330.0,1,False,Samay
+43,2026-12-03,21,21,21,14,330.0,4,False,Samay
+44,2026-12-04,0,0,0,0,0.0,0,True,Samay
+45,2026-12-07,19,19,19,14,330.0,4,False,Samay
+46,2026-12-08,19,17,17,15,325.68739474204864,5,False,Samay
+47,2026-12-09,20,20,20,15,330.0,4,False,Samay
+48,2026-12-10,18,17,17,15,330.0,2,False,Samay
+49,2026-12-11,17,17,17,13,330.0,3,False,Samay
+50,2026-12-14,17,17,17,13,317.12583144701034,3,False,Samay
+51,2026-12-15,19,19,19,13,330.0,3,False,Samay
+52,2026-12-16,19,14,14,12,330.0,4,False,Samay
+53,2026-12-17,16,16,16,11,330.0,2,False,Samay
+54,2026-12-18,16,15,15,13,322.74263731898463,2,False,Samay
+55,2026-12-21,15,14,14,13,330.0,1,False,Samay
+56,2026-12-22,19,19,19,14,330.0,2,False,Samay
+57,2026-12-23,18,18,18,14,318.49243437215625,4,False,Samay
+58,2026-12-24,17,17,17,12,329.930117403124,4,False,Samay
+59,2026-12-25,26,23,23,15,330.0,2,False,Samay
+60,2026-12-28,16,16,16,13,329.86458985124176,1,False,Samay
+1,2026-10-01,20,20,20,13,330.0,4,False,Without prefiling
+2,2026-10-05,17,17,17,15,322.3391020685943,3,False,Without prefiling
+3,2026-10-06,17,17,17,14,330.0,3,False,Without prefiling
+4,2026-10-07,18,18,18,14,330.0,5,False,Without prefiling
+5,2026-10-08,18,18,18,14,330.0,3,False,Without prefiling
+6,2026-10-09,0,0,0,0,0.0,0,True,Without prefiling
+7,2026-10-12,20,19,19,16,330.0,2,False,Without prefiling
+8,2026-10-13,19,19,19,15,330.0,2,False,Without prefiling
+9,2026-10-14,19,19,19,14,330.0,3,False,Without prefiling
+10,2026-10-15,19,18,18,11,315.3615171158779,5,False,Without prefiling
+11,2026-10-16,20,20,20,17,330.0,5,False,Without prefiling
+12,2026-10-19,19,18,18,16,330.0,3,False,Without prefiling
+13,2026-10-21,18,18,18,15,330.0,3,False,Without prefiling
+14,2026-10-22,19,16,16,15,326.9481361674812,3,False,Without prefiling
+15,2026-10-23,22,22,22,17,330.0,2,False,Without prefiling
+16,2026-10-26,21,21,21,14,330.0,5,False,Without prefiling
+17,2026-10-27,24,24,24,15,323.9823771796597,5,False,Without prefiling
+18,2026-10-28,20,20,20,17,330.0,5,False,Without prefiling
+19,2026-10-29,20,20,20,18,330.0,3,False,Without prefiling
+20,2026-10-30,21,21,21,13,330.0,5,False,Without prefiling
+21,2026-11-02,19,15,15,14,330.0,2,False,Without prefiling
+22,2026-11-03,22,22,22,17,330.0,4,False,Without prefiling
+23,2026-11-04,22,22,22,14,330.0,3,False,Without prefiling
+24,2026-11-05,19,19,19,14,330.0,4,False,Without prefiling
+25,2026-11-06,19,19,19,15,324.90932153443947,4,False,Without prefiling
+26,2026-11-10,22,22,22,16,330.0,3,False,Without prefiling
+27,2026-11-11,21,21,21,16,330.0,6,False,Without prefiling
+28,2026-11-12,18,17,17,14,330.0,3,False,Without prefiling
+29,2026-11-13,0,0,0,0,0.0,0,True,Without prefiling
+30,2026-11-16,19,19,19,15,330.0,3,False,Without prefiling
+31,2026-11-17,18,18,18,12,330.0,3,False,Without prefiling
+32,2026-11-18,18,17,17,16,330.0,2,False,Without prefiling
+33,2026-11-19,18,18,18,16,330.0,1,False,Without prefiling
+34,2026-11-20,18,16,16,14,330.0,1,False,Without prefiling
+35,2026-11-23,18,16,16,16,330.0,4,False,Without prefiling
+36,2026-11-24,18,17,17,15,330.0,4,False,Without prefiling
+37,2026-11-25,21,21,21,17,330.0,2,False,Without prefiling
+38,2026-11-26,20,20,20,17,323.2384484966917,3,False,Without prefiling
+39,2026-11-27,21,21,21,12,317.05367834960725,4,False,Without prefiling
+40,2026-11-30,22,22,22,15,330.0,2,False,Without prefiling
+41,2026-12-01,19,19,19,15,330.0,4,False,Without prefiling
+42,2026-12-02,17,16,16,15,330.0,2,False,Without prefiling
+43,2026-12-03,18,18,18,15,330.0,1,False,Without prefiling
+44,2026-12-04,0,0,0,0,0.0,0,True,Without prefiling
+45,2026-12-07,22,22,22,15,319.9073813041064,4,False,Without prefiling
+46,2026-12-08,23,23,23,15,326.6421562401438,5,False,Without prefiling
+47,2026-12-09,18,15,15,14,330.0,2,False,Without prefiling
+48,2026-12-10,19,18,18,16,330.0,3,False,Without prefiling
+49,2026-12-11,15,15,15,12,330.0,1,False,Without prefiling
+50,2026-12-14,21,21,21,14,330.0,5,False,Without prefiling
+51,2026-12-15,17,16,16,12,330.0,4,False,Without prefiling
+52,2026-12-16,16,14,14,13,330.0,3,False,Without prefiling
+53,2026-12-17,15,12,12,11,328.1747239173219,0,False,Without prefiling
+54,2026-12-18,17,17,17,14,325.23209069919204,3,False,Without prefiling
+55,2026-12-21,18,14,14,10,330.0,3,False,Without prefiling
+56,2026-12-22,17,17,17,12,320.6381795609022,4,False,Without prefiling
+57,2026-12-23,15,12,12,11,330.0,1,False,Without prefiling
+58,2026-12-24,18,16,16,12,330.0,2,False,Without prefiling
+59,2026-12-25,16,16,16,13,330.0,1,False,Without prefiling
+60,2026-12-28,17,16,16,13,330.0,1,False,Without prefiling
+1,2026-10-01,24,24,24,14,330.0,6,False,Without process tracking
+2,2026-10-05,17,17,17,14,330.0,2,False,Without process tracking
+3,2026-10-06,19,19,19,16,328.11833840463726,1,False,Without process tracking
+4,2026-10-07,18,15,15,13,319.2673211059208,4,False,Without process tracking
+5,2026-10-08,18,18,18,16,324.5166397478472,3,False,Without process tracking
+6,2026-10-09,0,0,0,0,0.0,0,True,Without process tracking
+7,2026-10-12,19,18,18,13,330.0,3,False,Without process tracking
+8,2026-10-13,21,21,21,17,330.0,4,False,Without process tracking
+9,2026-10-14,20,20,20,17,330.0,4,False,Without process tracking
+10,2026-10-15,19,19,19,13,320.65265459892913,4,False,Without process tracking
+11,2026-10-16,20,20,20,15,325.8235599788063,3,False,Without process tracking
+12,2026-10-19,18,18,18,13,330.0,4,False,Without process tracking
+13,2026-10-21,19,19,19,16,330.0,3,False,Without process tracking
+14,2026-10-22,18,18,18,16,330.0,4,False,Without process tracking
+15,2026-10-23,19,19,19,16,330.0,3,False,Without process tracking
+16,2026-10-26,22,20,20,17,330.0,4,False,Without process tracking
+17,2026-10-27,20,17,17,14,322.1348400557267,5,False,Without process tracking
+18,2026-10-28,22,22,22,18,320.3743073375925,4,False,Without process tracking
+19,2026-10-29,22,22,22,15,330.0,5,False,Without process tracking
+20,2026-10-30,19,19,19,15,320.41697571210995,5,False,Without process tracking
+21,2026-11-02,19,17,17,16,330.0,2,False,Without process tracking
+22,2026-11-03,19,19,19,17,324.59085916204464,1,False,Without process tracking
+23,2026-11-04,20,20,20,14,330.0,3,False,Without process tracking
+24,2026-11-05,18,18,18,14,330.0,4,False,Without process tracking
+25,2026-11-06,18,14,14,14,330.0,2,False,Without process tracking
+26,2026-11-10,18,17,17,15,329.892489786129,5,False,Without process tracking
+27,2026-11-11,19,18,18,14,330.0,3,False,Without process tracking
+28,2026-11-12,19,19,19,17,330.0,5,False,Without process tracking
+29,2026-11-13,0,0,0,0,0.0,0,True,Without process tracking
+30,2026-11-16,17,17,17,14,330.0,4,False,Without process tracking
+31,2026-11-17,19,17,17,15,322.2974268591156,2,False,Without process tracking
+32,2026-11-18,21,21,21,18,329.89530740109774,5,False,Without process tracking
+33,2026-11-19,17,15,15,14,330.0,3,False,Without process tracking
+34,2026-11-20,19,19,19,15,330.0,5,False,Without process tracking
+35,2026-11-23,17,17,17,15,330.0,2,False,Without process tracking
+36,2026-11-24,18,15,15,14,330.0,3,False,Without process tracking
+37,2026-11-25,20,20,20,16,330.0,4,False,Without process tracking
+38,2026-11-26,19,17,17,16,330.0,2,False,Without process tracking
+39,2026-11-27,16,15,15,15,330.0,1,False,Without process tracking
+40,2026-11-30,18,18,18,17,330.0,2,False,Without process tracking
+41,2026-12-01,16,13,13,12,330.0,2,False,Without process tracking
+42,2026-12-02,20,20,20,17,321.52951857941423,2,False,Without process tracking
+43,2026-12-03,19,16,16,13,329.78061269792306,3,False,Without process tracking
+44,2026-12-04,0,0,0,0,0.0,0,True,Without process tracking
+45,2026-12-07,19,17,17,15,330.0,3,False,Without process tracking
+46,2026-12-08,19,18,18,13,330.0,5,False,Without process tracking
+47,2026-12-09,19,19,19,14,330.0,4,False,Without process tracking
+48,2026-12-10,18,15,15,13,330.0,4,False,Without process tracking
+49,2026-12-11,20,16,16,14,330.0,4,False,Without process tracking
+50,2026-12-14,19,16,16,15,330.0,3,False,Without process tracking
+51,2026-12-15,18,18,18,13,330.0,3,False,Without process tracking
+52,2026-12-16,18,14,14,13,330.0,2,False,Without process tracking
+53,2026-12-17,19,18,18,13,330.0,5,False,Without process tracking
+54,2026-12-18,21,21,21,14,330.0,6,False,Without process tracking
+55,2026-12-21,20,16,16,15,330.0,4,False,Without process tracking
+56,2026-12-22,18,17,17,12,318.8468300733481,3,False,Without process tracking
+57,2026-12-23,19,19,19,14,330.0,4,False,Without process tracking
+58,2026-12-24,19,17,17,13,325.1211774539748,3,False,Without process tracking
+59,2026-12-25,20,20,20,15,330.0,3,False,Without process tracking
+60,2026-12-28,21,19,19,15,330.0,2,False,Without process tracking
+1,2026-10-01,19,19,19,15,322.53254498783434,7,False,Without intent check
+2,2026-10-05,19,16,16,14,330.0,3,False,Without intent check
+3,2026-10-06,17,14,14,13,330.0,4,False,Without intent check
+4,2026-10-07,18,18,18,15,330.0,6,False,Without intent check
+5,2026-10-08,19,19,19,13,330.0,5,False,Without intent check
+6,2026-10-09,0,0,0,0,0.0,0,True,Without intent check
+7,2026-10-12,19,16,16,13,330.0,3,False,Without intent check
+8,2026-10-13,18,17,17,16,330.0,4,False,Without intent check
+9,2026-10-14,19,17,17,15,330.0,3,False,Without intent check
+10,2026-10-15,20,20,20,16,330.0,6,False,Without intent check
+11,2026-10-16,19,18,18,17,330.0,2,False,Without intent check
+12,2026-10-19,19,17,17,17,330.0,4,False,Without intent check
+13,2026-10-21,22,21,21,14,330.0,4,False,Without intent check
+14,2026-10-22,19,18,18,18,330.0,3,False,Without intent check
+15,2026-10-23,21,21,21,17,326.67894766906056,5,False,Without intent check
+16,2026-10-26,21,18,18,16,329.2433057415646,5,False,Without intent check
+17,2026-10-27,25,25,25,16,330.0,4,False,Without intent check
+18,2026-10-28,20,20,20,14,330.0,6,False,Without intent check
+19,2026-10-29,19,19,19,16,330.0,2,False,Without intent check
+20,2026-10-30,22,22,22,14,323.07885888841986,4,False,Without intent check
+21,2026-11-02,21,21,21,17,330.0,2,False,Without intent check
+22,2026-11-03,19,15,15,13,316.5647684015404,4,False,Without intent check
+23,2026-11-04,23,23,23,15,326.50046978652296,5,False,Without intent check
+24,2026-11-05,19,17,17,14,323.9388088720105,3,False,Without intent check
+25,2026-11-06,26,26,26,20,330.0,2,False,Without intent check
+26,2026-11-10,21,21,21,14,326.80521900786965,5,False,Without intent check
+27,2026-11-11,22,22,22,17,330.0,4,False,Without intent check
+28,2026-11-12,26,26,26,17,330.0,4,False,Without intent check
+29,2026-11-13,0,0,0,0,0.0,0,True,Without intent check
+30,2026-11-16,19,17,17,14,330.0,2,False,Without intent check
+31,2026-11-17,19,19,19,13,328.2177388693694,2,False,Without intent check
+32,2026-11-18,18,18,18,16,324.5390446708004,2,False,Without intent check
+33,2026-11-19,17,16,16,15,330.0,2,False,Without intent check
+34,2026-11-20,20,20,20,15,330.0,5,False,Without intent check
+35,2026-11-23,18,17,17,15,330.0,1,False,Without intent check
+36,2026-11-24,19,19,19,13,324.15271742373506,3,False,Without intent check
+37,2026-11-25,22,22,22,17,330.0,5,False,Without intent check
+38,2026-11-26,22,22,22,15,330.0,4,False,Without intent check
+39,2026-11-27,21,21,21,17,330.0,2,False,Without intent check
+40,2026-11-30,21,20,20,13,330.0,2,False,Without intent check
+41,2026-12-01,20,19,19,15,318.21481538109583,3,False,Without intent check
+42,2026-12-02,20,20,20,16,330.0,3,False,Without intent check
+43,2026-12-03,22,22,22,15,330.0,3,False,Without intent check
+44,2026-12-04,0,0,0,0,0.0,0,True,Without intent check
+45,2026-12-07,24,24,24,13,330.0,5,False,Without intent check
+46,2026-12-08,19,19,19,14,330.0,5,False,Without intent check
+47,2026-12-09,20,20,20,13,330.0,4,False,Without intent check
+48,2026-12-10,18,16,16,12,325.8734730596938,4,False,Without intent check
+49,2026-12-11,19,19,19,14,330.0,5,False,Without intent check
+50,2026-12-14,19,19,19,13,323.53643790233605,5,False,Without intent check
+51,2026-12-15,21,21,21,14,330.0,5,False,Without intent check
+52,2026-12-16,21,21,21,14,330.0,4,False,Without intent check
+53,2026-12-17,18,17,17,14,321.83308458706256,3,False,Without intent check
+54,2026-12-18,18,18,18,13,325.2483311158749,3,False,Without intent check
+55,2026-12-21,19,17,17,13,328.9049847989187,3,False,Without intent check
+56,2026-12-22,17,15,15,13,330.0,2,False,Without intent check
+57,2026-12-23,23,21,21,16,330.0,3,False,Without intent check
+58,2026-12-24,19,18,18,14,330.0,3,False,Without intent check
+59,2026-12-25,16,16,16,12,330.0,3,False,Without intent check
+60,2026-12-28,16,15,15,15,330.0,3,False,Without intent check
+1,2026-10-01,20,20,20,14,330.0,7,False,Without fixed slot cluster
+2,2026-10-05,19,19,19,15,328.3059359332468,5,False,Without fixed slot cluster
+3,2026-10-06,20,20,20,16,330.0,6,False,Without fixed slot cluster
+4,2026-10-07,19,18,18,14,330.0,7,False,Without fixed slot cluster
+5,2026-10-08,18,17,17,14,325.4830564294523,5,False,Without fixed slot cluster
+6,2026-10-09,0,0,0,0,0.0,0,True,Without fixed slot cluster
+7,2026-10-12,21,21,21,17,330.0,3,False,Without fixed slot cluster
+8,2026-10-13,18,17,17,15,330.0,2,False,Without fixed slot cluster
+9,2026-10-14,23,23,23,14,328.65809144289,5,False,Without fixed slot cluster
+10,2026-10-15,19,18,18,13,322.1962886657752,5,False,Without fixed slot cluster
+11,2026-10-16,17,17,17,16,330.0,2,False,Without fixed slot cluster
+12,2026-10-19,19,19,19,14,320.39580442436454,4,False,Without fixed slot cluster
+13,2026-10-21,19,19,19,19,330.0,2,False,Without fixed slot cluster
+14,2026-10-22,17,14,14,13,319.6909768884158,3,False,Without fixed slot cluster
+15,2026-10-23,20,20,20,15,330.0,4,False,Without fixed slot cluster
+16,2026-10-26,21,19,19,15,330.0,5,False,Without fixed slot cluster
+17,2026-10-27,24,24,24,13,330.0,6,False,Without fixed slot cluster
+18,2026-10-28,19,19,19,16,330.0,3,False,Without fixed slot cluster
+19,2026-10-29,21,21,21,16,330.0,3,False,Without fixed slot cluster
+20,2026-10-30,19,19,19,15,330.0,4,False,Without fixed slot cluster
+21,2026-11-02,17,17,17,14,330.0,2,False,Without fixed slot cluster
+22,2026-11-03,18,17,17,15,330.0,3,False,Without fixed slot cluster
+23,2026-11-04,23,23,23,19,330.0,4,False,Without fixed slot cluster
+24,2026-11-05,17,17,17,13,327.42192984223334,3,False,Without fixed slot cluster
+25,2026-11-06,20,20,20,16,330.0,5,False,Without fixed slot cluster
+26,2026-11-10,19,18,18,17,330.0,1,False,Without fixed slot cluster
+27,2026-11-11,18,18,18,15,325.7041939693545,5,False,Without fixed slot cluster
+28,2026-11-12,20,20,20,16,330.0,3,False,Without fixed slot cluster
+29,2026-11-13,0,0,0,0,0.0,0,True,Without fixed slot cluster
+30,2026-11-16,19,18,18,15,330.0,1,False,Without fixed slot cluster
+31,2026-11-17,18,18,18,12,330.0,3,False,Without fixed slot cluster
+32,2026-11-18,21,21,21,15,330.0,4,False,Without fixed slot cluster
+33,2026-11-19,18,18,18,16,330.0,4,False,Without fixed slot cluster
+34,2026-11-20,20,20,20,17,330.0,5,False,Without fixed slot cluster
+35,2026-11-23,21,21,21,17,330.0,6,False,Without fixed slot cluster
+36,2026-11-24,18,17,17,13,327.2980997411886,4,False,Without fixed slot cluster
+37,2026-11-25,21,20,20,14,330.0,2,False,Without fixed slot cluster
+38,2026-11-26,19,19,19,17,330.0,4,False,Without fixed slot cluster
+39,2026-11-27,20,19,19,16,321.6192997240862,3,False,Without fixed slot cluster
+40,2026-11-30,18,17,17,15,330.0,1,False,Without fixed slot cluster
+41,2026-12-01,19,19,19,13,322.57482299832463,3,False,Without fixed slot cluster
+42,2026-12-02,18,18,18,17,330.0,1,False,Without fixed slot cluster
+43,2026-12-03,20,18,18,14,330.0,3,False,Without fixed slot cluster
+44,2026-12-04,0,0,0,0,0.0,0,True,Without fixed slot cluster
+45,2026-12-07,18,15,15,14,319.41422289736846,5,False,Without fixed slot cluster
+46,2026-12-08,17,16,16,13,330.0,4,False,Without fixed slot cluster
+47,2026-12-09,19,19,19,13,330.0,4,False,Without fixed slot cluster
+48,2026-12-10,17,16,16,12,330.0,5,False,Without fixed slot cluster
+49,2026-12-11,17,15,15,13,320.5071217137335,3,False,Without fixed slot cluster
+50,2026-12-14,19,17,17,14,330.0,3,False,Without fixed slot cluster
+51,2026-12-15,23,23,23,15,330.0,5,False,Without fixed slot cluster
+52,2026-12-16,19,19,19,12,320.06993760014217,2,False,Without fixed slot cluster
+53,2026-12-17,20,20,20,14,330.0,6,False,Without fixed slot cluster
+54,2026-12-18,20,20,20,15,330.0,6,False,Without fixed slot cluster
+55,2026-12-21,18,14,14,14,330.0,2,False,Without fixed slot cluster
+56,2026-12-22,19,19,19,15,330.0,3,False,Without fixed slot cluster
+57,2026-12-23,22,17,17,13,330.0,1,False,Without fixed slot cluster
+58,2026-12-24,20,20,20,13,330.0,3,False,Without fixed slot cluster
+59,2026-12-25,19,16,16,13,330.0,3,False,Without fixed slot cluster
+60,2026-12-28,18,17,17,12,330.0,3,False,Without fixed slot cluster
+1,2026-10-01,20,20,20,14,330.0,7,False,Without text signals
+2,2026-10-05,18,17,17,16,330.0,3,False,Without text signals
+3,2026-10-06,20,20,20,16,330.0,6,False,Without text signals
+4,2026-10-07,19,19,19,12,324.56246404174016,7,False,Without text signals
+5,2026-10-08,18,18,18,15,330.0,5,False,Without text signals
+6,2026-10-09,0,0,0,0,0.0,0,True,Without text signals
+7,2026-10-12,20,20,20,16,330.0,4,False,Without text signals
+8,2026-10-13,16,16,16,14,330.0,3,False,Without text signals
+9,2026-10-14,18,17,17,13,326.60875526212214,3,False,Without text signals
+10,2026-10-15,18,17,17,15,321.85276303706314,4,False,Without text signals
+11,2026-10-16,18,17,17,14,327.85809133474976,4,False,Without text signals
+12,2026-10-19,22,21,21,12,329.2233519086751,7,False,Without text signals
+13,2026-10-21,19,19,19,13,321.9943759206791,4,False,Without text signals
+14,2026-10-22,17,17,17,15,330.0,4,False,Without text signals
+15,2026-10-23,19,19,19,17,320.7939269405787,3,False,Without text signals
+16,2026-10-26,24,24,24,17,330.0,7,False,Without text signals
+17,2026-10-27,23,23,23,13,330.0,9,False,Without text signals
+18,2026-10-28,22,22,22,15,330.0,4,False,Without text signals
+19,2026-10-29,20,20,20,15,330.0,7,False,Without text signals
+20,2026-10-30,22,22,22,14,327.79163366502814,7,False,Without text signals
+21,2026-11-02,19,18,18,14,330.0,5,False,Without text signals
+22,2026-11-03,20,20,20,13,319.30287534699767,7,False,Without text signals
+23,2026-11-04,20,19,19,16,326.8981142113235,5,False,Without text signals
+24,2026-11-05,20,20,20,14,330.0,7,False,Without text signals
+25,2026-11-06,21,21,21,16,330.0,7,False,Without text signals
+26,2026-11-10,18,18,18,14,322.13806723534435,6,False,Without text signals
+27,2026-11-11,20,20,20,15,324.66962231435434,6,False,Without text signals
+28,2026-11-12,23,23,23,16,330.0,6,False,Without text signals
+29,2026-11-13,0,0,0,0,0.0,0,True,Without text signals
+30,2026-11-16,17,15,15,14,330.0,3,False,Without text signals
+31,2026-11-17,17,16,16,13,330.0,3,False,Without text signals
+32,2026-11-18,20,20,20,15,330.0,5,False,Without text signals
+33,2026-11-19,20,18,18,13,330.0,5,False,Without text signals
+34,2026-11-20,18,18,18,16,326.3969156630254,5,False,Without text signals
+35,2026-11-23,22,21,21,14,315.92106553505977,3,False,Without text signals
+36,2026-11-24,18,18,18,16,330.0,4,False,Without text signals
+37,2026-11-25,22,22,22,15,324.53452922482927,5,False,Without text signals
+38,2026-11-26,20,20,20,13,325.59096769208173,7,False,Without text signals
+39,2026-11-27,19,19,19,15,330.0,5,False,Without text signals
+40,2026-11-30,22,22,22,13,330.0,9,False,Without text signals
+41,2026-12-01,21,20,20,16,330.0,4,False,Without text signals
+42,2026-12-02,21,21,21,15,330.0,7,False,Without text signals
+43,2026-12-03,22,22,22,12,328.91269682701113,7,False,Without text signals
+44,2026-12-04,0,0,0,0,0.0,0,True,Without text signals
+45,2026-12-07,24,24,24,14,330.0,5,False,Without text signals
+46,2026-12-08,24,24,24,15,303.19389089454387,5,False,Without text signals
+47,2026-12-09,23,23,23,13,321.65977604100044,6,False,Without text signals
+48,2026-12-10,22,22,22,12,330.0,7,False,Without text signals
+49,2026-12-11,20,20,20,15,330.0,5,False,Without text signals
+50,2026-12-14,21,21,21,13,327.897769188036,7,False,Without text signals
+51,2026-12-15,23,21,21,15,330.0,3,False,Without text signals
+52,2026-12-16,20,20,20,14,330.0,8,False,Without text signals
+53,2026-12-17,19,19,19,13,330.0,5,False,Without text signals
+54,2026-12-18,16,16,16,14,330.0,3,False,Without text signals
+55,2026-12-21,18,16,16,13,330.0,3,False,Without text signals
+56,2026-12-22,18,18,18,13,330.0,4,False,Without text signals
+57,2026-12-23,20,20,20,12,330.0,7,False,Without text signals
+58,2026-12-24,21,21,21,13,330.0,9,False,Without text signals
+59,2026-12-25,15,13,13,13,326.64568950008083,3,False,Without text signals
+60,2026-12-28,19,19,19,13,330.0,6,False,Without text signals
+1,2026-10-01,60,20,20,14,316.98993863586895,9,False,Without optimiser
+2,2026-10-05,60,17,17,14,320.2937367640108,4,False,Without optimiser
+3,2026-10-06,60,14,14,13,330.0,7,False,Without optimiser
+4,2026-10-07,60,17,17,13,321.14469020014684,7,False,Without optimiser
+5,2026-10-08,60,20,20,10,317.90594966197114,9,False,Without optimiser
+6,2026-10-09,0,0,0,0,0.0,0,True,Without optimiser
+7,2026-10-12,60,24,24,12,330.0,5,False,Without optimiser
+8,2026-10-13,60,26,26,14,330.0,3,False,Without optimiser
+9,2026-10-14,60,22,22,13,322.4986218956677,3,False,Without optimiser
+10,2026-10-15,60,17,17,15,324.70485873435837,4,False,Without optimiser
+11,2026-10-16,60,19,19,13,330.0,6,False,Without optimiser
+12,2026-10-19,60,15,15,10,144.39536666985188,3,False,Without optimiser
+13,2026-10-21,60,19,19,17,330.0,5,False,Without optimiser
+14,2026-10-22,60,21,21,15,330.0,6,False,Without optimiser
+15,2026-10-23,60,19,19,13,330.0,8,False,Without optimiser
+16,2026-10-26,60,25,25,14,330.0,8,False,Without optimiser
+17,2026-10-27,60,16,16,10,272.0190849536702,8,False,Without optimiser
+18,2026-10-28,60,24,24,13,330.0,8,False,Without optimiser
+19,2026-10-29,60,23,23,12,314.1572925262248,13,False,Without optimiser
+20,2026-10-30,60,26,26,13,330.0,8,False,Without optimiser
+21,2026-11-02,60,26,26,14,330.0,12,False,Without optimiser
+22,2026-11-03,60,19,19,13,330.0,5,False,Without optimiser
+23,2026-11-04,60,25,25,17,330.0,15,False,Without optimiser
+24,2026-11-05,60,18,18,12,324.4374471835746,7,False,Without optimiser
+25,2026-11-06,60,27,27,19,330.0,6,False,Without optimiser
+26,2026-11-10,60,18,18,17,330.0,1,False,Without optimiser
+27,2026-11-11,60,17,17,13,330.0,10,False,Without optimiser
+28,2026-11-12,60,25,25,11,314.3161644092339,6,False,Without optimiser
+29,2026-11-13,0,0,0,0,0.0,0,True,Without optimiser
+30,2026-11-16,60,16,16,13,330.0,1,False,Without optimiser
+31,2026-11-17,60,25,25,8,289.4402392911813,2,False,Without optimiser
+32,2026-11-18,60,18,18,15,330.0,1,False,Without optimiser
+33,2026-11-19,60,18,18,12,291.1063487922324,1,False,Without optimiser
+34,2026-11-20,60,17,17,16,322.40752166564704,1,False,Without optimiser
+35,2026-11-23,60,21,21,17,330.0,1,False,Without optimiser
+36,2026-11-24,60,16,16,8,248.06752920846498,0,False,Without optimiser
+37,2026-11-25,60,24,24,15,329.5362856795629,1,False,Without optimiser
+38,2026-11-26,60,9,9,6,230.14168023510092,5,False,Without optimiser
+39,2026-11-27,60,19,19,16,330.0,2,False,Without optimiser
+40,2026-11-30,60,30,30,12,320.699576395794,5,False,Without optimiser
+41,2026-12-01,60,33,33,6,267.84508226484076,0,False,Without optimiser
+42,2026-12-02,60,15,15,5,241.32868359492127,0,False,Without optimiser
+43,2026-12-03,60,24,24,13,330.0,1,False,Without optimiser
+44,2026-12-04,0,0,0,0,0.0,0,True,Without optimiser
+45,2026-12-07,60,24,24,16,330.0,0,False,Without optimiser
+46,2026-12-08,60,11,11,4,211.01900287274498,2,False,Without optimiser
+47,2026-12-09,60,31,31,12,325.8838660276827,0,False,Without optimiser
+48,2026-12-10,60,28,28,13,318.58018497783337,5,False,Without optimiser
+49,2026-12-11,60,8,8,7,213.4682392521822,2,False,Without optimiser
+50,2026-12-14,60,26,26,15,330.0,1,False,Without optimiser
+51,2026-12-15,60,18,18,16,330.0,0,False,Without optimiser
+52,2026-12-16,60,12,12,6,237.08366839079082,2,False,Without optimiser
+53,2026-12-17,60,17,17,7,227.62751098120103,5,False,Without optimiser
+54,2026-12-18,60,23,23,16,330.0,1,False,Without optimiser
+55,2026-12-21,60,4,4,4,241.46064846161505,0,False,Without optimiser
+56,2026-12-22,60,8,8,8,235.4491472515528,0,False,Without optimiser
+57,2026-12-23,60,23,23,13,326.03402324457306,3,False,Without optimiser
+58,2026-12-24,60,18,18,9,303.8623131333922,1,False,Without optimiser
+59,2026-12-25,60,45,45,10,330.0,0,False,Without optimiser
+60,2026-12-28,60,14,14,6,213.3544409990934,2,False,Without optimiser
+1,2026-10-01,19,19,19,14,330.0,6,False,Without smart next date
+2,2026-10-05,16,15,15,15,330.0,1,False,Without smart next date
+3,2026-10-06,17,16,16,16,330.0,1,False,Without smart next date
+4,2026-10-07,18,17,17,16,330.0,5,False,Without smart next date
+5,2026-10-08,17,17,17,14,330.0,3,False,Without smart next date
+6,2026-10-09,0,0,0,0,0.0,0,True,Without smart next date
+7,2026-10-12,18,18,18,16,330.0,3,False,Without smart next date
+8,2026-10-13,16,15,15,15,330.0,2,False,Without smart next date
+9,2026-10-14,17,16,16,14,322.4322607504512,2,False,Without smart next date
+10,2026-10-15,19,18,18,15,324.73614867735847,4,False,Without smart next date
+11,2026-10-16,18,17,17,16,330.0,2,False,Without smart next date
+12,2026-10-19,21,21,21,17,330.0,5,False,Without smart next date
+13,2026-10-21,19,19,19,15,330.0,3,False,Without smart next date
+14,2026-10-22,19,19,19,18,330.0,1,False,Without smart next date
+15,2026-10-23,23,23,23,18,330.0,3,False,Without smart next date
+16,2026-10-26,22,22,22,14,330.0,6,False,Without smart next date
+17,2026-10-27,17,17,17,13,326.5180292570964,4,False,Without smart next date
+18,2026-10-28,20,20,20,16,330.0,7,False,Without smart next date
+19,2026-10-29,21,21,21,16,317.4639631489206,3,False,Without smart next date
+20,2026-10-30,18,18,18,15,322.1347152169561,4,False,Without smart next date
+21,2026-11-02,17,15,15,14,330.0,4,False,Without smart next date
+22,2026-11-03,17,17,17,16,319.2013679375417,2,False,Without smart next date
+23,2026-11-04,20,20,20,18,330.0,7,False,Without smart next date
+24,2026-11-05,20,20,20,14,330.0,7,False,Without smart next date
+25,2026-11-06,19,19,19,13,330.0,4,False,Without smart next date
+26,2026-11-10,17,16,16,16,330.0,3,False,Without smart next date
+27,2026-11-11,20,20,20,17,329.7336861815569,6,False,Without smart next date
+28,2026-11-12,17,17,17,15,330.0,5,False,Without smart next date
+29,2026-11-13,0,0,0,0,0.0,0,True,Without smart next date
+30,2026-11-16,19,19,19,16,330.0,5,False,Without smart next date
+31,2026-11-17,18,15,15,13,330.0,3,False,Without smart next date
+32,2026-11-18,18,18,18,14,330.0,2,False,Without smart next date
+33,2026-11-19,18,17,17,15,322.2654743332779,2,False,Without smart next date
+34,2026-11-20,17,17,17,15,330.0,2,False,Without smart next date
+35,2026-11-23,19,17,17,15,325.6838842578688,3,False,Without smart next date
+36,2026-11-24,18,18,18,16,326.1709240754409,2,False,Without smart next date
+37,2026-11-25,19,19,19,14,330.0,4,False,Without smart next date
+38,2026-11-26,18,17,17,16,330.0,3,False,Without smart next date
+39,2026-11-27,17,16,16,13,330.0,3,False,Without smart next date
+40,2026-11-30,20,20,20,16,330.0,8,False,Without smart next date
+41,2026-12-01,18,16,16,15,324.52400520761586,3,False,Without smart next date
+42,2026-12-02,19,19,19,17,330.0,4,False,Without smart next date
+43,2026-12-03,17,17,17,14,330.0,4,False,Without smart next date
+44,2026-12-04,0,0,0,0,0.0,0,True,Without smart next date
+45,2026-12-07,17,16,16,14,330.0,3,False,Without smart next date
+46,2026-12-08,17,17,17,13,330.0,3,False,Without smart next date
+47,2026-12-09,16,14,14,13,330.0,4,False,Without smart next date
+48,2026-12-10,17,17,17,16,330.0,3,False,Without smart next date
+49,2026-12-11,15,13,13,12,330.0,2,False,Without smart next date
+50,2026-12-14,20,18,18,15,330.0,5,False,Without smart next date
+51,2026-12-15,19,18,18,15,330.0,5,False,Without smart next date
+52,2026-12-16,17,17,17,13,320.9962262021908,5,False,Without smart next date
+53,2026-12-17,21,18,18,14,330.0,3,False,Without smart next date
+54,2026-12-18,15,12,12,11,330.0,0,False,Without smart next date
+55,2026-12-21,19,16,16,15,330.0,4,False,Without smart next date
+56,2026-12-22,18,17,17,15,330.0,3,False,Without smart next date
+57,2026-12-23,17,15,15,14,330.0,2,False,Without smart next date
+58,2026-12-24,17,17,17,15,330.0,5,False,Without smart next date
+59,2026-12-25,19,19,19,13,330.0,7,False,Without smart next date
+60,2026-12-28,21,20,20,15,330.0,5,False,Without smart next date
+1,2026-10-01,60,24,24,13,328.0104631713644,15,False,"Readiness levers only (no optimiser, no smart date)"
+2,2026-10-05,59,17,17,15,330.0,3,False,"Readiness levers only (no optimiser, no smart date)"
+3,2026-10-06,60,22,22,15,330.0,9,False,"Readiness levers only (no optimiser, no smart date)"
+4,2026-10-07,60,17,17,15,330.0,10,False,"Readiness levers only (no optimiser, no smart date)"
+5,2026-10-08,60,28,28,16,323.2656604503522,15,False,"Readiness levers only (no optimiser, no smart date)"
+6,2026-10-09,0,0,0,0,0.0,0,True,"Readiness levers only (no optimiser, no smart date)"
+7,2026-10-12,60,20,20,12,324.9419479570504,5,False,"Readiness levers only (no optimiser, no smart date)"
+8,2026-10-13,60,16,16,12,330.0,6,False,"Readiness levers only (no optimiser, no smart date)"
+9,2026-10-14,60,23,23,16,330.0,11,False,"Readiness levers only (no optimiser, no smart date)"
+10,2026-10-15,60,22,22,11,316.68886165704487,8,False,"Readiness levers only (no optimiser, no smart date)"
+11,2026-10-16,60,30,30,13,330.0,16,False,"Readiness levers only (no optimiser, no smart date)"
+12,2026-10-19,60,23,23,16,330.0,9,False,"Readiness levers only (no optimiser, no smart date)"
+13,2026-10-21,60,19,19,15,330.0,9,False,"Readiness levers only (no optimiser, no smart date)"
+14,2026-10-22,60,27,27,17,330.0,12,False,"Readiness levers only (no optimiser, no smart date)"
+15,2026-10-23,60,30,30,17,330.0,15,False,"Readiness levers only (no optimiser, no smart date)"
+16,2026-10-26,60,20,20,12,326.7761052652081,11,False,"Readiness levers only (no optimiser, no smart date)"
+17,2026-10-27,60,22,22,15,330.0,8,False,"Readiness levers only (no optimiser, no smart date)"
+18,2026-10-28,60,27,27,13,330.0,10,False,"Readiness levers only (no optimiser, no smart date)"
+19,2026-10-29,60,23,23,17,330.0,7,False,"Readiness levers only (no optimiser, no smart date)"
+20,2026-10-30,60,23,23,14,330.0,12,False,"Readiness levers only (no optimiser, no smart date)"
+21,2026-11-02,60,19,19,15,320.7648960367635,11,False,"Readiness levers only (no optimiser, no smart date)"
+22,2026-11-03,60,30,30,14,328.593238230287,10,False,"Readiness levers only (no optimiser, no smart date)"
+23,2026-11-04,60,21,21,17,330.0,8,False,"Readiness levers only (no optimiser, no smart date)"
+24,2026-11-05,60,27,27,19,330.0,10,False,"Readiness levers only (no optimiser, no smart date)"
+25,2026-11-06,60,27,27,16,330.0,10,False,"Readiness levers only (no optimiser, no smart date)"
+26,2026-11-10,60,23,23,12,330.0,10,False,"Readiness levers only (no optimiser, no smart date)"
+27,2026-11-11,60,17,17,13,330.0,12,False,"Readiness levers only (no optimiser, no smart date)"
+28,2026-11-12,60,23,23,18,330.0,14,False,"Readiness levers only (no optimiser, no smart date)"
+29,2026-11-13,0,0,0,0,0.0,0,True,"Readiness levers only (no optimiser, no smart date)"
+30,2026-11-16,60,24,24,14,330.0,2,False,"Readiness levers only (no optimiser, no smart date)"
+31,2026-11-17,60,23,23,12,330.0,2,False,"Readiness levers only (no optimiser, no smart date)"
+32,2026-11-18,60,14,14,13,330.0,2,False,"Readiness levers only (no optimiser, no smart date)"
+33,2026-11-19,60,31,31,11,316.5400394565263,3,False,"Readiness levers only (no optimiser, no smart date)"
+34,2026-11-20,60,17,17,15,322.96324338346824,2,False,"Readiness levers only (no optimiser, no smart date)"
+35,2026-11-23,60,25,25,13,330.0,2,False,"Readiness levers only (no optimiser, no smart date)"
+36,2026-11-24,60,17,17,12,327.2596928532785,2,False,"Readiness levers only (no optimiser, no smart date)"
+37,2026-11-25,60,22,22,13,330.0,1,False,"Readiness levers only (no optimiser, no smart date)"
+38,2026-11-26,60,19,19,11,120.82321289915154,1,False,"Readiness levers only (no optimiser, no smart date)"
+39,2026-11-27,60,19,19,12,296.8453940315044,6,False,"Readiness levers only (no optimiser, no smart date)"
+40,2026-11-30,60,17,17,13,320.7679153208618,9,False,"Readiness levers only (no optimiser, no smart date)"
+41,2026-12-01,60,29,29,14,325.0448971419249,15,False,"Readiness levers only (no optimiser, no smart date)"
+42,2026-12-02,60,21,21,14,317.6582174051295,13,False,"Readiness levers only (no optimiser, no smart date)"
+43,2026-12-03,60,19,19,14,325.75885946510266,11,False,"Readiness levers only (no optimiser, no smart date)"
+44,2026-12-04,0,0,0,0,0.0,0,True,"Readiness levers only (no optimiser, no smart date)"
+45,2026-12-07,60,25,25,11,330.0,0,False,"Readiness levers only (no optimiser, no smart date)"
+46,2026-12-08,60,25,25,12,322.228949902289,3,False,"Readiness levers only (no optimiser, no smart date)"
+47,2026-12-09,60,18,18,10,307.7962191288521,2,False,"Readiness levers only (no optimiser, no smart date)"
+48,2026-12-10,60,24,24,15,317.88601567509295,2,False,"Readiness levers only (no optimiser, no smart date)"
+49,2026-12-11,60,21,21,12,297.3950657194863,2,False,"Readiness levers only (no optimiser, no smart date)"
+50,2026-12-14,60,15,15,14,330.0,1,False,"Readiness levers only (no optimiser, no smart date)"
+51,2026-12-15,60,23,23,14,330.0,3,False,"Readiness levers only (no optimiser, no smart date)"
+52,2026-12-16,60,17,17,13,329.57024778042444,1,False,"Readiness levers only (no optimiser, no smart date)"
+53,2026-12-17,60,18,18,12,330.0,2,False,"Readiness levers only (no optimiser, no smart date)"
+54,2026-12-18,60,27,27,14,328.1600340592131,0,False,"Readiness levers only (no optimiser, no smart date)"
+55,2026-12-21,60,20,20,11,113.21425012027962,3,False,"Readiness levers only (no optimiser, no smart date)"
+56,2026-12-22,60,16,16,12,110.62210764661856,1,False,"Readiness levers only (no optimiser, no smart date)"
+57,2026-12-23,60,30,30,21,330.0,6,False,"Readiness levers only (no optimiser, no smart date)"
+58,2026-12-24,60,23,23,12,324.9270129665743,9,False,"Readiness levers only (no optimiser, no smart date)"
+59,2026-12-25,60,23,23,13,327.62544597044905,9,False,"Readiness levers only (no optimiser, no smart date)"
+60,2026-12-28,60,26,26,11,318.121443664075,13,False,"Readiness levers only (no optimiser, no smart date)"
+1,2026-10-01,24,24,24,14,330.0,6,False,"Scheduling only (no pre-filing, no party input)"
+2,2026-10-05,21,21,21,13,330.0,7,False,"Scheduling only (no pre-filing, no party input)"
+3,2026-10-06,22,19,19,16,330.0,2,False,"Scheduling only (no pre-filing, no party input)"
+4,2026-10-07,20,16,16,13,330.0,6,False,"Scheduling only (no pre-filing, no party input)"
+5,2026-10-08,18,17,17,14,330.0,4,False,"Scheduling only (no pre-filing, no party input)"
+6,2026-10-09,0,0,0,0,0.0,0,True,"Scheduling only (no pre-filing, no party input)"
+7,2026-10-12,21,19,19,13,330.0,3,False,"Scheduling only (no pre-filing, no party input)"
+8,2026-10-13,21,21,21,16,330.0,5,False,"Scheduling only (no pre-filing, no party input)"
+9,2026-10-14,21,21,21,15,330.0,4,False,"Scheduling only (no pre-filing, no party input)"
+10,2026-10-15,20,18,18,12,328.7362364284091,3,False,"Scheduling only (no pre-filing, no party input)"
+11,2026-10-16,21,21,21,17,330.0,5,False,"Scheduling only (no pre-filing, no party input)"
+12,2026-10-19,23,23,23,13,330.0,4,False,"Scheduling only (no pre-filing, no party input)"
+13,2026-10-21,23,23,23,17,330.0,3,False,"Scheduling only (no pre-filing, no party input)"
+14,2026-10-22,22,22,22,17,330.0,5,False,"Scheduling only (no pre-filing, no party input)"
+15,2026-10-23,19,18,18,15,330.0,3,False,"Scheduling only (no pre-filing, no party input)"
+16,2026-10-26,21,21,21,15,326.6930200013732,5,False,"Scheduling only (no pre-filing, no party input)"
+17,2026-10-27,22,22,22,14,320.5295660980264,4,False,"Scheduling only (no pre-filing, no party input)"
+18,2026-10-28,22,22,22,17,330.0,7,False,"Scheduling only (no pre-filing, no party input)"
+19,2026-10-29,23,23,23,15,330.0,6,False,"Scheduling only (no pre-filing, no party input)"
+20,2026-10-30,20,20,20,15,330.0,5,False,"Scheduling only (no pre-filing, no party input)"
+21,2026-11-02,21,21,21,14,330.0,7,False,"Scheduling only (no pre-filing, no party input)"
+22,2026-11-03,21,21,21,14,330.0,6,False,"Scheduling only (no pre-filing, no party input)"
+23,2026-11-04,25,25,25,14,330.0,6,False,"Scheduling only (no pre-filing, no party input)"
+24,2026-11-05,23,23,23,11,330.0,7,False,"Scheduling only (no pre-filing, no party input)"
+25,2026-11-06,20,20,20,16,330.0,4,False,"Scheduling only (no pre-filing, no party input)"
+26,2026-11-10,22,22,22,15,322.56255377152166,8,False,"Scheduling only (no pre-filing, no party input)"
+27,2026-11-11,25,25,25,14,330.0,8,False,"Scheduling only (no pre-filing, no party input)"
+28,2026-11-12,24,24,24,11,330.0,8,False,"Scheduling only (no pre-filing, no party input)"
+29,2026-11-13,0,0,0,0,0.0,0,True,"Scheduling only (no pre-filing, no party input)"
+30,2026-11-16,21,21,21,15,330.0,3,False,"Scheduling only (no pre-filing, no party input)"
+31,2026-11-17,26,26,26,13,330.0,6,False,"Scheduling only (no pre-filing, no party input)"
+32,2026-11-18,26,26,26,16,330.0,9,False,"Scheduling only (no pre-filing, no party input)"
+33,2026-11-19,19,19,19,13,330.0,6,False,"Scheduling only (no pre-filing, no party input)"
+34,2026-11-20,18,18,18,12,330.0,6,False,"Scheduling only (no pre-filing, no party input)"
+35,2026-11-23,22,22,22,15,330.0,7,False,"Scheduling only (no pre-filing, no party input)"
+36,2026-11-24,20,20,20,14,330.0,8,False,"Scheduling only (no pre-filing, no party input)"
+37,2026-11-25,20,20,20,13,330.0,5,False,"Scheduling only (no pre-filing, no party input)"
+38,2026-11-26,23,23,23,15,325.1052594671986,5,False,"Scheduling only (no pre-filing, no party input)"
+39,2026-11-27,21,21,21,13,330.0,5,False,"Scheduling only (no pre-filing, no party input)"
+40,2026-11-30,19,19,19,14,329.24505638776657,4,False,"Scheduling only (no pre-filing, no party input)"
+41,2026-12-01,21,21,21,14,320.44429371475974,6,False,"Scheduling only (no pre-filing, no party input)"
+42,2026-12-02,22,20,20,15,330.0,5,False,"Scheduling only (no pre-filing, no party input)"
+43,2026-12-03,22,22,22,13,330.0,4,False,"Scheduling only (no pre-filing, no party input)"
+44,2026-12-04,0,0,0,0,0.0,0,True,"Scheduling only (no pre-filing, no party input)"
+45,2026-12-07,21,21,21,14,330.0,4,False,"Scheduling only (no pre-filing, no party input)"
+46,2026-12-08,22,22,22,13,322.53652886246164,8,False,"Scheduling only (no pre-filing, no party input)"
+47,2026-12-09,27,27,27,13,330.0,9,False,"Scheduling only (no pre-filing, no party input)"
+48,2026-12-10,20,18,18,14,322.47491271920046,6,False,"Scheduling only (no pre-filing, no party input)"
+49,2026-12-11,22,21,21,15,321.3264819082808,3,False,"Scheduling only (no pre-filing, no party input)"
+50,2026-12-14,27,27,27,14,330.0,5,False,"Scheduling only (no pre-filing, no party input)"
+51,2026-12-15,24,24,24,15,330.0,7,False,"Scheduling only (no pre-filing, no party input)"
+52,2026-12-16,22,21,21,13,330.0,3,False,"Scheduling only (no pre-filing, no party input)"
+53,2026-12-17,25,25,25,15,322.6694692534008,10,False,"Scheduling only (no pre-filing, no party input)"
+54,2026-12-18,23,23,23,11,330.0,6,False,"Scheduling only (no pre-filing, no party input)"
+55,2026-12-21,24,24,24,11,330.0,7,False,"Scheduling only (no pre-filing, no party input)"
+56,2026-12-22,24,20,20,13,330.0,6,False,"Scheduling only (no pre-filing, no party input)"
+57,2026-12-23,21,16,16,12,330.0,4,False,"Scheduling only (no pre-filing, no party input)"
+58,2026-12-24,25,24,24,14,330.0,4,False,"Scheduling only (no pre-filing, no party input)"
+59,2026-12-25,22,22,22,11,330.0,5,False,"Scheduling only (no pre-filing, no party input)"
+60,2026-12-28,25,23,23,11,279.6157552907549,4,False,"Scheduling only (no pre-filing, no party input)"
+1,2026-10-01,23,23,23,14,330.0,6,False,Scheduling only + fixed slots and clustering
+2,2026-10-05,20,20,20,15,322.00953522843383,5,False,Scheduling only + fixed slots and clustering
+3,2026-10-06,22,22,22,15,330.0,7,False,Scheduling only + fixed slots and clustering
+4,2026-10-07,20,20,20,14,330.0,8,False,Scheduling only + fixed slots and clustering
+5,2026-10-08,20,20,20,15,326.92277061215293,7,False,Scheduling only + fixed slots and clustering
+6,2026-10-09,0,0,0,0,0.0,0,True,Scheduling only + fixed slots and clustering
+7,2026-10-12,19,19,19,12,330.0,3,False,Scheduling only + fixed slots and clustering
+8,2026-10-13,19,18,18,15,323.1966309101077,5,False,Scheduling only + fixed slots and clustering
+9,2026-10-14,20,20,20,14,328.28687548157893,7,False,Scheduling only + fixed slots and clustering
+10,2026-10-15,19,19,19,14,330.0,5,False,Scheduling only + fixed slots and clustering
+11,2026-10-16,22,22,22,15,330.0,5,False,Scheduling only + fixed slots and clustering
+12,2026-10-19,20,17,17,14,330.0,3,False,Scheduling only + fixed slots and clustering
+13,2026-10-21,20,19,19,16,330.0,4,False,Scheduling only + fixed slots and clustering
+14,2026-10-22,20,20,20,15,330.0,5,False,Scheduling only + fixed slots and clustering
+15,2026-10-23,21,21,21,16,330.0,5,False,Scheduling only + fixed slots and clustering
+16,2026-10-26,26,21,21,15,330.0,4,False,Scheduling only + fixed slots and clustering
+17,2026-10-27,20,19,19,17,330.0,5,False,Scheduling only + fixed slots and clustering
+18,2026-10-28,23,23,23,16,330.0,8,False,Scheduling only + fixed slots and clustering
+19,2026-10-29,24,24,24,17,330.0,6,False,Scheduling only + fixed slots and clustering
+20,2026-10-30,21,21,21,14,328.6228178655709,6,False,Scheduling only + fixed slots and clustering
+21,2026-11-02,20,20,20,14,330.0,5,False,Scheduling only + fixed slots and clustering
+22,2026-11-03,21,21,21,17,329.8478431186767,6,False,Scheduling only + fixed slots and clustering
+23,2026-11-04,24,24,24,14,330.0,5,False,Scheduling only + fixed slots and clustering
+24,2026-11-05,22,21,21,13,330.0,6,False,Scheduling only + fixed slots and clustering
+25,2026-11-06,22,21,21,15,321.3322902961322,4,False,Scheduling only + fixed slots and clustering
+26,2026-11-10,23,23,23,15,329.0377909690284,6,False,Scheduling only + fixed slots and clustering
+27,2026-11-11,21,21,21,16,330.0,5,False,Scheduling only + fixed slots and clustering
+28,2026-11-12,24,24,24,15,330.0,9,False,Scheduling only + fixed slots and clustering
+29,2026-11-13,0,0,0,0,0.0,0,True,Scheduling only + fixed slots and clustering
+30,2026-11-16,21,21,21,15,330.0,5,False,Scheduling only + fixed slots and clustering
+31,2026-11-17,26,26,26,16,330.0,6,False,Scheduling only + fixed slots and clustering
+32,2026-11-18,20,18,18,15,330.0,3,False,Scheduling only + fixed slots and clustering
+33,2026-11-19,23,23,23,13,330.0,8,False,Scheduling only + fixed slots and clustering
+34,2026-11-20,23,23,23,15,330.0,7,False,Scheduling only + fixed slots and clustering
+35,2026-11-23,18,18,18,15,330.0,5,False,Scheduling only + fixed slots and clustering
+36,2026-11-24,22,22,22,14,330.0,5,False,Scheduling only + fixed slots and clustering
+37,2026-11-25,22,20,20,14,330.0,3,False,Scheduling only + fixed slots and clustering
+38,2026-11-26,21,21,21,14,330.0,8,False,Scheduling only + fixed slots and clustering
+39,2026-11-27,28,28,28,15,330.0,10,False,Scheduling only + fixed slots and clustering
+40,2026-11-30,21,21,21,14,330.0,7,False,Scheduling only + fixed slots and clustering
+41,2026-12-01,20,20,20,14,330.0,4,False,Scheduling only + fixed slots and clustering
+42,2026-12-02,21,20,20,15,330.0,2,False,Scheduling only + fixed slots and clustering
+43,2026-12-03,22,22,22,14,330.0,4,False,Scheduling only + fixed slots and clustering
+44,2026-12-04,0,0,0,0,0.0,0,True,Scheduling only + fixed slots and clustering
+45,2026-12-07,26,25,25,12,284.57415756243483,4,False,Scheduling only + fixed slots and clustering
+46,2026-12-08,24,24,24,12,330.0,8,False,Scheduling only + fixed slots and clustering
+47,2026-12-09,23,23,23,11,325.1558235655959,6,False,Scheduling only + fixed slots and clustering
+48,2026-12-10,22,22,22,13,325.88917901625354,5,False,Scheduling only + fixed slots and clustering
+49,2026-12-11,22,18,18,14,326.9547606537174,2,False,Scheduling only + fixed slots and clustering
+50,2026-12-14,23,22,22,14,330.0,5,False,Scheduling only + fixed slots and clustering
+51,2026-12-15,25,25,25,15,327.3000123539237,4,False,Scheduling only + fixed slots and clustering
+52,2026-12-16,28,28,28,11,330.0,9,False,Scheduling only + fixed slots and clustering
+53,2026-12-17,20,17,17,11,330.0,3,False,Scheduling only + fixed slots and clustering
+54,2026-12-18,20,20,20,12,330.0,4,False,Scheduling only + fixed slots and clustering
+55,2026-12-21,24,24,24,13,330.0,7,False,Scheduling only + fixed slots and clustering
+56,2026-12-22,22,18,18,12,329.2260746676919,3,False,Scheduling only + fixed slots and clustering
+57,2026-12-23,25,25,25,11,330.0,7,False,Scheduling only + fixed slots and clustering
+58,2026-12-24,23,23,23,10,330.0,6,False,Scheduling only + fixed slots and clustering
+59,2026-12-25,21,17,17,12,330.0,5,False,Scheduling only + fixed slots and clustering
+60,2026-12-28,24,24,24,11,330.0,6,False,Scheduling only + fixed slots and clustering

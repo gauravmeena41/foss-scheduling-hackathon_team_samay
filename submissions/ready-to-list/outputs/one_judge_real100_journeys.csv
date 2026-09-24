@@ -1,0 +1,637 @@
+day,date,case_number,hearing_type,block,start,outcome,from_waitlist,attempt,listing,score,approach
+1,2026-10-05,ST/954/2021,APPLICATION_REVIEW,Morning,11:58,unready,False,1,first,0.0,Today's rules
+2,2026-10-06,ST/1343/2026,WARRANT,Morning,11:59,unclear,False,1,first,0.0,Today's rules
+4,2026-10-08,ST/459/2023,APPEARANCE,Morning,11:41,substantive,False,0,first,0.0,Today's rules
+7,2026-10-13,ST/565/2026,COGNIZANCE,Morning,11:25,substantive,False,0,first,0.0,Today's rules
+9,2026-10-15,ST/977/2024,EVIDENCE_ACCUSED,Afternoon,16:30,absence,False,1,first,0.0,Today's rules
+10,2026-10-16,ST/831/2022,JUDGEMENT,Afternoon,13:33,substantive,False,1,first,0.0,Today's rules
+11,2026-10-19,ST/917/2021,ARGUMENTS,Afternoon,14:37,unready,False,1,first,0.0,Today's rules
+11,2026-10-19,ST/313/2023,ARGUMENTS,Afternoon,16:00,unready,False,1,first,0.0,Today's rules
+12,2026-10-21,ST/1198/2026,DELAY_CONDONATION_HEARING,Morning,11:58,unready,False,1,first,0.0,Today's rules
+12,2026-10-21,ST/1284/2018,ARGUMENTS,Afternoon,14:13,court,False,1,first,0.0,Today's rules
+14,2026-10-23,ST/344/2023,APPLICATION_REVIEW,Morning,10:45,substantive,False,0,first,0.0,Today's rules
+16,2026-10-27,ST/514/2023,JUDGEMENT,Afternoon,16:53,substantive,False,1,first,0.0,Today's rules
+17,2026-10-28,ST/572/2017,REPORTS,Morning,11:22,absence,False,1,first,0.0,Today's rules
+18,2026-10-29,ST/219/2017,JUDGEMENT,Afternoon,14:23,substantive,False,1,first,0.0,Today's rules
+19,2026-10-30,ST/655/2025,BAIL,Morning,10:48,unready,False,1,first,0.0,Today's rules
+19,2026-10-30,ST/262/2025,WARRANT,Morning,11:55,process,False,1,first,0.0,Today's rules
+19,2026-10-30,ST/792/2024,EXAMINATION_UNDER_S351_BNSS,Afternoon,13:33,unclear,False,1,first,0.0,Today's rules
+19,2026-10-30,ST/465/2025,EVIDENCE_ACCUSED,Afternoon,14:07,absence,False,1,first,0.0,Today's rules
+19,2026-10-30,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,15:48,unready,False,1,first,0.0,Today's rules
+20,2026-11-02,ST/934/2024,PLEA,Morning,11:36,substantive,False,0,first,0.0,Today's rules
+21,2026-11-03,ST/367/2023,JUDGEMENT,Afternoon,16:43,substantive,False,1,first,0.0,Today's rules
+22,2026-11-04,ST/387/2020,EVIDENCE_COMPLAINANT,Afternoon,15:11,absence,False,1,first,0.0,Today's rules
+24,2026-11-06,ST/7/2025,WARRANT,Morning,12:11,unclear,False,1,first,0.0,Today's rules
+24,2026-11-06,ST/1109/2025,DELAY_CONDONATION_HEARING,Morning,12:16,unready,False,1,first,0.0,Today's rules
+25,2026-11-10,ST/1269/2025,APPEARANCE,Morning,12:01,unclear,False,1,first,0.0,Today's rules
+25,2026-11-10,ST/733/2025,APPLICATION_REVIEW,Morning,12:06,substantive,False,0,first,0.0,Today's rules
+29,2026-11-16,ST/554/2021,APPLICATION_REVIEW,Morning,11:29,substantive,False,0,first,0.0,Today's rules
+29,2026-11-16,ST/341/2017,EVIDENCE_ACCUSED,Afternoon,15:32,unready,False,1,first,0.0,Today's rules
+30,2026-11-17,ST/176/2026,APPEARANCE,Morning,12:20,absence,False,1,first,0.0,Today's rules
+33,2026-11-20,ST/434/2022,APPLICATION_REVIEW,Morning,11:16,substantive,False,0,first,0.0,Today's rules
+33,2026-11-20,ST/330/2025,WARRANT,Morning,12:28,substantive,False,0,first,0.0,Today's rules
+35,2026-11-24,ST/1261/2017,JUDGEMENT,Afternoon,15:06,substantive,False,1,first,0.0,Today's rules
+37,2026-11-26,ST/770/2023,EVIDENCE_ACCUSED,Afternoon,15:29,absence,False,1,first,0.0,Today's rules
+37,2026-11-26,ST/872/2025,EXAMINATION_UNDER_S351_BNSS,Afternoon,16:33,substantive,False,0,first,0.0,Today's rules
+38,2026-11-27,ST/555/2023,WARRANT,Morning,11:56,substantive,False,0,first,0.0,Today's rules
+40,2026-12-01,ST/356/2016,JUDGEMENT,Afternoon,13:30,substantive,False,1,first,0.0,Today's rules
+40,2026-12-01,ST/697/2021,EVIDENCE_ACCUSED,Afternoon,14:45,absence,False,1,first,0.0,Today's rules
+44,2026-12-07,ST/954/2021,APPLICATION_REVIEW,Morning,10:48,unclear,False,2,second,0.0,Today's rules
+44,2026-12-07,ST/571/2023,REPORTS,Morning,11:25,unready,False,1,first,0.0,Today's rules
+45,2026-12-08,ST/979/2022,ARGUMENTS,Afternoon,15:38,absence,False,1,first,0.0,Today's rules
+46,2026-12-09,ST/1118/2021,EVIDENCE_ACCUSED,Afternoon,13:36,absence,False,1,first,0.0,Today's rules
+47,2026-12-10,ST/459/2023,PLEA,Morning,11:46,substantive,False,0,first,0.0,Today's rules
+49,2026-12-14,ST/1166/2023,EVIDENCE_COMPLAINANT,Afternoon,16:45,absence,False,1,first,0.0,Today's rules
+52,2026-12-17,ST/565/2026,APPEARANCE,Morning,11:43,substantive,False,0,first,0.0,Today's rules
+53,2026-12-18,ST/178/2017,REPORTS,Morning,12:10,absence,False,1,first,0.0,Today's rules
+55,2026-12-22,ST/917/2021,ARGUMENTS,Afternoon,13:41,substantive,False,0,second,0.0,Today's rules
+55,2026-12-22,ST/313/2023,ARGUMENTS,Afternoon,15:50,unready,False,2,second,0.0,Today's rules
+56,2026-12-23,ST/803/2026,ADMISSION,Morning,10:58,substantive,False,0,first,0.0,Today's rules
+56,2026-12-23,ST/1284/2018,ARGUMENTS,Afternoon,13:36,unready,False,2,second,0.0,Today's rules
+61,2026-12-30,ST/572/2017,REPORTS,Morning,10:53,absence,False,2,second,0.0,Today's rules
+61,2026-12-30,ST/262/2022,EVIDENCE_ACCUSED,Afternoon,15:24,absence,False,1,first,0.0,Today's rules
+62,2026-12-31,ST/655/2025,BAIL,Morning,10:48,absence,False,2,second,0.0,Today's rules
+63,2027-01-01,ST/262/2025,WARRANT,Morning,11:55,court,False,2,second,0.0,Today's rules
+63,2027-01-01,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,2,second,0.0,Today's rules
+63,2027-01-01,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,14:38,unready,False,1,first,0.0,Today's rules
+65,2027-01-05,ST/679/2024,WARRANT,Morning,12:13,unclear,False,1,first,0.0,Today's rules
+65,2027-01-05,ST/522/2023,EVIDENCE_COMPLAINANT,Afternoon,14:01,absence,False,1,first,0.0,Today's rules
+66,2027-01-06,ST/789/2022,JUDGEMENT,Afternoon,15:15,substantive,False,1,first,0.0,Today's rules
+68,2027-01-08,ST/7/2025,WARRANT,Morning,12:18,unclear,False,2,second,0.0,Today's rules
+68,2027-01-08,ST/1109/2025,DELAY_CONDONATION_HEARING,Morning,12:23,substantive,False,0,second,0.0,Today's rules
+69,2027-01-11,ST/1269/2025,APPEARANCE,Morning,12:10,substantive,False,0,second,0.0,Today's rules
+69,2027-01-11,ST/733/2025,APPEARANCE,Morning,12:21,substantive,False,0,first,0.0,Today's rules
+71,2027-01-13,ST/576/2024,WARRANT,Morning,11:35,unclear,False,1,first,0.0,Today's rules
+71,2027-01-13,ST/1295/2025,WARRANT,Morning,11:57,absence,False,1,first,0.0,Today's rules
+71,2027-01-13,ST/29/2022,ARGUMENTS,Afternoon,13:42,unready,False,1,first,0.0,Today's rules
+73,2027-01-15,ST/1283/2022,APPLICATION_REVIEW,Morning,11:43,substantive,False,0,first,0.0,Today's rules
+73,2027-01-15,ST/947/2022,EVIDENCE_COMPLAINANT,Afternoon,13:58,absence,False,1,first,0.0,Today's rules
+73,2027-01-15,ST/199/2022,EVIDENCE_ACCUSED,Afternoon,15:42,absence,False,1,first,0.0,Today's rules
+74,2027-01-18,ST/884/2023,EVIDENCE_ACCUSED,Afternoon,15:36,absence,False,1,first,0.0,Today's rules
+77,2027-01-21,ST/363/2026,APPEARANCE,Morning,11:20,absence,False,1,first,0.0,Today's rules
+78,2027-01-22,ST/341/2017,EVIDENCE_ACCUSED,Afternoon,13:36,substantive,False,0,second,0.0,Today's rules
+78,2027-01-22,ST/554/2021,JUDGEMENT,Afternoon,15:22,substantive,False,1,first,0.0,Today's rules
+81,2027-01-27,ST/293/2026,DELAY_CONDONATION_HEARING,Morning,10:54,absence,False,1,first,0.0,Today's rules
+82,2027-01-28,ST/330/2025,PLEA,Morning,12:24,substantive,False,0,first,0.0,Today's rules
+82,2027-01-28,ST/434/2022,EVIDENCE_COMPLAINANT,Afternoon,15:36,unready,False,1,first,0.0,Today's rules
+84,2027-02-01,ST/1115/2021,JUDGEMENT,Afternoon,13:49,substantive,False,1,first,0.0,Today's rules
+84,2027-02-01,ST/1113/2022,ARGUMENTS,Afternoon,14:40,substantive,False,0,first,0.0,Today's rules
+86,2027-02-03,ST/1147/2021,EVIDENCE_COMPLAINANT,Afternoon,13:58,unready,False,1,first,0.0,Today's rules
+86,2027-02-03,ST/770/2023,EVIDENCE_ACCUSED,Afternoon,16:36,substantive,False,0,second,0.0,Today's rules
+87,2027-02-04,ST/555/2023,PLEA,Morning,10:48,unclear,False,1,first,0.0,Today's rules
+89,2027-02-08,ST/804/2023,APPLICATION_REVIEW,Morning,11:39,substantive,False,0,first,0.0,Today's rules
+89,2027-02-08,ST/697/2021,EVIDENCE_ACCUSED,Afternoon,14:07,absence,False,2,second,0.0,Today's rules
+91,2027-02-10,ST/628/2022,REPORTS,Morning,11:40,absence,False,1,first,0.0,Today's rules
+91,2027-02-10,ST/135/2022,EVIDENCE_ACCUSED,Afternoon,16:00,substantive,False,0,first,0.0,Today's rules
+92,2027-02-11,ST/950/2023,APPLICATION_REVIEW,Morning,11:47,substantive,False,0,first,0.0,Today's rules
+93,2027-02-12,ST/164/2023,WARRANT,Morning,11:39,unclear,False,1,first,0.0,Today's rules
+95,2027-02-16,ST/954/2021,APPLICATION_REVIEW,Morning,11:21,substantive,False,0,deferred,0.0,Today's rules
+95,2027-02-16,ST/571/2023,REPORTS,Morning,11:39,unready,False,2,second,0.0,Today's rules
+97,2027-02-18,ST/1118/2021,EVIDENCE_ACCUSED,Afternoon,13:36,substantive,False,0,second,0.0,Today's rules
+100,2027-02-23,ST/1156/2024,PLEA,Morning,12:12,substantive,False,0,first,0.0,Today's rules
+100,2027-02-23,ST/1166/2023,EVIDENCE_COMPLAINANT,Afternoon,16:41,unready,False,2,second,0.0,Today's rules
+102,2027-02-25,ST/617/2022,JUDGEMENT,Afternoon,14:33,substantive,False,1,first,0.0,Today's rules
+105,2027-03-02,ST/655/2025,BAIL,Morning,10:48,substantive,False,0,deferred,0.0,Today's rules
+106,2027-03-03,ST/313/2023,ARGUMENTS,Afternoon,14:45,court,False,3,deferred,0.0,Today's rules
+107,2027-03-04,ST/803/2026,COGNIZANCE,Morning,11:24,substantive,False,0,first,0.0,Today's rules
+109,2027-03-08,ST/990/2025,PLEA,Morning,11:37,substantive,False,0,first,0.0,Today's rules
+114,2027-03-15,ST/262/2025,WARRANT,Morning,11:14,substantive,False,0,deferred,0.0,Today's rules
+114,2027-03-15,ST/792/2024,EXAMINATION_UNDER_S351_BNSS,Afternoon,15:18,unready,False,2,second,0.0,Today's rules
+115,2027-03-16,ST/1048/2025,DELAY_CONDONATION_HEARING,Morning,11:52,unready,False,1,first,0.0,Today's rules
+115,2027-03-16,ST/934/2024,EXAMINATION_UNDER_S351_BNSS,Afternoon,16:09,substantive,False,0,first,0.0,Today's rules
+116,2027-03-17,ST/679/2024,WARRANT,Morning,11:15,unclear,False,2,second,0.0,Today's rules
+116,2027-03-17,ST/181/2025,PLEA,Morning,12:07,substantive,False,0,first,0.0,Today's rules
+116,2027-03-17,ST/522/2023,EVIDENCE_COMPLAINANT,Afternoon,13:30,unready,False,2,second,0.0,Today's rules
+117,2027-03-18,ST/645/2023,ARGUMENTS,Afternoon,14:53,substantive,False,0,first,0.0,Today's rules
+117,2027-03-18,ST/1028/2023,EVIDENCE_COMPLAINANT,Afternoon,16:05,substantive,False,0,first,0.0,Today's rules
+118,2027-03-19,ST/819/2023,EVIDENCE_ACCUSED,Afternoon,14:27,absence,False,1,first,0.0,Today's rules
+118,2027-03-19,ST/1015/2023,EVIDENCE_ACCUSED,Afternoon,14:33,unready,False,1,first,0.0,Today's rules
+119,2027-03-22,ST/7/2025,WARRANT,Morning,12:22,unclear,False,3,deferred,0.0,Today's rules
+119,2027-03-22,ST/1109/2025,COGNIZANCE,Morning,12:27,absence,False,1,first,0.0,Today's rules
+120,2027-03-23,ST/1269/2025,PLEA,Morning,10:53,substantive,False,0,first,0.0,Today's rules
+120,2027-03-23,ST/733/2025,PLEA,Morning,11:07,substantive,False,0,first,0.0,Today's rules
+122,2027-03-25,ST/576/2024,WARRANT,Morning,12:17,unclear,False,2,second,0.0,Today's rules
+122,2027-03-25,ST/1295/2025,WARRANT,Morning,12:23,unclear,False,2,second,0.0,Today's rules
+122,2027-03-25,ST/29/2022,ARGUMENTS,Afternoon,14:14,unready,False,2,second,0.0,Today's rules
+122,2027-03-25,ST/1046/2023,EVIDENCE_COMPLAINANT,Afternoon,16:25,unclear,False,1,first,0.0,Today's rules
+124,2027-03-29,ST/199/2022,EVIDENCE_ACCUSED,Afternoon,13:30,substantive,False,0,second,0.0,Today's rules
+125,2027-03-30,ST/884/2023,EVIDENCE_ACCUSED,Afternoon,14:29,unready,False,2,second,0.0,Today's rules
+126,2027-03-31,ST/416/2024,WARRANT,Morning,11:16,unclear,False,1,first,0.0,Today's rules
+128,2027-04-02,ST/363/2026,APPEARANCE,Morning,11:34,substantive,False,0,second,0.0,Today's rules
+129,2027-04-05,ST/1272/2023,REPORTS,Morning,11:32,substantive,False,0,first,0.0,Today's rules
+129,2027-04-05,ST/341/2017,ARGUMENTS,Afternoon,13:36,unclear,False,1,first,0.0,Today's rules
+130,2027-04-06,ST/739/2022,EVIDENCE_ACCUSED,Afternoon,16:54,unready,False,1,first,0.0,Today's rules
+133,2027-04-09,ST/434/2022,EVIDENCE_COMPLAINANT,Afternoon,14:57,substantive,False,0,second,0.0,Today's rules
+135,2027-04-13,ST/1113/2022,JUDGEMENT,Afternoon,15:10,substantive,False,1,first,0.0,Today's rules
+137,2027-04-15,ST/1147/2021,EVIDENCE_COMPLAINANT,Afternoon,16:33,substantive,False,0,second,0.0,Today's rules
+138,2027-04-16,ST/555/2023,PLEA,Morning,12:09,unclear,False,2,second,0.0,Today's rules
+140,2027-04-20,ST/697/2021,EVIDENCE_ACCUSED,Afternoon,15:18,absence,False,3,deferred,0.0,Today's rules
+142,2027-04-22,ST/135/2022,ARGUMENTS,Afternoon,16:03,unready,False,1,first,0.0,Today's rules
+144,2027-04-26,ST/164/2023,WARRANT,Morning,11:33,substantive,False,0,second,0.0,Today's rules
+144,2027-04-26,ST/950/2023,JUDGEMENT,Afternoon,14:02,substantive,False,1,first,0.0,Today's rules
+145,2027-04-27,ST/1230/2025,APPLICATION_REVIEW,Morning,11:06,substantive,False,0,first,0.0,Today's rules
+146,2027-04-28,ST/954/2021,JUDGEMENT,Afternoon,14:08,substantive,False,1,first,0.0,Today's rules
+146,2027-04-28,ST/1266/2023,JUDGEMENT,Afternoon,16:25,substantive,False,1,first,0.0,Today's rules
+147,2027-04-29,ST/979/2022,ARGUMENTS,Afternoon,15:51,unready,False,2,second,0.0,Today's rules
+148,2027-04-30,ST/1118/2021,ARGUMENTS,Afternoon,13:36,unready,False,1,first,0.0,Today's rules
+151,2027-05-05,ST/1166/2023,EVIDENCE_COMPLAINANT,Afternoon,15:55,unclear,False,3,deferred,0.0,Today's rules
+153,2027-05-07,ST/652/2020,REPORTS,Morning,11:36,substantive,False,0,first,0.0,Today's rules
+154,2027-05-10,ST/178/2017,REPORTS,Morning,11:24,substantive,False,0,second,0.0,Today's rules
+155,2027-05-11,ST/565/2026,PLEA,Morning,10:45,substantive,False,0,first,0.0,Today's rules
+156,2027-05-12,ST/917/2021,JUDGEMENT,Afternoon,13:56,court,False,1,first,0.0,Today's rules
+157,2027-05-13,ST/1284/2018,ARGUMENTS,Afternoon,13:36,court,False,3,deferred,0.0,Today's rules
+157,2027-05-13,ST/313/2023,ARGUMENTS,Afternoon,14:47,court,False,4,deferred,0.0,Today's rules
+162,2027-05-20,ST/572/2017,REPORTS,Morning,11:40,absence,False,3,deferred,0.0,Today's rules
+162,2027-05-20,ST/262/2022,EVIDENCE_ACCUSED,Afternoon,14:25,unready,False,2,second,0.0,Today's rules
+164,2027-05-24,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,3,deferred,0.0,Today's rules
+164,2027-05-24,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,15:02,absence,False,2,second,0.0,Today's rules
+165,2027-05-25,ST/262/2025,PLEA,Morning,12:03,unready,False,1,first,0.0,Today's rules
+166,2027-05-26,ST/387/2020,EVIDENCE_COMPLAINANT,Afternoon,13:49,unready,False,2,second,0.0,Today's rules
+167,2027-05-27,ST/522/2023,EVIDENCE_COMPLAINANT,Afternoon,14:37,unclear,False,3,deferred,0.0,Today's rules
+168,2027-05-28,ST/92/2026,DELAY_CONDONATION_HEARING,Morning,11:15,unready,False,1,first,0.0,Today's rules
+169,2027-05-31,ST/1227/2025,EVIDENCE_ACCUSED,Afternoon,14:26,unready,False,1,first,0.0,Today's rules
+169,2027-05-31,ST/1278/2018,JUDGEMENT,Afternoon,15:26,substantive,False,1,first,0.0,Today's rules
+172,2027-06-03,ST/1340/2026,APPEARANCE,Morning,11:19,unclear,False,1,first,0.0,Today's rules
+173,2027-06-04,ST/29/2022,ARGUMENTS,Afternoon,14:30,unready,False,3,deferred,0.0,Today's rules
+173,2027-06-04,ST/1046/2023,EVIDENCE_COMPLAINANT,Afternoon,14:54,unready,False,2,second,0.0,Today's rules
+174,2027-06-07,ST/1295/2025,WARRANT,Morning,10:48,substantive,False,0,deferred,0.0,Today's rules
+174,2027-06-07,ST/545/2024,EXAMINATION_UNDER_S351_BNSS,Afternoon,14:21,unready,False,1,first,0.0,Today's rules
+175,2027-06-08,ST/947/2022,EVIDENCE_COMPLAINANT,Afternoon,15:54,unclear,False,2,second,0.0,Today's rules
+175,2027-06-08,ST/199/2022,ARGUMENTS,Afternoon,16:43,substantive,False,0,first,0.0,Today's rules
+176,2027-06-09,ST/884/2023,EVIDENCE_ACCUSED,Afternoon,15:40,substantive,False,0,deferred,0.0,Today's rules
+180,2027-06-15,ST/702/2026,DELAY_CONDONATION_HEARING,Morning,11:43,unready,False,1,first,0.0,Today's rules
+180,2027-06-15,ST/341/2017,ARGUMENTS,Afternoon,14:21,absence,False,2,second,0.0,Today's rules
+182,2027-06-17,ST/176/2026,APPEARANCE,Morning,12:14,substantive,False,0,second,0.0,Today's rules
+184,2027-06-21,ST/434/2022,EVIDENCE_ACCUSED,Afternoon,15:35,substantive,False,0,first,0.0,Today's rules
+185,2027-06-22,ST/330/2025,EXAMINATION_UNDER_S351_BNSS,Afternoon,16:54,court,False,1,first,0.0,Today's rules
+188,2027-06-25,ST/1178/2026,ADMISSION,Morning,12:22,substantive,False,0,first,0.0,Today's rules
+189,2027-06-28,ST/872/2025,EVIDENCE_COMPLAINANT,Afternoon,16:01,unready,False,1,first,0.0,Today's rules
+189,2027-06-28,ST/1012/2025,EVIDENCE_COMPLAINANT,Afternoon,16:16,substantive,False,0,first,0.0,Today's rules
+190,2027-06-29,ST/555/2023,PLEA,Morning,10:45,substantive,False,0,deferred,0.0,Today's rules
+191,2027-06-30,ST/697/2021,EVIDENCE_ACCUSED,Afternoon,16:24,unready,False,4,deferred,0.0,Today's rules
+192,2027-07-01,ST/804/2023,JUDGEMENT,Afternoon,15:38,unready,False,1,first,0.0,Today's rules
+196,2027-07-07,ST/551/2023,EVIDENCE_COMPLAINANT,Afternoon,13:30,absence,False,1,first,0.0,Today's rules
+199,2027-07-12,ST/1343/2026,WARRANT,Morning,12:12,substantive,False,0,second,0.0,Today's rules
+199,2027-07-12,ST/1118/2021,ARGUMENTS,Afternoon,15:33,unready,False,2,second,0.0,Today's rules
+200,2027-07-13,ST/459/2023,EXAMINATION_UNDER_S351_BNSS,Afternoon,15:54,substantive,False,0,first,0.0,Today's rules
+203,2027-07-16,ST/1156/2024,EXAMINATION_UNDER_S351_BNSS,Afternoon,16:29,substantive,False,0,first,0.0,Today's rules
+204,2027-07-19,ST/1355/2023,EVIDENCE_COMPLAINANT,Afternoon,15:36,unclear,False,1,first,0.0,Today's rules
+208,2027-07-23,ST/655/2025,PLEA,Morning,11:19,unclear,False,1,first,0.0,Today's rules
+209,2027-07-26,ST/313/2023,ARGUMENTS,Afternoon,14:00,substantive,False,0,deferred,0.0,Today's rules
+210,2027-07-27,ST/803/2026,APPEARANCE,Morning,12:13,substantive,False,0,first,0.0,Today's rules
+212,2027-07-29,ST/344/2023,JUDGEMENT,Afternoon,14:51,substantive,False,1,first,0.0,Today's rules
+216,2027-08-04,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,14:21,unready,False,3,deferred,0.0,Today's rules
+217,2027-08-05,ST/262/2025,PLEA,Morning,11:01,substantive,False,0,second,0.0,Today's rules
+218,2027-08-06,ST/1048/2025,DELAY_CONDONATION_HEARING,Morning,11:49,unclear,False,2,second,0.0,Today's rules
+219,2027-08-09,ST/679/2024,WARRANT,Morning,11:41,unclear,False,3,deferred,0.0,Today's rules
+219,2027-08-09,ST/522/2023,EVIDENCE_COMPLAINANT,Afternoon,14:58,unready,False,4,deferred,0.0,Today's rules
+220,2027-08-10,ST/92/2026,DELAY_CONDONATION_HEARING,Morning,12:08,unclear,False,2,second,0.0,Today's rules
+220,2027-08-10,ST/645/2023,JUDGEMENT,Afternoon,16:28,court,False,1,first,0.0,Today's rules
+220,2027-08-10,ST/1028/2023,EVIDENCE_ACCUSED,Afternoon,16:41,unready,False,1,first,0.0,Today's rules
+221,2027-08-11,ST/655/2021,REPORTS,Morning,11:19,substantive,False,0,first,0.0,Today's rules
+222,2027-08-12,ST/7/2025,WARRANT,Morning,12:12,substantive,False,0,deferred,0.0,Today's rules
+222,2027-08-12,ST/1109/2025,COGNIZANCE,Morning,12:21,substantive,False,0,second,0.0,Today's rules
+225,2027-08-17,ST/576/2024,WARRANT,Morning,12:16,substantive,False,0,deferred,0.0,Today's rules
+225,2027-08-17,ST/29/2022,ARGUMENTS,Afternoon,14:15,unready,False,4,deferred,0.0,Today's rules
+225,2027-08-17,ST/1046/2023,EVIDENCE_COMPLAINANT,Afternoon,14:39,absence,False,3,deferred,0.0,Today's rules
+226,2027-08-18,ST/1295/2025,PLEA,Morning,11:19,substantive,False,0,first,0.0,Today's rules
+227,2027-08-19,ST/947/2022,EVIDENCE_COMPLAINANT,Afternoon,15:09,absence,False,3,deferred,0.0,Today's rules
+227,2027-08-19,ST/199/2022,JUDGEMENT,Afternoon,15:45,absence,False,1,first,0.0,Today's rules
+228,2027-08-20,ST/884/2023,ARGUMENTS,Afternoon,14:47,unready,False,1,first,0.0,Today's rules
+232,2027-08-26,ST/1272/2023,APPEARANCE,Morning,11:50,unclear,False,1,first,0.0,Today's rules
+232,2027-08-26,ST/341/2017,ARGUMENTS,Afternoon,14:07,substantive,False,0,deferred,0.0,Today's rules
+236,2027-09-01,ST/434/2022,ARGUMENTS,Afternoon,13:48,substantive,False,0,first,0.0,Today's rules
+240,2027-09-07,ST/1147/2021,EVIDENCE_ACCUSED,Afternoon,14:25,unready,False,1,first,0.0,Today's rules
+240,2027-09-07,ST/770/2023,ARGUMENTS,Afternoon,16:36,absence,False,1,first,0.0,Today's rules
+241,2027-09-08,ST/1178/2026,COGNIZANCE,Morning,11:13,substantive,False,0,first,0.0,Today's rules
+242,2027-09-09,ST/1012/2025,EVIDENCE_ACCUSED,Afternoon,13:33,substantive,False,0,first,0.0,Today's rules
+243,2027-09-10,ST/697/2021,EVIDENCE_ACCUSED,Afternoon,13:41,unready,False,5,deferred,0.0,Today's rules
+248,2027-09-17,ST/551/2023,EVIDENCE_COMPLAINANT,Afternoon,14:04,absence,False,2,second,0.0,Today's rules
+0,2026-10-01,ST/1230/2025,APPLICATION_REVIEW,Morning,10:48,substantive,False,0,first,32.9,Scheduling only
+1,2026-10-05,ST/954/2021,APPLICATION_REVIEW,Morning,10:48,substantive,False,0,first,73.3,Scheduling only
+12,2026-10-21,ST/344/2023,APPLICATION_REVIEW,Morning,12:18,substantive,True,0,first,48.1,Scheduling only
+12,2026-10-21,ST/344/2023,JUDGEMENT,Afternoon,15:32,substantive,True,1,first,48.1,Scheduling only
+12,2026-10-21,ST/831/2022,JUDGEMENT,Afternoon,16:02,substantive,True,1,first,63.8,Scheduling only
+15,2026-10-26,ST/572/2017,REPORTS,Morning,11:55,unclear,False,1,first,68.6,Scheduling only
+16,2026-10-27,ST/954/2021,JUDGEMENT,Afternoon,13:39,substantive,False,1,first,77.8,Scheduling only
+16,2026-10-27,ST/219/2017,JUDGEMENT,Afternoon,14:04,substantive,False,1,first,83.9,Scheduling only
+18,2026-10-29,ST/92/2026,DELAY_CONDONATION_HEARING,Morning,12:04,unclear,False,1,first,14.7,Scheduling only
+19,2026-10-30,ST/655/2025,BAIL,Morning,10:45,unclear,False,1,first,21.2,Scheduling only
+21,2026-11-03,ST/733/2025,APPLICATION_REVIEW,Morning,12:28,substantive,True,0,first,35.0,Scheduling only
+22,2026-11-04,ST/1278/2018,JUDGEMENT,Afternoon,13:39,substantive,False,1,first,75.0,Scheduling only
+24,2026-11-06,ST/655/2025,BAIL,Morning,10:45,substantive,False,0,second,25.0,Scheduling only
+24,2026-11-06,ST/1283/2022,APPLICATION_REVIEW,Morning,10:57,substantive,False,0,first,62.2,Scheduling only
+24,2026-11-06,ST/572/2017,REPORTS,Morning,12:08,unclear,False,2,second,69.2,Scheduling only
+25,2026-11-10,ST/485/2021,JUDGEMENT,Afternoon,13:38,substantive,False,1,first,66.5,Scheduling only
+29,2026-11-16,ST/572/2017,REPORTS,Morning,12:10,substantive,False,0,deferred,69.7,Scheduling only
+30,2026-11-17,ST/554/2021,APPLICATION_REVIEW,Morning,10:48,substantive,False,0,first,56.2,Scheduling only
+30,2026-11-17,ST/92/2026,DELAY_CONDONATION_HEARING,Morning,12:08,unclear,False,2,second,18.6,Scheduling only
+32,2026-11-19,ST/434/2022,APPLICATION_REVIEW,Morning,11:26,substantive,False,0,first,51.2,Scheduling only
+34,2026-11-23,ST/1261/2017,JUDGEMENT,Afternoon,13:39,substantive,False,1,first,91.3,Scheduling only
+37,2026-11-26,ST/92/2026,DELAY_CONDONATION_HEARING,Morning,12:10,unclear,False,3,deferred,22.5,Scheduling only
+38,2026-11-27,ST/804/2023,APPLICATION_REVIEW,Morning,11:15,unready,False,1,first,58.4,Scheduling only
+38,2026-11-27,ST/356/2016,JUDGEMENT,Afternoon,14:07,substantive,False,1,first,79.3,Scheduling only
+39,2026-11-30,ST/1283/2022,JUDGEMENT,Afternoon,16:57,substantive,True,1,first,66.7,Scheduling only
+40,2026-12-01,ST/950/2023,APPLICATION_REVIEW,Morning,10:58,substantive,False,0,first,56.2,Scheduling only
+41,2026-12-02,ST/655/2025,PLEA,Morning,11:59,unclear,False,1,first,41.3,Scheduling only
+44,2026-12-07,ST/572/2017,JUDGEMENT,Afternoon,13:39,unclear,False,1,first,93.2,Scheduling only
+45,2026-12-08,ST/804/2023,APPLICATION_REVIEW,Morning,10:48,substantive,False,0,second,59.0,Scheduling only
+45,2026-12-08,ST/92/2026,DELAY_CONDONATION_HEARING,Morning,11:16,substantive,False,0,deferred,26.4,Scheduling only
+45,2026-12-08,ST/554/2021,JUDGEMENT,Afternoon,13:39,unready,False,1,first,67.1,Scheduling only
+46,2026-12-09,ST/655/2025,PLEA,Morning,11:05,unclear,False,2,second,42.7,Scheduling only
+49,2026-12-14,ST/178/2017,REPORTS,Morning,12:06,unclear,False,1,first,56.3,Scheduling only
+49,2026-12-14,ST/572/2017,JUDGEMENT,Afternoon,13:38,substantive,False,2,second,93.7,Scheduling only
+51,2026-12-16,ST/655/2025,PLEA,Morning,11:17,unclear,False,3,deferred,44.2,Scheduling only
+51,2026-12-16,ST/789/2022,JUDGEMENT,Afternoon,15:58,substantive,True,1,first,63.1,Scheduling only
+52,2026-12-17,ST/554/2021,JUDGEMENT,Afternoon,13:39,substantive,False,2,second,67.7,Scheduling only
+54,2026-12-21,ST/178/2017,REPORTS,Morning,11:39,substantive,False,0,second,57.4,Scheduling only
+55,2026-12-22,ST/92/2026,COGNIZANCE,Morning,11:14,unready,False,1,first,41.7,Scheduling only
+56,2026-12-23,ST/655/2025,PLEA,Morning,10:48,absence,False,4,deferred,45.6,Scheduling only
+60,2026-12-29,ST/804/2023,JUDGEMENT,Afternoon,13:39,substantive,False,1,first,63.5,Scheduling only
+61,2026-12-30,ST/655/2025,PLEA,Morning,11:02,substantive,False,0,deferred,40.3,Scheduling only
+62,2026-12-31,ST/92/2026,COGNIZANCE,Morning,10:45,absence,False,2,second,41.8,Scheduling only
+63,2027-01-01,ST/934/2024,PLEA,Morning,10:53,substantive,False,0,first,33.6,Scheduling only
+65,2027-01-05,ST/1156/2024,PLEA,Morning,11:51,absence,True,1,first,33.5,Scheduling only
+65,2027-01-05,ST/1115/2021,JUDGEMENT,Afternoon,13:39,substantive,False,1,first,61.5,Scheduling only
+67,2027-01-07,ST/92/2026,COGNIZANCE,Morning,10:45,absence,False,3,deferred,35.2,Scheduling only
+69,2027-01-11,ST/655/2021,REPORTS,Morning,12:11,substantive,False,0,first,46.1,Scheduling only
+69,2027-01-11,ST/178/2017,JUDGEMENT,Afternoon,13:39,absence,False,1,first,80.9,Scheduling only
+70,2027-01-12,ST/1156/2024,PLEA,Morning,10:57,substantive,False,0,second,34.9,Scheduling only
+70,2027-01-12,ST/950/2023,JUDGEMENT,Afternoon,13:39,substantive,False,1,first,61.0,Scheduling only
+72,2027-01-14,ST/92/2026,COGNIZANCE,Morning,10:45,substantive,False,0,deferred,35.3,Scheduling only
+73,2027-01-15,ST/652/2020,REPORTS,Morning,11:53,unclear,False,1,first,44.2,Scheduling only
+74,2027-01-18,ST/178/2017,JUDGEMENT,Afternoon,13:39,substantive,False,2,second,73.9,Scheduling only
+77,2027-01-21,ST/514/2023,JUDGEMENT,Afternoon,16:31,substantive,True,1,first,60.5,Scheduling only
+78,2027-01-22,ST/652/2020,REPORTS,Morning,11:40,unclear,False,2,second,45.7,Scheduling only
+78,2027-01-22,ST/990/2025,PLEA,Morning,12:06,substantive,True,0,first,31.4,Scheduling only
+78,2027-01-22,ST/990/2025,EXAMINATION_UNDER_S351_BNSS,Afternoon,15:11,unready,True,1,first,31.4,Scheduling only
+83,2027-01-29,ST/652/2020,REPORTS,Morning,12:05,unclear,False,3,deferred,46.6,Scheduling only
+84,2027-02-01,ST/565/2026,COGNIZANCE,Morning,10:45,substantive,False,0,first,27.6,Scheduling only
+84,2027-02-01,ST/181/2025,PLEA,Morning,10:59,substantive,False,0,first,28.2,Scheduling only
+84,2027-02-01,ST/655/2021,JUDGEMENT,Afternoon,13:39,substantive,False,1,first,70.4,Scheduling only
+84,2027-02-01,ST/367/2023,JUDGEMENT,Afternoon,16:52,substantive,True,1,first,60.5,Scheduling only
+88,2027-02-05,ST/652/2020,REPORTS,Morning,11:46,unclear,False,4,deferred,47.5,Scheduling only
+89,2027-02-08,ST/1266/2023,JUDGEMENT,Afternoon,15:57,substantive,True,1,first,60.6,Scheduling only
+93,2027-02-12,ST/652/2020,REPORTS,Morning,11:56,unclear,False,5,deferred,48.4,Scheduling only
+96,2027-02-17,ST/92/2026,APPEARANCE,Morning,12:14,substantive,False,0,first,31.4,Scheduling only
+98,2027-02-19,ST/652/2020,REPORTS,Morning,12:30,unclear,False,6,deferred,49.2,Scheduling only
+102,2027-02-25,ST/617/2022,JUDGEMENT,Afternoon,16:21,substantive,True,1,first,59.7,Scheduling only
+103,2027-02-26,ST/652/2020,REPORTS,Morning,12:12,substantive,False,0,deferred,50.1,Scheduling only
+107,2027-03-04,ST/92/2026,PLEA,Morning,12:10,unready,False,1,first,41.8,Scheduling only
+109,2027-03-08,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:30,absence,False,1,first,69.9,Scheduling only
+110,2027-03-09,ST/387/2020,EVIDENCE_COMPLAINANT,Afternoon,16:59,substantive,True,0,first,49.2,Scheduling only
+113,2027-03-12,ST/652/2020,EVIDENCE_COMPLAINANT,Afternoon,13:33,substantive,False,0,first,56.3,Scheduling only
+114,2027-03-15,ST/92/2026,PLEA,Morning,12:13,unready,False,2,second,43.8,Scheduling only
+114,2027-03-15,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:30,absence,False,2,second,69.7,Scheduling only
+119,2027-03-22,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,3,deferred,70.4,Scheduling only
+120,2027-03-23,ST/1147/2021,EVIDENCE_COMPLAINANT,Afternoon,13:51,substantive,False,0,first,46.2,Scheduling only
+121,2027-03-24,ST/92/2026,PLEA,Morning,12:15,substantive,False,0,deferred,45.8,Scheduling only
+121,2027-03-24,ST/990/2025,EXAMINATION_UNDER_S351_BNSS,Afternoon,15:33,substantive,False,0,second,29.1,Scheduling only
+126,2027-03-31,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:49,absence,False,4,deferred,72.3,Scheduling only
+129,2027-04-05,ST/434/2022,EVIDENCE_COMPLAINANT,Afternoon,16:37,substantive,True,0,first,46.1,Scheduling only
+131,2027-04-07,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,5,deferred,71.7,Scheduling only
+132,2027-04-08,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,1,first,62.2,Scheduling only
+134,2027-04-12,ST/1166/2023,EVIDENCE_COMPLAINANT,Afternoon,16:26,absence,True,1,first,43.2,Scheduling only
+136,2027-04-14,ST/1284/2018,ARGUMENTS,Afternoon,13:30,substantive,False,0,first,53.5,Scheduling only
+138,2027-04-16,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:33,absence,False,6,deferred,73.6,Scheduling only
+139,2027-04-19,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,2,second,63.4,Scheduling only
+139,2027-04-19,ST/1166/2023,EVIDENCE_COMPLAINANT,Afternoon,16:54,unclear,True,2,second,42.6,Scheduling only
+140,2027-04-20,ST/459/2023,APPEARANCE,Morning,12:05,substantive,True,0,first,29.8,Scheduling only
+140,2027-04-20,ST/792/2024,EXAMINATION_UNDER_S351_BNSS,Afternoon,16:56,substantive,True,0,first,39.0,Scheduling only
+143,2027-04-23,ST/652/2020,EVIDENCE_ACCUSED,Afternoon,13:30,unclear,False,1,first,54.5,Scheduling only
+143,2027-04-23,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:33,unready,False,7,deferred,73.0,Scheduling only
+144,2027-04-26,ST/1166/2023,EVIDENCE_COMPLAINANT,Afternoon,13:48,unclear,False,3,deferred,45.7,Scheduling only
+146,2027-04-28,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:50,unready,False,3,deferred,64.2,Scheduling only
+147,2027-04-29,ST/655/2025,EXAMINATION_UNDER_S351_BNSS,Afternoon,14:31,absence,False,1,first,36.7,Scheduling only
+148,2027-04-30,ST/652/2020,EVIDENCE_ACCUSED,Afternoon,14:08,absence,False,2,second,55.3,Scheduling only
+149,2027-05-03,ST/1166/2023,EVIDENCE_COMPLAINANT,Afternoon,14:23,unready,False,4,deferred,46.6,Scheduling only
+149,2027-05-03,ST/947/2022,EVIDENCE_COMPLAINANT,Afternoon,15:58,unclear,True,1,first,41.3,Scheduling only
+150,2027-05-04,ST/459/2023,PLEA,Morning,11:18,substantive,False,0,first,42.4,Scheduling only
+150,2027-05-04,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:33,unready,False,8,deferred,74.9,Scheduling only
+151,2027-05-05,ST/1284/2018,JUDGEMENT,Afternoon,15:41,unready,False,1,first,75.2,Scheduling only
+153,2027-05-07,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,4,deferred,64.9,Scheduling only
+153,2027-05-07,ST/655/2025,EXAMINATION_UNDER_S351_BNSS,Afternoon,14:45,absence,False,2,second,35.0,Scheduling only
+153,2027-05-07,ST/652/2020,EVIDENCE_ACCUSED,Afternoon,14:53,substantive,True,0,deferred,54.9,Scheduling only
+154,2027-05-10,ST/947/2022,EVIDENCE_COMPLAINANT,Afternoon,14:03,absence,False,2,second,44.4,Scheduling only
+154,2027-05-10,ST/1355/2023,EVIDENCE_COMPLAINANT,Afternoon,16:03,substantive,True,0,first,40.4,Scheduling only
+156,2027-05-12,ST/1166/2023,EVIDENCE_COMPLAINANT,Afternoon,14:26,substantive,False,0,deferred,47.5,Scheduling only
+157,2027-05-13,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:33,unready,False,9,deferred,75.5,Scheduling only
+158,2027-05-14,ST/341/2017,EVIDENCE_ACCUSED,Afternoon,13:30,substantive,False,0,first,54.4,Scheduling only
+158,2027-05-14,ST/655/2025,EXAMINATION_UNDER_S351_BNSS,Afternoon,14:39,absence,False,3,deferred,36.3,Scheduling only
+158,2027-05-14,ST/1284/2018,JUDGEMENT,Afternoon,14:44,unready,False,2,second,75.8,Scheduling only
+159,2027-05-17,ST/947/2022,EVIDENCE_COMPLAINANT,Afternoon,14:14,substantive,False,0,deferred,43.0,Scheduling only
+160,2027-05-18,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,5,deferred,65.7,Scheduling only
+163,2027-05-21,ST/655/2025,EXAMINATION_UNDER_S351_BNSS,Afternoon,15:38,unready,False,4,deferred,37.6,Scheduling only
+164,2027-05-24,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,10,deferred,76.2,Scheduling only
+165,2027-05-25,ST/1284/2018,JUDGEMENT,Afternoon,14:13,substantive,False,3,deferred,76.4,Scheduling only
+167,2027-05-27,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,6,deferred,66.5,Scheduling only
+168,2027-05-28,ST/1028/2023,EVIDENCE_COMPLAINANT,Afternoon,16:24,unready,True,1,first,40.1,Scheduling only
+170,2027-06-01,ST/655/2025,EXAMINATION_UNDER_S351_BNSS,Afternoon,14:41,absence,False,5,deferred,40.8,Scheduling only
+170,2027-06-01,ST/792/2024,EVIDENCE_COMPLAINANT,Afternoon,16:05,unready,True,1,first,39.3,Scheduling only
+171,2027-06-02,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,11,deferred,76.2,Scheduling only
+174,2027-06-07,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:30,absence,False,7,deferred,67.2,Scheduling only
+175,2027-06-08,ST/1028/2023,EVIDENCE_COMPLAINANT,Afternoon,13:51,unready,False,2,second,42.4,Scheduling only
+175,2027-06-08,ST/655/2025,EXAMINATION_UNDER_S351_BNSS,Afternoon,15:43,substantive,False,0,deferred,37.8,Scheduling only
+177,2027-06-10,ST/792/2024,EVIDENCE_COMPLAINANT,Afternoon,14:23,unclear,False,2,second,40.5,Scheduling only
+178,2027-06-11,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,12,deferred,76.2,Scheduling only
+179,2027-06-14,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,8,deferred,66.7,Scheduling only
+182,2027-06-17,ST/1028/2023,EVIDENCE_COMPLAINANT,Afternoon,14:33,unready,False,3,deferred,43.3,Scheduling only
+182,2027-06-17,ST/792/2024,EVIDENCE_COMPLAINANT,Afternoon,14:38,substantive,False,0,deferred,41.6,Scheduling only
+182,2027-06-17,ST/522/2023,EVIDENCE_COMPLAINANT,Afternoon,16:36,absence,True,1,first,38.6,Scheduling only
+185,2027-06-22,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,13,deferred,76.2,Scheduling only
+186,2027-06-23,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,9,deferred,68.7,Scheduling only
+186,2027-06-23,ST/655/2025,EVIDENCE_COMPLAINANT,Afternoon,16:16,unclear,True,1,first,38.7,Scheduling only
+187,2027-06-24,ST/522/2023,EVIDENCE_COMPLAINANT,Afternoon,16:41,substantive,True,0,second,38.0,Scheduling only
+189,2027-06-28,ST/1028/2023,EVIDENCE_COMPLAINANT,Afternoon,15:22,unready,False,4,deferred,44.2,Scheduling only
+191,2027-06-30,ST/655/2025,EVIDENCE_COMPLAINANT,Afternoon,13:51,substantive,False,0,second,39.8,Scheduling only
+192,2027-07-01,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:33,absence,False,14,deferred,76.2,Scheduling only
+193,2027-07-02,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,10,deferred,69.5,Scheduling only
+196,2027-07-07,ST/1028/2023,EVIDENCE_COMPLAINANT,Afternoon,14:11,substantive,False,0,deferred,45.1,Scheduling only
+197,2027-07-08,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:30,absence,False,15,deferred,74.9,Scheduling only
+198,2027-07-09,ST/551/2023,EVIDENCE_COMPLAINANT,Afternoon,13:51,unready,False,1,first,37.6,Scheduling only
+200,2027-07-13,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,11,deferred,70.3,Scheduling only
+202,2027-07-15,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:30,absence,False,16,deferred,74.9,Scheduling only
+205,2027-07-20,ST/551/2023,EVIDENCE_COMPLAINANT,Afternoon,13:51,substantive,False,0,second,39.9,Scheduling only
+207,2027-07-22,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,12,deferred,71.1,Scheduling only
+207,2027-07-22,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:33,unready,False,17,deferred,74.9,Scheduling only
+208,2027-07-23,ST/819/2023,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,1,first,53.3,Scheduling only
+214,2027-08-02,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,13,deferred,71.8,Scheduling only
+214,2027-08-02,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:33,unready,False,18,deferred,76.2,Scheduling only
+215,2027-08-03,ST/819/2023,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,2,second,54.5,Scheduling only
+217,2027-08-05,ST/733/2025,APPEARANCE,Morning,11:28,unclear,False,1,first,28.9,Scheduling only
+217,2027-08-05,ST/459/2023,EXAMINATION_UNDER_S351_BNSS,Afternoon,17:00,substantive,True,0,first,34.2,Scheduling only
+221,2027-08-11,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,14,deferred,71.9,Scheduling only
+221,2027-08-11,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:33,unready,False,19,deferred,76.2,Scheduling only
+222,2027-08-12,ST/819/2023,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,3,deferred,55.3,Scheduling only
+223,2027-08-13,ST/733/2025,APPEARANCE,Morning,11:24,substantive,False,0,second,30.9,Scheduling only
+228,2027-08-20,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:33,unready,False,15,deferred,72.1,Scheduling only
+228,2027-08-20,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:38,unready,False,20,deferred,76.2,Scheduling only
+229,2027-08-23,ST/819/2023,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,4,deferred,56.0,Scheduling only
+233,2027-08-27,ST/733/2025,PLEA,Morning,12:14,substantive,False,0,first,45.4,Scheduling only
+235,2027-08-31,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:33,unready,False,16,deferred,72.2,Scheduling only
+235,2027-08-31,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:38,unready,False,21,deferred,76.2,Scheduling only
+236,2027-09-01,ST/819/2023,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,5,deferred,56.8,Scheduling only
+242,2027-09-09,ST/1230/2025,APPEARANCE,Morning,12:20,substantive,True,0,first,27.5,Scheduling only
+242,2027-09-09,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:33,unready,False,17,deferred,72.3,Scheduling only
+242,2027-09-09,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:38,unready,False,22,deferred,76.2,Scheduling only
+242,2027-09-09,ST/1156/2024,EXAMINATION_UNDER_S351_BNSS,Afternoon,16:42,substantive,True,0,first,33.4,Scheduling only
+243,2027-09-10,ST/819/2023,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,6,deferred,57.6,Scheduling only
+247,2027-09-16,ST/934/2024,EXAMINATION_UNDER_S351_BNSS,Afternoon,16:00,substantive,True,0,first,32.6,Scheduling only
+249,2027-09-20,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:33,unready,False,18,deferred,72.4,Scheduling only
+249,2027-09-20,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:38,unready,False,23,deferred,76.2,Scheduling only
+0,2026-10-01,ST/1230/2025,APPLICATION_REVIEW,Morning,10:48,substantive,False,0,first,32.9,Scheduling + pre-filing
+1,2026-10-05,ST/954/2021,APPLICATION_REVIEW,Morning,10:48,substantive,False,0,first,73.3,Scheduling + pre-filing
+12,2026-10-21,ST/831/2022,JUDGEMENT,Afternoon,16:35,substantive,True,1,first,63.8,Scheduling + pre-filing
+15,2026-10-26,ST/344/2023,APPLICATION_REVIEW,Morning,10:48,substantive,False,0,first,48.1,Scheduling + pre-filing
+15,2026-10-26,ST/572/2017,REPORTS,Morning,11:54,substantive,False,0,first,68.6,Scheduling + pre-filing
+16,2026-10-27,ST/954/2021,JUDGEMENT,Afternoon,13:39,substantive,False,1,first,77.8,Scheduling + pre-filing
+16,2026-10-27,ST/219/2017,JUDGEMENT,Afternoon,14:25,substantive,False,1,first,83.9,Scheduling + pre-filing
+19,2026-10-30,ST/655/2025,BAIL,Morning,10:45,absence,False,1,first,21.2,Scheduling + pre-filing
+22,2026-11-04,ST/1278/2018,JUDGEMENT,Afternoon,14:05,substantive,False,1,first,75.0,Scheduling + pre-filing
+24,2026-11-06,ST/655/2025,BAIL,Morning,10:45,substantive,False,0,second,22.6,Scheduling + pre-filing
+24,2026-11-06,ST/1283/2022,APPLICATION_REVIEW,Morning,11:07,substantive,False,0,first,62.2,Scheduling + pre-filing
+25,2026-11-10,ST/485/2021,JUDGEMENT,Afternoon,13:39,substantive,False,1,first,66.5,Scheduling + pre-filing
+29,2026-11-16,ST/554/2021,APPLICATION_REVIEW,Morning,11:17,substantive,False,0,first,56.2,Scheduling + pre-filing
+30,2026-11-17,ST/572/2017,JUDGEMENT,Afternoon,13:39,substantive,False,1,first,92.1,Scheduling + pre-filing
+32,2026-11-19,ST/434/2022,APPLICATION_REVIEW,Morning,10:45,unready,False,1,first,51.2,Scheduling + pre-filing
+32,2026-11-19,ST/733/2025,APPLICATION_REVIEW,Morning,11:32,substantive,True,0,first,35.2,Scheduling + pre-filing
+34,2026-11-23,ST/1261/2017,JUDGEMENT,Afternoon,13:39,substantive,False,1,first,91.3,Scheduling + pre-filing
+38,2026-11-27,ST/804/2023,APPLICATION_REVIEW,Morning,11:03,unready,False,1,first,58.4,Scheduling + pre-filing
+38,2026-11-27,ST/356/2016,JUDGEMENT,Afternoon,13:39,substantive,False,1,first,79.3,Scheduling + pre-filing
+39,2026-11-30,ST/434/2022,APPLICATION_REVIEW,Morning,11:16,unready,False,2,second,58.5,Scheduling + pre-filing
+39,2026-11-30,ST/1283/2022,JUDGEMENT,Afternoon,13:39,substantive,False,1,first,66.7,Scheduling + pre-filing
+40,2026-12-01,ST/950/2023,APPLICATION_REVIEW,Morning,10:48,substantive,False,0,first,56.2,Scheduling + pre-filing
+44,2026-12-07,ST/655/2025,PLEA,Morning,12:07,unclear,True,1,first,41.3,Scheduling + pre-filing
+44,2026-12-07,ST/554/2021,JUDGEMENT,Afternoon,13:39,substantive,False,1,first,67.1,Scheduling + pre-filing
+45,2026-12-08,ST/804/2023,APPLICATION_REVIEW,Morning,11:09,substantive,False,0,second,59.0,Scheduling + pre-filing
+46,2026-12-09,ST/434/2022,APPLICATION_REVIEW,Morning,11:00,substantive,False,0,deferred,59.4,Scheduling + pre-filing
+48,2026-12-11,ST/789/2022,JUDGEMENT,Afternoon,16:52,substantive,True,1,first,63.0,Scheduling + pre-filing
+49,2026-12-14,ST/655/2025,PLEA,Morning,10:58,absence,False,2,second,42.8,Scheduling + pre-filing
+49,2026-12-14,ST/178/2017,REPORTS,Morning,11:28,absence,False,1,first,56.3,Scheduling + pre-filing
+54,2026-12-21,ST/655/2025,PLEA,Morning,11:03,unclear,False,3,deferred,37.5,Scheduling + pre-filing
+54,2026-12-21,ST/178/2017,REPORTS,Morning,11:22,substantive,False,0,second,56.8,Scheduling + pre-filing
+59,2026-12-28,ST/655/2025,PLEA,Morning,11:02,unclear,False,4,deferred,45.7,Scheduling + pre-filing
+60,2026-12-29,ST/804/2023,JUDGEMENT,Afternoon,13:39,substantive,False,1,first,63.5,Scheduling + pre-filing
+61,2026-12-30,ST/1115/2021,JUDGEMENT,Afternoon,13:39,substantive,False,1,first,61.5,Scheduling + pre-filing
+62,2026-12-31,ST/934/2024,PLEA,Morning,11:04,substantive,False,0,first,33.6,Scheduling + pre-filing
+64,2027-01-04,ST/655/2025,PLEA,Morning,10:48,unready,False,5,deferred,47.1,Scheduling + pre-filing
+64,2027-01-04,ST/1156/2024,PLEA,Morning,12:07,substantive,True,0,first,33.5,Scheduling + pre-filing
+64,2027-01-04,ST/1156/2024,EXAMINATION_UNDER_S351_BNSS,Afternoon,15:33,substantive,True,0,first,33.5,Scheduling + pre-filing
+67,2027-01-07,ST/950/2023,JUDGEMENT,Afternoon,13:39,substantive,False,1,first,61.0,Scheduling + pre-filing
+68,2027-01-08,ST/655/2021,REPORTS,Morning,11:57,unclear,False,1,first,46.0,Scheduling + pre-filing
+69,2027-01-11,ST/178/2017,JUDGEMENT,Afternoon,13:39,substantive,False,1,first,80.9,Scheduling + pre-filing
+71,2027-01-13,ST/655/2025,PLEA,Morning,10:48,unclear,False,6,deferred,48.6,Scheduling + pre-filing
+72,2027-01-14,ST/514/2023,JUDGEMENT,Afternoon,16:06,substantive,True,1,first,60.4,Scheduling + pre-filing
+73,2027-01-15,ST/655/2021,REPORTS,Morning,11:36,unclear,False,2,second,47.3,Scheduling + pre-filing
+74,2027-01-18,ST/652/2020,REPORTS,Morning,12:19,absence,False,1,first,44.3,Scheduling + pre-filing
+76,2027-01-20,ST/655/2025,PLEA,Morning,10:48,substantive,False,0,deferred,50.0,Scheduling + pre-filing
+78,2027-01-22,ST/655/2021,REPORTS,Morning,12:10,absence,False,3,deferred,47.9,Scheduling + pre-filing
+79,2027-01-25,ST/652/2020,REPORTS,Morning,12:18,unclear,False,2,second,45.1,Scheduling + pre-filing
+81,2027-01-27,ST/990/2025,PLEA,Morning,10:53,substantive,False,0,first,31.4,Scheduling + pre-filing
+81,2027-01-27,ST/367/2023,JUDGEMENT,Afternoon,15:48,substantive,True,1,first,60.5,Scheduling + pre-filing
+83,2027-01-29,ST/655/2021,REPORTS,Morning,11:48,substantive,False,0,deferred,47.9,Scheduling + pre-filing
+84,2027-02-01,ST/565/2026,COGNIZANCE,Morning,10:45,substantive,False,0,first,27.6,Scheduling + pre-filing
+84,2027-02-01,ST/652/2020,REPORTS,Morning,11:59,unclear,False,3,deferred,46.6,Scheduling + pre-filing
+85,2027-02-02,ST/181/2025,PLEA,Morning,10:56,unready,False,1,first,28.2,Scheduling + pre-filing
+86,2027-02-03,ST/1266/2023,JUDGEMENT,Afternoon,16:27,substantive,True,1,first,60.5,Scheduling + pre-filing
+93,2027-02-12,ST/181/2025,PLEA,Morning,12:25,substantive,False,0,second,35.1,Scheduling + pre-filing
+96,2027-02-17,ST/652/2020,REPORTS,Morning,12:16,substantive,False,0,deferred,47.6,Scheduling + pre-filing
+96,2027-02-17,ST/344/2023,JUDGEMENT,Afternoon,15:05,substantive,True,1,first,60.1,Scheduling + pre-filing
+98,2027-02-19,ST/655/2021,JUDGEMENT,Afternoon,13:39,unclear,False,1,first,72.2,Scheduling + pre-filing
+100,2027-02-23,ST/617/2022,JUDGEMENT,Afternoon,16:22,substantive,True,1,first,59.7,Scheduling + pre-filing
+103,2027-02-26,ST/655/2021,JUDGEMENT,Afternoon,13:39,unclear,False,2,second,72.9,Scheduling + pre-filing
+106,2027-03-03,ST/652/2020,EVIDENCE_COMPLAINANT,Afternoon,13:54,substantive,False,0,first,53.9,Scheduling + pre-filing
+107,2027-03-04,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,1,first,69.9,Scheduling + pre-filing
+108,2027-03-05,ST/655/2021,JUDGEMENT,Afternoon,14:36,unclear,False,3,deferred,73.5,Scheduling + pre-filing
+108,2027-03-05,ST/387/2020,EVIDENCE_COMPLAINANT,Afternoon,16:03,unready,True,1,first,49.2,Scheduling + pre-filing
+110,2027-03-09,ST/434/2022,EVIDENCE_COMPLAINANT,Afternoon,15:04,substantive,True,0,first,47.3,Scheduling + pre-filing
+113,2027-03-12,ST/655/2021,JUDGEMENT,Afternoon,14:23,substantive,False,4,deferred,74.1,Scheduling + pre-filing
+114,2027-03-15,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:30,absence,False,2,second,71.0,Scheduling + pre-filing
+115,2027-03-16,ST/387/2020,EVIDENCE_COMPLAINANT,Afternoon,13:42,unready,False,2,second,50.8,Scheduling + pre-filing
+118,2027-03-19,ST/655/2025,EXAMINATION_UNDER_S351_BNSS,Afternoon,15:20,substantive,False,0,first,38.7,Scheduling + pre-filing
+119,2027-03-22,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,15:18,absence,True,3,deferred,70.4,Scheduling + pre-filing
+119,2027-03-22,ST/1147/2021,EVIDENCE_COMPLAINANT,Afternoon,15:26,absence,True,1,first,46.2,Scheduling + pre-filing
+122,2027-03-25,ST/387/2020,EVIDENCE_COMPLAINANT,Afternoon,13:33,unready,False,3,deferred,51.7,Scheduling + pre-filing
+125,2027-03-30,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:30,absence,False,4,deferred,71.0,Scheduling + pre-filing
+126,2027-03-31,ST/1147/2021,EVIDENCE_COMPLAINANT,Afternoon,13:42,unclear,False,2,second,45.6,Scheduling + pre-filing
+129,2027-04-05,ST/387/2020,EVIDENCE_COMPLAINANT,Afternoon,13:45,substantive,False,0,deferred,52.6,Scheduling + pre-filing
+130,2027-04-06,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:30,absence,False,5,deferred,71.7,Scheduling + pre-filing
+131,2027-04-07,ST/1147/2021,EVIDENCE_COMPLAINANT,Afternoon,13:42,court,False,3,deferred,48.7,Scheduling + pre-filing
+131,2027-04-07,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,16:43,absence,True,1,first,62.2,Scheduling + pre-filing
+132,2027-04-08,ST/1166/2023,EVIDENCE_COMPLAINANT,Afternoon,16:51,unready,True,1,first,43.2,Scheduling + pre-filing
+133,2027-04-09,ST/1147/2021,EVIDENCE_COMPLAINANT,Afternoon,13:54,substantive,False,0,deferred,49.5,Scheduling + pre-filing
+135,2027-04-13,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,6,deferred,72.3,Scheduling + pre-filing
+136,2027-04-14,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,14:00,unready,False,2,second,62.1,Scheduling + pre-filing
+139,2027-04-19,ST/1166/2023,EVIDENCE_COMPLAINANT,Afternoon,14:23,substantive,False,0,second,44.8,Scheduling + pre-filing
+140,2027-04-20,ST/792/2024,EXAMINATION_UNDER_S351_BNSS,Afternoon,15:30,substantive,True,0,first,39.0,Scheduling + pre-filing
+142,2027-04-22,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,7,deferred,74.2,Scheduling + pre-filing
+143,2027-04-23,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,15:46,unready,True,3,deferred,64.1,Scheduling + pre-filing
+145,2027-04-27,ST/947/2022,EVIDENCE_COMPLAINANT,Afternoon,16:28,substantive,True,0,first,41.2,Scheduling + pre-filing
+149,2027-05-03,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:33,unready,False,8,deferred,74.9,Scheduling + pre-filing
+149,2027-05-03,ST/1355/2023,EVIDENCE_COMPLAINANT,Afternoon,15:47,substantive,True,0,first,40.3,Scheduling + pre-filing
+150,2027-05-04,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,4,deferred,64.9,Scheduling + pre-filing
+156,2027-05-12,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,9,deferred,75.5,Scheduling + pre-filing
+157,2027-05-13,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:30,absence,False,5,deferred,65.6,Scheduling + pre-filing
+161,2027-05-19,ST/341/2017,EVIDENCE_ACCUSED,Afternoon,13:33,substantive,False,0,first,54.4,Scheduling + pre-filing
+162,2027-05-20,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,6,deferred,65.1,Scheduling + pre-filing
+163,2027-05-21,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,10,deferred,76.2,Scheduling + pre-filing
+165,2027-05-25,ST/1028/2023,EVIDENCE_COMPLAINANT,Afternoon,15:57,unready,True,1,first,40.0,Scheduling + pre-filing
+168,2027-05-28,ST/792/2024,EVIDENCE_COMPLAINANT,Afternoon,16:35,absence,True,1,first,39.3,Scheduling + pre-filing
+169,2027-05-31,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:51,unready,False,7,deferred,67.2,Scheduling + pre-filing
+170,2027-06-01,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:30,absence,False,11,deferred,76.2,Scheduling + pre-filing
+172,2027-06-03,ST/1028/2023,EVIDENCE_COMPLAINANT,Afternoon,16:54,substantive,True,0,second,42.4,Scheduling + pre-filing
+174,2027-06-07,ST/792/2024,EVIDENCE_COMPLAINANT,Afternoon,13:58,substantive,False,0,second,38.2,Scheduling + pre-filing
+175,2027-06-08,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,12,deferred,74.9,Scheduling + pre-filing
+175,2027-06-08,ST/522/2023,EVIDENCE_COMPLAINANT,Afternoon,16:12,absence,True,1,first,38.4,Scheduling + pre-filing
+176,2027-06-09,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,8,deferred,67.9,Scheduling + pre-filing
+181,2027-06-16,ST/522/2023,EVIDENCE_COMPLAINANT,Afternoon,14:52,substantive,False,0,second,37.9,Scheduling + pre-filing
+182,2027-06-17,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,13,deferred,76.2,Scheduling + pre-filing
+183,2027-06-18,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,9,deferred,68.7,Scheduling + pre-filing
+189,2027-06-28,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:30,absence,False,14,deferred,76.2,Scheduling + pre-filing
+189,2027-06-28,ST/551/2023,EVIDENCE_COMPLAINANT,Afternoon,13:42,substantive,False,0,first,37.4,Scheduling + pre-filing
+190,2027-06-29,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:33,unready,False,10,deferred,69.5,Scheduling + pre-filing
+193,2027-07-02,ST/459/2023,APPEARANCE,Morning,11:15,substantive,False,0,first,30.6,Scheduling + pre-filing
+194,2027-07-05,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,15,deferred,74.9,Scheduling + pre-filing
+197,2027-07-08,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,11,deferred,70.2,Scheduling + pre-filing
+201,2027-07-14,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:33,unready,False,16,deferred,76.2,Scheduling + pre-filing
+202,2027-07-15,ST/819/2023,EVIDENCE_ACCUSED,Afternoon,15:09,unready,True,1,first,53.2,Scheduling + pre-filing
+203,2027-07-16,ST/459/2023,PLEA,Morning,12:22,absence,True,1,first,43.3,Scheduling + pre-filing
+204,2027-07-19,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,12,deferred,71.0,Scheduling + pre-filing
+206,2027-07-21,ST/652/2020,EVIDENCE_ACCUSED,Afternoon,15:34,substantive,True,0,first,53.1,Scheduling + pre-filing
+208,2027-07-23,ST/459/2023,PLEA,Morning,11:20,substantive,False,0,second,38.5,Scheduling + pre-filing
+208,2027-07-23,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:33,unready,False,17,deferred,76.2,Scheduling + pre-filing
+209,2027-07-26,ST/819/2023,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,2,second,54.4,Scheduling + pre-filing
+211,2027-07-28,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,13,deferred,71.8,Scheduling + pre-filing
+215,2027-08-03,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,18,deferred,76.2,Scheduling + pre-filing
+215,2027-08-03,ST/655/2025,EVIDENCE_COMPLAINANT,Afternoon,14:12,unready,False,1,first,35.9,Scheduling + pre-filing
+216,2027-08-04,ST/819/2023,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,3,deferred,55.2,Scheduling + pre-filing
+218,2027-08-06,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,14,deferred,71.9,Scheduling + pre-filing
+218,2027-08-06,ST/459/2023,EXAMINATION_UNDER_S351_BNSS,Afternoon,15:11,substantive,True,0,first,34.2,Scheduling + pre-filing
+222,2027-08-12,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:30,absence,False,19,deferred,76.2,Scheduling + pre-filing
+222,2027-08-12,ST/655/2025,EVIDENCE_COMPLAINANT,Afternoon,14:51,substantive,False,0,second,37.1,Scheduling + pre-filing
+223,2027-08-13,ST/819/2023,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,4,deferred,55.9,Scheduling + pre-filing
+225,2027-08-17,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,15,deferred,72.0,Scheduling + pre-filing
+225,2027-08-17,ST/387/2020,EVIDENCE_ACCUSED,Afternoon,13:33,absence,False,1,first,51.9,Scheduling + pre-filing
+227,2027-08-19,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,20,deferred,74.9,Scheduling + pre-filing
+230,2027-08-24,ST/819/2023,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,5,deferred,56.7,Scheduling + pre-filing
+230,2027-08-24,ST/387/2020,EVIDENCE_ACCUSED,Afternoon,14:31,substantive,True,0,second,51.5,Scheduling + pre-filing
+232,2027-08-26,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,16,deferred,72.1,Scheduling + pre-filing
+234,2027-08-30,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,21,deferred,76.2,Scheduling + pre-filing
+237,2027-09-02,ST/819/2023,EVIDENCE_ACCUSED,Afternoon,15:23,unready,True,6,deferred,57.5,Scheduling + pre-filing
+239,2027-09-06,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,17,deferred,72.2,Scheduling + pre-filing
+241,2027-09-08,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,22,deferred,76.2,Scheduling + pre-filing
+242,2027-09-09,ST/934/2024,EXAMINATION_UNDER_S351_BNSS,Afternoon,16:10,substantive,True,0,first,32.6,Scheduling + pre-filing
+244,2027-09-13,ST/819/2023,EVIDENCE_ACCUSED,Afternoon,15:01,unready,True,7,deferred,58.3,Scheduling + pre-filing
+246,2027-09-15,ST/481/2020,EVIDENCE_ACCUSED,Afternoon,13:30,unready,False,18,deferred,72.4,Scheduling + pre-filing
+248,2027-09-17,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,13:30,absence,False,23,deferred,76.2,Scheduling + pre-filing
+0,2026-10-01,ST/1230/2025,APPLICATION_REVIEW,Morning,10:45,substantive,False,0,first,32.9,Samay (all levers)
+1,2026-10-05,ST/954/2021,APPLICATION_REVIEW,Morning,10:45,substantive,False,0,first,73.3,Samay (all levers)
+3,2026-10-07,ST/1118/2021,EVIDENCE_ACCUSED,Afternoon,13:30,unclear,False,1,first,43.8,Samay (all levers)
+8,2026-10-14,ST/1118/2021,EVIDENCE_ACCUSED,Afternoon,13:30,substantive,False,0,second,45.1,Samay (all levers)
+9,2026-10-15,ST/831/2022,JUDGEMENT,Afternoon,13:36,substantive,False,1,first,63.8,Samay (all levers)
+12,2026-10-21,ST/344/2023,APPLICATION_REVIEW,Morning,11:03,substantive,False,0,first,48.1,Samay (all levers)
+15,2026-10-26,ST/572/2017,REPORTS,Morning,11:49,unclear,False,1,first,68.6,Samay (all levers)
+16,2026-10-27,ST/954/2021,JUDGEMENT,Afternoon,13:33,substantive,False,1,first,77.8,Samay (all levers)
+16,2026-10-27,ST/219/2017,JUDGEMENT,Afternoon,14:10,substantive,False,1,first,83.9,Samay (all levers)
+19,2026-10-30,ST/655/2025,BAIL,Morning,10:45,substantive,False,0,first,21.2,Samay (all levers)
+20,2026-11-02,ST/572/2017,REPORTS,Morning,12:13,substantive,False,0,second,69.2,Samay (all levers)
+22,2026-11-04,ST/1278/2018,JUDGEMENT,Afternoon,13:33,substantive,False,1,first,75.0,Samay (all levers)
+24,2026-11-06,ST/1283/2022,APPLICATION_REVIEW,Morning,11:07,substantive,False,0,first,62.2,Samay (all levers)
+25,2026-11-10,ST/733/2025,APPLICATION_REVIEW,Morning,10:45,substantive,False,0,first,35.1,Samay (all levers)
+26,2026-11-11,ST/485/2021,JUDGEMENT,Afternoon,15:06,substantive,False,1,first,66.5,Samay (all levers)
+29,2026-11-16,ST/554/2021,APPLICATION_REVIEW,Morning,11:04,substantive,False,0,first,56.2,Samay (all levers)
+32,2026-11-19,ST/434/2022,APPLICATION_REVIEW,Morning,11:03,unclear,False,1,first,51.2,Samay (all levers)
+34,2026-11-23,ST/1261/2017,JUDGEMENT,Afternoon,13:33,substantive,False,1,first,91.3,Samay (all levers)
+35,2026-11-24,ST/572/2017,JUDGEMENT,Afternoon,13:30,substantive,False,1,first,92.6,Samay (all levers)
+37,2026-11-26,ST/434/2022,APPLICATION_REVIEW,Morning,11:01,substantive,False,0,second,58.4,Samay (all levers)
+38,2026-11-27,ST/804/2023,APPLICATION_REVIEW,Morning,10:51,substantive,False,0,first,58.4,Samay (all levers)
+38,2026-11-27,ST/356/2016,JUDGEMENT,Afternoon,13:30,substantive,False,1,first,79.3,Samay (all levers)
+40,2026-12-01,ST/950/2023,APPLICATION_REVIEW,Morning,11:02,substantive,False,0,first,56.2,Samay (all levers)
+44,2026-12-07,ST/554/2021,JUDGEMENT,Afternoon,13:30,substantive,False,1,first,67.1,Samay (all levers)
+45,2026-12-08,ST/1283/2022,JUDGEMENT,Afternoon,13:52,substantive,False,1,first,66.8,Samay (all levers)
+47,2026-12-10,ST/178/2017,REPORTS,Morning,12:03,unready,False,1,first,56.3,Samay (all levers)
+48,2026-12-11,ST/789/2022,JUDGEMENT,Afternoon,15:38,substantive,True,1,first,63.0,Samay (all levers)
+52,2026-12-17,ST/934/2024,PLEA,Morning,11:45,substantive,False,0,first,33.4,Samay (all levers)
+53,2026-12-18,ST/1115/2021,JUDGEMENT,Afternoon,13:33,substantive,False,1,first,61.3,Samay (all levers)
+54,2026-12-21,ST/178/2017,REPORTS,Morning,12:08,absence,False,2,second,57.4,Samay (all levers)
+58,2026-12-25,ST/1156/2024,PLEA,Morning,12:20,substantive,True,0,first,33.4,Samay (all levers)
+58,2026-12-25,ST/804/2023,JUDGEMENT,Afternoon,13:30,substantive,False,1,first,63.0,Samay (all levers)
+59,2026-12-28,ST/178/2017,REPORTS,Morning,12:22,substantive,False,0,deferred,57.3,Samay (all levers)
+66,2027-01-06,ST/514/2023,JUDGEMENT,Afternoon,16:24,substantive,True,1,first,60.3,Samay (all levers)
+68,2027-01-08,ST/617/2022,JUDGEMENT,Afternoon,13:30,substantive,False,1,first,59.1,Samay (all levers)
+72,2027-01-14,ST/950/2023,JUDGEMENT,Afternoon,13:30,substantive,False,1,first,61.0,Samay (all levers)
+73,2027-01-15,ST/990/2025,PLEA,Morning,10:45,substantive,False,0,first,31.3,Samay (all levers)
+74,2027-01-18,ST/367/2023,JUDGEMENT,Afternoon,13:30,substantive,False,1,first,60.4,Samay (all levers)
+76,2027-01-20,ST/1266/2023,JUDGEMENT,Afternoon,16:53,substantive,True,1,first,60.4,Samay (all levers)
+79,2027-01-25,ST/565/2026,COGNIZANCE,Morning,11:55,substantive,False,0,first,27.5,Samay (all levers)
+86,2027-02-03,ST/434/2022,EVIDENCE_COMPLAINANT,Afternoon,13:30,substantive,False,0,first,46.1,Samay (all levers)
+90,2027-02-09,ST/655/2021,REPORTS,Morning,12:16,substantive,False,0,first,46.4,Samay (all levers)
+93,2027-02-12,ST/344/2023,JUDGEMENT,Afternoon,13:50,substantive,False,1,first,60.0,Samay (all levers)
+95,2027-02-16,ST/178/2017,JUDGEMENT,Afternoon,15:29,unclear,False,1,first,81.4,Samay (all levers)
+98,2027-02-19,ST/652/2020,REPORTS,Morning,12:06,unclear,False,1,first,44.7,Samay (all levers)
+100,2027-02-23,ST/434/2022,EVIDENCE_ACCUSED,Afternoon,13:30,substantive,False,0,first,44.0,Samay (all levers)
+100,2027-02-23,ST/178/2017,JUDGEMENT,Afternoon,15:54,unclear,False,2,second,82.0,Samay (all levers)
+104,2027-03-01,ST/652/2020,REPORTS,Morning,12:18,unclear,False,2,second,46.2,Samay (all levers)
+105,2027-03-02,ST/178/2017,JUDGEMENT,Afternoon,15:11,unclear,False,3,deferred,82.5,Samay (all levers)
+105,2027-03-02,ST/655/2021,JUDGEMENT,Afternoon,15:22,unclear,True,1,first,70.8,Samay (all levers)
+110,2027-03-09,ST/178/2017,JUDGEMENT,Afternoon,15:20,unclear,False,4,deferred,83.0,Samay (all levers)
+110,2027-03-09,ST/655/2021,JUDGEMENT,Afternoon,15:25,unclear,False,2,second,71.4,Samay (all levers)
+110,2027-03-09,ST/434/2022,ARGUMENTS,Afternoon,16:55,substantive,True,0,first,41.3,Samay (all levers)
+111,2027-03-10,ST/652/2020,REPORTS,Morning,11:55,absence,False,3,deferred,47.1,Samay (all levers)
+114,2027-03-15,ST/341/2017,EVIDENCE_ACCUSED,Afternoon,13:56,substantive,False,0,first,54.4,Samay (all levers)
+115,2027-03-16,ST/178/2017,JUDGEMENT,Afternoon,15:57,substantive,False,5,deferred,83.6,Samay (all levers)
+115,2027-03-16,ST/655/2021,JUDGEMENT,Afternoon,16:36,substantive,False,3,deferred,72.0,Samay (all levers)
+116,2027-03-17,ST/652/2020,REPORTS,Morning,11:42,substantive,False,0,deferred,47.3,Samay (all levers)
+122,2027-03-25,ST/1284/2018,ARGUMENTS,Afternoon,16:48,substantive,True,0,first,53.5,Samay (all levers)
+124,2027-03-29,ST/341/2017,ARGUMENTS,Afternoon,13:30,substantive,False,0,first,54.2,Samay (all levers)
+125,2027-03-30,ST/434/2022,JUDGEMENT,Afternoon,15:30,substantive,False,1,first,63.0,Samay (all levers)
+128,2027-04-02,ST/652/2020,EVIDENCE_COMPLAINANT,Afternoon,15:36,substantive,False,0,first,54.2,Samay (all levers)
+137,2027-04-15,ST/1284/2018,JUDGEMENT,Afternoon,16:32,substantive,False,1,first,75.2,Samay (all levers)
+139,2027-04-19,ST/341/2017,JUDGEMENT,Afternoon,14:13,unready,False,1,first,75.8,Samay (all levers)
+145,2027-04-27,ST/934/2024,EXAMINATION_UNDER_S351_BNSS,Afternoon,16:54,substantive,True,0,first,30.9,Samay (all levers)
+146,2027-04-28,ST/341/2017,JUDGEMENT,Afternoon,15:08,unready,False,2,second,76.4,Samay (all levers)
+147,2027-04-29,ST/313/2023,ARGUMENTS,Afternoon,13:33,unready,False,1,first,50.8,Samay (all levers)
+153,2027-05-07,ST/341/2017,JUDGEMENT,Afternoon,15:03,absence,False,3,deferred,77.0,Samay (all levers)
+154,2027-05-10,ST/313/2023,ARGUMENTS,Afternoon,13:33,absence,False,2,second,51.9,Samay (all levers)
+158,2027-05-14,ST/341/2017,JUDGEMENT,Afternoon,14:53,substantive,False,4,deferred,70.0,Samay (all levers)
+159,2027-05-17,ST/313/2023,ARGUMENTS,Afternoon,13:33,court,False,3,deferred,51.6,Samay (all levers)
+159,2027-05-17,ST/1156/2024,EXAMINATION_UNDER_S351_BNSS,Afternoon,16:29,substantive,True,0,first,30.7,Samay (all levers)
+161,2027-05-19,ST/313/2023,ARGUMENTS,Afternoon,13:33,court,False,4,deferred,53.2,Samay (all levers)
+163,2027-05-21,ST/313/2023,ARGUMENTS,Afternoon,13:30,substantive,False,0,deferred,53.8,Samay (all levers)
+164,2027-05-24,ST/608/2017,EVIDENCE_ACCUSED,Afternoon,14:05,substantive,False,0,first,69.9,Samay (all levers)
+167,2027-05-27,ST/733/2025,APPEARANCE,Morning,10:45,substantive,False,0,first,28.1,Samay (all levers)
+168,2027-05-28,ST/1118/2021,ARGUMENTS,Afternoon,13:33,unclear,False,1,first,45.4,Samay (all levers)
+173,2027-06-04,ST/1118/2021,ARGUMENTS,Afternoon,13:30,substantive,False,0,second,46.1,Samay (all levers)
+175,2027-06-08,ST/608/2017,ARGUMENTS,Afternoon,13:30,substantive,False,0,first,70.0,Samay (all levers)
+177,2027-06-10,ST/733/2025,PLEA,Morning,11:26,substantive,False,0,first,42.6,Samay (all levers)
+178,2027-06-11,ST/313/2023,JUDGEMENT,Afternoon,16:24,court,False,1,first,76.4,Samay (all levers)
+178,2027-06-11,ST/792/2024,EXAMINATION_UNDER_S351_BNSS,Afternoon,16:29,absence,True,1,first,39.7,Samay (all levers)
+180,2027-06-15,ST/313/2023,JUDGEMENT,Afternoon,16:47,substantive,False,2,second,77.0,Samay (all levers)
+183,2027-06-18,ST/792/2024,EXAMINATION_UNDER_S351_BNSS,Afternoon,14:45,substantive,False,0,second,39.3,Samay (all levers)
+188,2027-06-25,ST/181/2025,PLEA,Morning,12:07,substantive,False,0,first,29.9,Samay (all levers)
+188,2027-06-25,ST/1118/2021,JUDGEMENT,Afternoon,15:20,substantive,False,1,first,68.1,Samay (all levers)
+190,2027-06-29,ST/608/2017,JUDGEMENT,Afternoon,15:20,unready,False,1,first,91.0,Samay (all levers)
+191,2027-06-30,ST/387/2020,EVIDENCE_COMPLAINANT,Afternoon,14:42,absence,False,1,first,50.6,Samay (all levers)
+193,2027-07-02,ST/792/2024,EVIDENCE_COMPLAINANT,Afternoon,16:41,substantive,True,0,first,40.8,Samay (all levers)
+196,2027-07-07,ST/387/2020,EVIDENCE_COMPLAINANT,Afternoon,13:38,substantive,False,0,second,50.0,Samay (all levers)
+197,2027-07-08,ST/608/2017,JUDGEMENT,Afternoon,15:21,unready,False,2,second,91.6,Samay (all levers)
+201,2027-07-14,ST/628/2022,REPORTS,Morning,11:52,absence,False,1,first,45.4,Samay (all levers)
+201,2027-07-14,ST/1230/2025,APPEARANCE,Morning,12:19,substantive,True,0,first,26.8,Samay (all levers)
+201,2027-07-14,ST/934/2024,EVIDENCE_COMPLAINANT,Afternoon,14:18,substantive,False,0,first,30.5,Samay (all levers)
+204,2027-07-19,ST/262/2022,EVIDENCE_ACCUSED,Afternoon,14:02,substantive,False,0,first,45.7,Samay (all levers)
+204,2027-07-19,ST/608/2017,JUDGEMENT,Afternoon,15:33,substantive,False,3,deferred,92.2,Samay (all levers)
+208,2027-07-23,ST/628/2022,REPORTS,Morning,12:28,absence,False,2,second,46.1,Samay (all levers)
+211,2027-07-28,ST/1230/2025,PLEA,Morning,11:20,substantive,False,0,first,41.4,Samay (all levers)
+212,2027-07-29,ST/387/2020,EVIDENCE_ACCUSED,Afternoon,13:39,substantive,False,0,first,50.1,Samay (all levers)
+214,2027-08-02,ST/262/2022,ARGUMENTS,Afternoon,13:30,unready,False,1,first,45.6,Samay (all levers)
+215,2027-08-03,ST/628/2022,REPORTS,Morning,12:26,unclear,False,3,deferred,46.7,Samay (all levers)
+221,2027-08-11,ST/628/2022,REPORTS,Morning,12:13,unclear,False,4,deferred,48.0,Samay (all levers)
+221,2027-08-11,ST/262/2022,ARGUMENTS,Afternoon,13:30,unready,False,2,second,46.3,Samay (all levers)
+226,2027-08-18,ST/628/2022,REPORTS,Morning,12:17,substantive,False,0,deferred,48.6,Samay (all levers)
+228,2027-08-20,ST/262/2022,ARGUMENTS,Afternoon,13:30,substantive,False,0,deferred,47.1,Samay (all levers)
+241,2027-09-08,ST/628/2022,JUDGEMENT,Afternoon,16:50,unclear,False,1,first,72.3,Samay (all levers)
+243,2027-09-10,ST/947/2022,EVIDENCE_COMPLAINANT,Afternoon,14:26,absence,False,1,first,42.9,Samay (all levers)
+243,2027-09-10,ST/262/2022,JUDGEMENT,Afternoon,15:17,substantive,False,1,first,68.3,Samay (all levers)
+246,2027-09-15,ST/628/2022,JUDGEMENT,Afternoon,14:57,substantive,False,2,second,72.9,Samay (all levers)
+248,2027-09-17,ST/697/2021,EVIDENCE_ACCUSED,Afternoon,14:05,absence,False,1,first,43.4,Samay (all levers)
+248,2027-09-17,ST/947/2022,EVIDENCE_COMPLAINANT,Afternoon,14:45,substantive,False,0,second,43.7,Samay (all levers)
