@@ -16,11 +16,14 @@ import agents
 from baseline import BASELINE, baseline_causelist
 from model import ATT_MAX, ATT_MIN, DATA_DIR, OUTCOMES, load_reason_shares, SIDE_TYPES, advance, happens, load_reference, needs_brief, outcome_probs
 from next_date import Calendar, next_date
-from packer import _mins, build_causelist
+from packer import CAUSELIST_COLUMNS, _mins, build_causelist
 from priority import rank
 
 DURATION_SIGMA = 0.35
 DAY_END_GRACE = 10       # minutes a started hearing may run past lunch / the end of the day    # lognormal spread around the reference minutes
+HEARING_COLUMNS = ["date", "case_id", "purpose", "block", "visit", "failure_detail", "promised_date", "slippage_days",
+                   "est_start", "actual_start", "listed", "reached", "happened", "substantive", "minutes_used",
+                   "failure_reason", "is_old", "age_years", "next_date", "next_gap_days", "ref_gap_days"]
 PROCESS_PURPOSES = {"APPEARANCE", "WARRANT"}   # entering these needs a process to return first
 
 
@@ -275,4 +278,8 @@ def run(cases: pd.DataFrame, policy: str, cfg: dict, start: str = "2026-09-24", 
                       "disposed_total": int((s["next_purpose"] == "DISPOSED").sum())})
 
     s.attrs["agents"] = pool   # L3: the advocates as they ended the run (for the agent study / UI)
-    return pd.DataFrame(hearings), pd.DataFrame(daily), pd.concat(lists, ignore_index=True), s
+    h = pd.DataFrame(hearings, columns=HEARING_COLUMNS) if not hearings else pd.DataFrame(hearings)
+    for c in ["listed", "reached", "happened", "substantive"]:
+        h[c] = h[c].fillna(False).astype(bool)
+    cl_all = pd.concat(lists, ignore_index=True) if lists else pd.DataFrame(columns=CAUSELIST_COLUMNS)
+    return h, pd.DataFrame(daily), cl_all, s

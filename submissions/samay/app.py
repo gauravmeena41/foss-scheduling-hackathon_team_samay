@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import ast
 import hashlib
+import os
 import importlib.util
 import sys
 import tempfile
@@ -22,7 +23,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE / "src"))
 
 # Streamlit keeps imported modules alive between reruns; reload the engine so a `git pull` is always picked up.
-for _m in ["score100", "orders", "efiling", "model", "config", "priority", "packer", "next_date", "agents",
+for _m in ["score100", "orders", "efiling", "model", "intake", "config", "priority", "packer", "next_date", "agents",
            "baseline", "metrics", "brief", "simulate"]:
     if _m in sys.modules:
         importlib.reload(sys.modules[_m])
@@ -30,12 +31,17 @@ for _m in ["score100", "orders", "efiling", "model", "config", "priority", "pack
 from brief import build_brief  # noqa: E402
 from config import GUARDRAILS, PRESETS, make_config  # noqa: E402
 from efiling import enrich  # noqa: E402
+from intake import read_upload  # noqa: E402
 from metrics import PERCENT, compute  # noqa: E402
 from model import DATA_DIR, load_cases, validate_cases  # noqa: E402
 from next_date import Calendar  # noqa: E402
 from simulate import DURATION_SIGMA, run  # noqa: E402
 
 st.set_page_config(page_title="Samay — court scheduler", layout="wide")
+
+# Full-width elements: width="stretch" on Streamlit >= 1.50, use_container_width on older releases (e.g. 1.49).
+_ST_VERSION = tuple(int(x) for x in st.__version__.split(".")[:2] if x.isdigit())
+FULL = {"width": "stretch"} if _ST_VERSION >= (1, 50) else {"use_container_width": True}
 
 # Cached results must be thrown away whenever the engine changes, not only when app.py does.
 ENGINE_VERSION = hashlib.md5(b"".join(p.read_bytes() for p in sorted((HERE / "src").glob("*.py")))).hexdigest()[:12]
@@ -47,6 +53,13 @@ START = "2026-09-24"
 
 
 # ---------------------------------------------------------------- inputs
+def save_csv(df: pd.DataFrame, out: Path) -> None:
+    """Write-then-rename, so another session never reads a half-written file."""
+    tmp = out.with_suffix(f".{os.getpid()}.{np.random.randint(1e9)}.tmp")
+    df.to_csv(tmp, index=False)
+    os.replace(tmp, out)
+
+
 @st.cache_data(show_spinner=False)
 def sample_roster(n_cases: int, efiling: bool, engine: str = ENGINE_VERSION) -> str:
     base = DATA_DIR / "roster_sample_100.csv"
@@ -59,36 +72,28 @@ def sample_roster(n_cases: int, efiling: bool, engine: str = ENGINE_VERSION) -> 
         df = gen.generate(n_cases, 42, str(base))
     if efiling:
         df = enrich(df)
-    out = Path(tempfile.gettempdir()) / f"samay_roster_{n_cases}_{int(efiling)}.csv"
-    df.to_csv(out, index=False)
+    out = Path(tempfile.gettempdir()) / f"samay_roster_{n_cases}_{int(efiling)}_{engine}.csv"
+    save_csv(df, out)
     return str(out)
 
 
-def uploaded_roster(file, efiling: bool) -> tuple[str | None, list[str]]:
-    """Save an uploaded .xlsx/.csv as a roster CSV. Returns (path, problems)."""
-    raw = file.getvalue()
-    try:
-        df = pd.read_csv(file) if file.name.lower().endswith(".csv") else pd.read_excel(file)
-    except Exception as e:  # noqa: BLE001
-        return None, [f"Couldn't read the file: {e}"]
-    missing = [c for c in REQUIRED_INPUT if c not in df.columns]
-    if missing:
-        return None, [f"Missing column(s): {', '.join(missing)} — use the sample Excel as the template."]
-    for col in [c for c in df.columns if c.startswith("hearings_")] + ["total_hearings_held"]:
-        df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0).astype(int)
-    for c in [c for c in pd.read_csv(DATA_DIR / "roster_sample_100.csv", nrows=1).columns if c.startswith("hearings_")]:
-        if c not in df.columns:
-            df[c] = 0
-    df["filing_number"] = df.get("filing_number", df["case_number"])
+@st.cache_data(show_spinner="Reading the cases…", max_entries=16)
+def uploaded_roster(name: str, raw: bytes, efiling: bool, engine: str = ENGINE_VERSION):
+    """Save an uploaded .xlsx/.csv as a clean roster CSV. Returns (path, problems, notes)."""
+    hearing_cols = [c for c in pd.read_csv(DATA_DIR / "roster_sample_100.csv", nrows=1).columns
+                    if c.startswith("hearings_")]
+    df, problems, notes = read_upload(name, raw, START, hearing_cols)
+    if df is None:
+        return None, problems, notes
     if efiling:
         df = enrich(df)
-    out = Path(tempfile.gettempdir()) / f"samay_upload_{hashlib.md5(raw).hexdigest()[:10]}_{int(efiling)}.csv"
-    df.to_csv(out, index=False)
+    out = Path(tempfile.gettempdir()) / f"samay_upload_{hashlib.md5(raw).hexdigest()[:10]}_{int(efiling)}_{engine}.csv"
+    save_csv(df, out)
     try:
         problems = validate_cases(load_cases(str(out), as_of=START))
     except Exception as e:  # noqa: BLE001
-        problems = [f"Couldn't build the case model: {e}"]
-    return str(out), problems
+        problems = [f"Couldn't build the case model: {type(e).__name__}: {e}"]
+    return str(out), problems, notes
 
 
 def freeze(cfg: dict) -> tuple:
@@ -140,14 +145,17 @@ with st.sidebar:
     source = st.radio("Cases", ["Sample docket", "Upload Excel / CSV"], horizontal=True)
     efiling_on = st.toggle("E-filing signals (synthetic)", False,
                            help="Addresses, contact known, prepaid summons/e-post, jurisdiction")
-    path, problems = None, []
+    path, problems, notes = None, [], []
     if source == "Upload Excel / CSV":
         up = st.file_uploader("Cases file (.xlsx or .csv)", type=["xlsx", "xls", "csv"])
         if SAMPLE_XLSX.exists():
             st.download_button("Download the sample Excel template", SAMPLE_XLSX.read_bytes(),
                                file_name="sample_cases.xlsx")
+        test_file = os.environ.get("SAMAY_TEST_UPLOAD")      # automated tests only (file_uploader can't be scripted)
+        if up is None and test_file:
+            up = type("Upload", (), {"name": Path(test_file).name, "getvalue": lambda self: Path(test_file).read_bytes()})()
         if up is not None:
-            path, problems = uploaded_roster(up, efiling_on)
+            path, problems, notes = uploaded_roster(up.name, up.getvalue(), efiling_on, ENGINE_VERSION)
     else:
         n_cases = st.select_slider("Roster size", [100, 500, 1000, 3000], value=3000,
                                    help="3,000 = the case study's docket. Smaller rosters leave the baseline court idle.")
@@ -189,13 +197,15 @@ with st.sidebar:
     cost = st.toggle("Cost for on-the-day adjournment", base["adjournment_cost"], disabled=not agents_on)
 
 st.title("Samay — a court day that runs to plan")
+if problems:
+    st.error("The file needs fixing before Samay can schedule it:\n\n" + "\n".join(f"- {p}" for p in problems))
+    st.stop()
 if path is None:
     st.info("Upload the judge's cases as an Excel or CSV file (sidebar) — or switch to the sample docket. "
             "The sample Excel shows the expected columns.")
     st.stop()
-if problems:
-    st.error("The file needs fixing before Samay can schedule it:\n\n" + "\n".join(f"- {p}" for p in problems))
-    st.stop()
+if notes:
+    st.info("Cleaned the upload: " + " ".join(notes))
 
 cfg = make_config(preset, enforce_guardrails=enforce, overbook_factor=overbook, old_case_min_share=old_share,
                   age_weight=age_w, gate_prerequisites=gate, cluster_by_advocate=cluster,
@@ -212,6 +222,11 @@ st.caption(f"One judge · {len(initial):,} cases · {len(sd)} sitting days"
            + (f" ({len(leave)} on leave)" if leave else "")
            + f" · sits 10:30–11:00 → 12:30, lunch, 13:30 → 17:00 (≈{cfg['day_minutes'] / 60:.2f} h) · "
            f"{cfg['changeover_minutes']:g}-min changeover · preset **{preset}** · baseline = list 60 a day, flat 60-day next date")
+if sl.empty:
+    held = initial.loc[~initial["prereq_ok"].astype(bool), "prereq_reason"].value_counts()
+    st.warning("No case could be listed in this period — every open case is waiting on something first"
+               + (": " + ", ".join(f"{k} ({v})" for k, v in held.items()) if len(held) else "")
+               + ". Turn off 'Don't list until prerequisites are met' to list them anyway.")
 if cfg["guardrail_clamped"]:
     st.warning(f"Guardrail: ageing-case share raised to {cfg['old_case_min_share']:.0%}. "
                "Old cases can't be deprioritised below the floor.")
@@ -252,24 +267,24 @@ with tabs[0]:
             f"Packed into the sittings at ~{day1['exp_minutes'].sum():.0f} expected minutes; "
             f"{int(day1['is_old'].sum())} are 4+ years old.",
         ]})
-    st.dataframe(steps, hide_index=True, width="stretch")
+    st.dataframe(steps, hide_index=True, **FULL)
     with st.expander("Step 3-4 in full — every case's 0-100 priority score and why", expanded=False):
         sc = initial[initial["next_purpose"] != "DISPOSED"][
             ["case_id", "age_years", "next_purpose", "visit", "prereq_reason", "score_100", "pts_age", "pts_readiness",
              "pts_disposal", "pts_churn", "pts_urgency"]].rename(columns={
                 "prereq_reason": "held back for", "score_100": "score /100", "pts_age": "age", "pts_readiness": "ready",
                 "pts_disposal": "near end", "pts_churn": "churn", "pts_urgency": "urgent"})
-        st.dataframe(sc.sort_values("score /100", ascending=False).round(1), hide_index=True, width="stretch")
+        st.dataframe(sc.sort_values("score /100", ascending=False).round(1), hide_index=True, **FULL)
     c1, c2 = st.columns(2)
     c1.markdown("**Before — as uploaded**")
     raw = pd.read_csv(path)
     c1.dataframe(raw[["case_number", "filing_date", "purpose_of_next_hearing"]].head(20)
                  .rename(columns={"case_number": "case", "purpose_of_next_hearing": "next purpose"}),
-                 hide_index=True, width="stretch")
+                 hide_index=True, **FULL)
     c2.markdown(f"**After — Samay's causelist for {first_day}**")
     c2.dataframe(day1.join(initial[["score_100"]], on="case_id")[["est_start", "case_id", "purpose", "score_100", "reason"]].head(20)
                  .rename(columns={"est_start": "starts ~", "case_id": "case", "reason": "why listed"}),
-                 hide_index=True, width="stretch")
+                 hide_index=True, **FULL)
     st.download_button("Download the proposed schedule (CSV)", sl.to_csv(index=False).encode(),
                        file_name="proposed_schedule.csv")
 
@@ -291,7 +306,7 @@ with tabs[1]:
         color=alt.Color("purpose:N", legend=alt.Legend(orient="bottom", columns=4)),
         tooltip=["case_id", "purpose", "visit", "est_start", alt.Tooltip("exp_minutes", format=".0f"), "reason"])
     st.markdown(f"**Planned** — each case's expected slot; the gaps between blocks are the {co:g}-min changeovers (hover for details)")
-    st.altair_chart(band + bars, width="stretch")
+    st.altair_chart(band + bars, **FULL)
     ran = sh[(sh["date"] == cday) & sh["listed"] & sh["reached"]].copy()
     if len(ran):
         ran["start"] = ran["actual_start"].map(lambda t: hm(to_min(t)))
@@ -308,7 +323,7 @@ with tabs[1]:
             tooltip=["case_id", "purpose", "visit", "actual_start", alt.Tooltip("minutes_used", format=".0f"), "result", "why"])
         st.markdown("**What happened (simulated)** — actual start between 10:30 and 11:00, "
                     f"{cfg['changeover_minutes']:g}-min changeovers, lunch as a hard break")
-        st.altair_chart(band + bars2, width="stretch")
+        st.altair_chart(band + bars2, **FULL)
         unreached = int((sh["date"] == cday).sum() - len(ran) - (~sh.loc[sh["date"] == cday, "listed"]).sum())
         st.caption(f"{len(ran)} reached · {unreached} not reached before 17:00")
 
@@ -337,7 +352,7 @@ with tabs[2]:
         c2.caption("5+ year cases that moved at least one stage")
         c2.bar_chart(comp["Backlog 5+ advanced"], horizontal=True)
         st.dataframe(comp.style.format({k: "{:.0%}" for k in comp.columns if k in PERCENT} |
-                                       {k: "{:,.1f}" for k in comp.columns if k not in PERCENT}), width="stretch")
+                                       {k: "{:,.1f}" for k in comp.columns if k not in PERCENT}), **FULL)
         st.caption("Fresh-first (Joshi) buys throughput with the old backlog; the guardrail puts a floor under that trade.")
 
 # ---------------------------------------------------------------- backlog & drift
@@ -407,7 +422,7 @@ with tabs[5]:
     view = today[["keep", "block", "est_start", "case_id", "purpose", "visit", "score_100", "age_years",
                   "p_sub_eff", "exp_minutes", "reason"]]
     edited = st.data_editor(
-        view, hide_index=True, width="stretch", disabled=[c for c in view.columns if c != "keep"],
+        view, hide_index=True, **FULL, disabled=[c for c in view.columns if c != "keep"],
         column_config={"score_100": st.column_config.ProgressColumn("priority /100", min_value=0, max_value=100, format="%.0f"),
                        "est_start": "starts ~", "age_years": st.column_config.NumberColumn("age (yrs)", format="%.1f"),
                        "p_sub_eff": st.column_config.ProgressColumn("P(moves forward)", min_value=0, max_value=1,
@@ -463,7 +478,7 @@ with tabs[5]:
             t += r["exp_minutes"]
         approved = pd.DataFrame(rows_out)
         st.success(f"Approved: {len(approved)} cases for {day}.")
-        st.dataframe(approved, hide_index=True, width="stretch")
+        st.dataframe(approved, hide_index=True, **FULL)
         st.download_button("Download the approved causelist (CSV)", approved.to_csv(index=False).encode(),
                            file_name=f"causelist_{day}.csv")
 
@@ -485,7 +500,7 @@ with tabs[7]:
     st.caption(f"{len(risk):,} open cases need the judge's attention")
     st.dataframe(risk[["case_id", "age_years", "next_purpose", "why", "waiting_on", "hearings_in_stage",
                        "adjournments_est", "remaining_hearings_est", "times_listed", "due_date"]]
-                 .sort_values("age_years", ascending=False), hide_index=True, width="stretch")
+                 .sort_values("age_years", ascending=False), hide_index=True, **FULL)
 
 # ---------------------------------------------------------------- advocates
 with tabs[8]:
@@ -497,7 +512,7 @@ with tabs[8]:
                                                  free_adjournments=("free_adjournments", "sum"))
         st.caption("Advocate agents at the end of the run under the current levers "
                    "(start: dilatory 45% prepared, overloaded 65%, diligent 90%).")
-        st.dataframe(g.style.format({"prepared": "{:.0%}", "shows_up": "{:.0%}"}), width="stretch")
+        st.dataframe(g.style.format({"prepared": "{:.0%}", "shows_up": "{:.0%}"}), **FULL)
         on_day = int((sh["failure_reason"] == "preparation").sum())
         early = int((~sh["listed"]).sum())
         st.metric("'Not prepared' discovered on the day vs admitted early", f"{on_day:,} vs {early:,}")
@@ -516,7 +531,7 @@ with tabs[9]:
                                                             "Wasted trips", "Reach rate"]}})
         rk = pd.DataFrame(rk).set_index("ranker")
         st.dataframe(rk.style.format({"Backlog 5+ advanced": "{:.0%}", "Reach rate": "{:.0%}", "Effective / day": "{:.1f}"}),
-                     width="stretch")
+                     **FULL)
     r = HERE / "rankers.md"
     if r.exists():
         st.markdown(r.read_text())
@@ -524,7 +539,7 @@ with tabs[9]:
 # ---------------------------------------------------------------- all metrics
 with tabs[10]:
     st.dataframe(pd.DataFrame({"metric": list(sm), "baseline": [fmt(k, bm[k]) for k in sm],
-                               "samay": [fmt(k, sm[k]) for k in sm]}), hide_index=True, width="stretch")
+                               "samay": [fmt(k, sm[k]) for k in sm]}), hide_index=True, **FULL)
     res = HERE / "results.md"
     if res.exists():
         st.markdown(res.read_text())

@@ -168,7 +168,8 @@ def load_cases(roster_path: Path | str | None = None, as_of: str = "2026-09-24",
                data_dir: Path = DATA_DIR) -> pd.DataFrame:
     """Roster CSV -> DataFrame[Case]. TODO(Dev 1): richer parsing of last_hearing_summary."""
     roster_path = Path(roster_path) if roster_path else data_dir / "roster_sample_100.csv"
-    r = pd.read_csv(roster_path, parse_dates=["filing_date"])
+    r = pd.read_csv(roster_path, parse_dates=["filing_date"],
+                    dtype={"case_number": str, "advocate_id": str, "party_id": str, "filing_number": str})
     ref = load_reference(data_dir)
     as_of_ts = pd.Timestamp(as_of)
 
