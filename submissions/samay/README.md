@@ -9,6 +9,7 @@ python run.py --roster <3000.csv> --agents --efiling
 python results.py --roster <3000.csv> --seeds 10    # mean ± sd over seeds -> results.md
 python ablation.py --roster <3000.csv>              # what each lever adds, by stage
 python agents_study.py --roster <3000.csv>          # L3: how advocates respond to incentives
+python -m pytest tests -q                           # engine checks (pip install pytest)
 streamlit run app.py                                # dashboard
 ```
 

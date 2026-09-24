@@ -128,6 +128,7 @@ python run.py --roster /tmp/roster_3000.csv --agents
 python results.py --roster /tmp/roster_3000.csv --seeds 10
 python ablation.py --roster /tmp/roster_3000.csv
 python agents_study.py --roster /tmp/roster_3000.csv
+pip install pytest && python -m pytest tests -q   # 6 engine checks
 streamlit run app.py                            # then: Upload Excel / CSV -> samples/sample_docket_3000.xlsx
 ```
 
