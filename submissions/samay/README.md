@@ -22,7 +22,7 @@ streamlit run app.py                   # dashboard
 | `src/next_date.py` | D | Dev 1 | Gap by next purpose × today's outcome; process → return date; weekly carry-forward | Load-aware dates (skip full days) |
 | `src/config.py` | E | Dev 3 | Defaults, guardrail floor, presets: Recommended / Sehgal / Dimakar / Joshi | Tune presets; leave dates in UI |
 | `src/simulate.py`, `baseline.py`, `metrics.py` | F | Dev 2 | Day-by-day sim, lognormal durations, outcomes drawn from the failure data, 13 metrics | Monte Carlo over seeds (mean ± spread); utilisation overrun cap |
-| `src/agents.py` | L3 | Dev 2 | Advocate attendance multiplier (clash / slot / clustering) | Personalities, incentives, feedback loop |
+| `src/agents.py` + `agents_study.py` | L3 | — | **Done.** Advocate agents (diligent / overloaded / dilatory) decide to appear, be prepared, admit "need time"; respond to slots, clustering, reminders, on-the-day adjournment cost; learn from outcomes | — |
 | `src/brief.py` | Aditi's steer | Dev 1 → Dev 3 | One-page case brief: journey, last order, who was absent, per-stage readiness checklist | Seed from e-filing synopsis fields; "agreed / disputed" section |
 | `simulate.confirm_readiness` | Aditi's steer | Dev 2 | Advocates confirm ready / need time 2 days before; freed slots refilled | Make it the L3 agent's decision (personality, incentives) |
 | `app.py` | G | Dev 3 | KPI deltas vs baseline, backlog trend, causelist, at-risk list, all rule toggles | "Move these cases" what-if, 3-judge side-by-side, polish |

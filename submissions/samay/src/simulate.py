@@ -57,12 +57,13 @@ def init_state(cases: pd.DataFrame, start: pd.Timestamp, ref: pd.DataFrame, rng,
     return s
 
 
-def _draw(s, cid, day, sim_cfg, rng, mult=1.0):
-    probs = outcome_probs(s.loc[cid], sim_cfg, s.at[cid, "ready_date"] <= day, attendance_mult=mult)
+def _draw(s, cid, day, sim_cfg, rng, mult=1.0, prep_mult=1.0):
+    probs = outcome_probs(s.loc[cid], sim_cfg, s.at[cid, "ready_date"] <= day, attendance_mult=mult,
+                          prep_mult=prep_mult)
     return rng.choice(OUTCOMES, p=[probs[o] for o in OUTCOMES])
 
 
-def confirm_readiness(ranked, s, day, cfg, sim_cfg, rng):
+def confirm_readiness(ranked, s, day, cfg, sim_cfg, rng, pool=None):
     """Two days before: advocates of the top candidates say 'ready' or 'need time'.
 
     Outcomes are drawn now (the same draw is used on the day, so nothing is double-counted).
@@ -76,12 +77,17 @@ def confirm_readiness(ranked, s, day, cfg, sim_cfg, rng):
         if seen > window:
             break
         seen += em
-        mult = agents.attendance_multiplier(rng, True, 1, bool(cfg.get("cluster_by_advocate"))) \
-            if cfg.get("agents") else 1.0
-        out = _draw(s, cid, day, sim_cfg, rng, mult)
-        if out == "preparation" and rng.random() < cfg["confirm_reveals_prep"]:
+        reveal_prep, reveal_abs = cfg["confirm_reveals_prep"], cfg["confirm_reveals_absence"]
+        att_m, prep_m = 1.0, 1.0
+        if pool is not None:                      # L3: the advocate decides how honest to be
+            adv = s.at[cid, "advocate_id"]
+            att_m, prep_m = pool.multipliers(adv, rng, sim_cfg, True, bool(cfg.get("cluster_by_advocate")), 1)
+            reveal_prep = pool.get(adv).honest_now(sim_cfg)
+            reveal_abs = 0.6 * reveal_prep
+        out = _draw(s, cid, day, sim_cfg, rng, att_m, prep_m)
+        if out == "preparation" and rng.random() < reveal_prep:
             declined.append((cid, "need time (not prepared)"))
-        elif out == "attendance" and rng.random() < cfg["confirm_reveals_absence"]:
+        elif out == "attendance" and rng.random() < reveal_abs:
             declined.append((cid, "need time (party unavailable)"))
         else:
             predrawn[cid] = out
@@ -108,7 +114,10 @@ def run(cases: pd.DataFrame, policy: str, cfg: dict, start: str = "2026-09-24", 
     if policy == "samay":   # blocked cases get a tentative date at the expected process return
         blocked = ~s["prereq_ok"].astype(bool)
         s.loc[blocked, "due_date"] = [cal.on_or_after(d) for d in s.loc[blocked, "ready_est"]]
-    sim_cfg = cfg if policy == "samay" else {**cfg, "summary_mandate": False, "agents": cfg.get("agents")}
+    # the baseline court has none of our levers (the agents, if on, exist in both worlds)
+    sim_cfg = cfg if policy == "samay" else {**cfg, "summary_mandate": False, "reminders": False,
+                                             "adjournment_cost": False, "readiness_confirmation": False}
+    pool = agents.AgentPool(cases["advocate_id"], seed) if cfg.get("agents") else None
     blocks = {b["name"]: _mins(b["start"]) for b in cfg["blocks"]}
 
     hearings, daily, lists = [], [], []
@@ -121,7 +130,7 @@ def run(cases: pd.DataFrame, policy: str, cfg: dict, start: str = "2026-09-24", 
         else:
             ranked = rank(s, day, cfg)
             if cfg.get("readiness_confirmation"):
-                ranked, predrawn, declined = confirm_readiness(ranked, s, day, cfg, sim_cfg, rng)
+                ranked, predrawn, declined = confirm_readiness(ranked, s, day, cfg, sim_cfg, rng, pool)
             cl = build_causelist(ranked, day, cfg)
         lists.append(cl)
         used, clock, n = 0.0, None, dict.fromkeys(["listed", "reached", "happened", "substantive"], 0)
@@ -159,12 +168,15 @@ def run(cases: pd.DataFrame, policy: str, cfg: dict, start: str = "2026-09-24", 
             if used + s.at[cid, "est_minutes"] > cfg["day_minutes"] + DAY_END_GRACE:
                 outcome = "unreached"
             else:
-                mult = 1.0
-                if cfg.get("agents"):
-                    mult = agents.attendance_multiplier(
-                        rng, has_slot=(policy == "samay"), same_advocate_today=adv_count.get(row["advocate_id"], 1),
-                        clustered=bool(cfg.get("cluster_by_advocate")) and policy == "samay")
-                outcome = predrawn[cid] if cid in predrawn else _draw(s, cid, day, sim_cfg, rng, mult)
+                att_m, prep_m = 1.0, 1.0
+                if pool is not None:
+                    att_m, prep_m = pool.multipliers(
+                        row["advocate_id"], rng, sim_cfg, has_slot=(policy == "samay"),
+                        clustered=bool(cfg.get("cluster_by_advocate")) and policy == "samay",
+                        n_today=adv_count.get(row["advocate_id"], 1))
+                outcome = predrawn[cid] if cid in predrawn else _draw(s, cid, day, sim_cfg, rng, att_m, prep_m)
+                if pool is not None:
+                    pool.get(row["advocate_id"]).learn(outcome, sim_cfg)
                 est = s.at[cid, "est_minutes"]
                 if sim_cfg.get("summary_mandate") and needs_brief(s.loc[cid]):
                     est *= 1 - cfg.get("brief_time_saving", 0.0)   # judge isn't re-reading the file
@@ -229,4 +241,5 @@ def run(cases: pd.DataFrame, policy: str, cfg: dict, start: str = "2026-09-24", 
                       "open_5plus": int((open_["age_years"] >= 5).sum()),
                       "disposed_total": int((s["next_purpose"] == "DISPOSED").sum())})
 
+    s.attrs["agents"] = pool   # L3: the advocates as they ended the run (for the agent study / UI)
     return pd.DataFrame(hearings), pd.DataFrame(daily), pd.concat(lists, ignore_index=True), s

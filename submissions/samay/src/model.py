@@ -262,7 +262,8 @@ def validate_cases(df: pd.DataFrame) -> list[str]:
 OUTCOMES = ["substantive", "attendance", "preparation", "process", "other"]
 
 
-def outcome_probs(case, cfg: dict, prereq_ready: bool, attendance_mult: float = 1.0) -> dict:
+def outcome_probs(case, cfg: dict, prereq_ready: bool, attendance_mult: float = 1.0,
+                  prep_mult: float = 1.0) -> dict:
     """P(each outcome) for one listing of `case`. Shared by the scorer and the simulator.
 
     - prerequisites not ready -> the hearing fails on process, full stop
@@ -275,7 +276,7 @@ def outcome_probs(case, cfg: dict, prereq_ready: bool, attendance_mult: float = 
     ps = case["p_substantive"]
     q = 1 - ps
     att = q * case["fail_attendance"] * case.get("att_mult", 1.0) * attendance_mult
-    prep = q * case["fail_preparation"] * case.get("prep_mult", 1.0)
+    prep = q * case["fail_preparation"] * case.get("prep_mult", 1.0) * prep_mult
     other = q * case["fail_other"]
     if cfg.get("summary_mandate") and needs_brief(case):
         moved = prep * cfg.get("summary_prep_reduction", 0.5)

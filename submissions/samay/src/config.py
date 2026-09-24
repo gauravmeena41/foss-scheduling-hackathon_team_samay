@@ -37,7 +37,9 @@ DEFAULT_CONFIG = {
     ],
     "use_efiling_signals": True,      # predict process-return dates per case when e-filing data exists
     "leave_dates": [],                # judge's personal leave (YYYY-MM-DD)
-    "agents": False,                  # L3: advocate agents decide to appear / seek adjournment
+    "agents": False,                  # L3: advocate agents (personalities) decide, and learn from the court
+    "reminders": True,                # SMS/WhatsApp reminder of next steps 2 days before (acts on agents)
+    "adjournment_cost": True,         # costs for adjourning ON THE DAY; free if admitted at the readiness check
 }
 
 PRESETS = {

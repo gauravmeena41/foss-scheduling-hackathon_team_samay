@@ -31,7 +31,19 @@ Samay lists only the hearings that are ready to happen and likely to move the ca
 ## 4. Justify your complexity level
 
 - **L2:** sampled durations; outcome distributions per hearing type from the failure data; prerequisite readiness that changes over time; overbooking factor, guardrail, clustering, weekly carry-forward, mandatory summaries as rules a judge toggles, with the dashboard showing the impact against the baseline immediately.
-- **L3-lite:** `src/agents.py` — advocates who may have a matter in another courtroom; a real slot and clustering change whether they turn up. _TODO(Dev 2): describe final agent._
+- **L3 (behavioural):** `src/agents.py` — every advocate is an agent with a personality (diligent 30% / overloaded 50% / dilatory 20%: how often prepared, how often they turn up, how honest at the readiness check, how often listed in another courtroom the same day). They **decide** whether to appear, whether they're prepared, and whether to admit "need time" two days ahead. The court's policy changes those decisions: a real time slot and clustering cut the clash penalty; reminders raise preparedness; a cost for adjourning *on the day* (admitting early is free) makes dilatory advocates more honest and better prepared. Outcomes **feed back**: an adjournment that cost nothing makes a non-diligent advocate prepare less next time; one that cost something makes them prepare more; a hearing that went ahead on its date raises their trust in dates. Multipliers are relative to the population, so with no levers the court-wide rates match the observed data.
+
+  `python agents_study.py` (3,000 cases, 1,154 advocate agents):
+
+  | Scenario | Effective / day | On-day "not prepared" | Admitted early | Wasted trips |
+  |---|---|---|---|---|
+  | Baseline court | 13.7 | 305 | 0 | 2,471 |
+  | Samay, no incentives | 26.2 | 69 | 273 | 1,015 |
+  | + reminders | 26.5 | 67 | 214 | 986 |
+  | + cost for on-the-day adjournment | 26.0 | 42 | 381 | 1,035 |
+  | + both | 27.0 | 24 | 291 | 1,014 |
+
+  The cost doesn't raise throughput much by itself; it moves unpreparedness from the courtroom to the readiness check, where the slot can still be refilled. Learning drift is small in 60 days (each advocate appears only a handful of times) but has the right sign.
 
 ## 5. Results
 
