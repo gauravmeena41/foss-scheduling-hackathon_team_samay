@@ -215,6 +215,15 @@ def run(cases: pd.DataFrame, policy: str, cfg: dict, start: str = "2026-09-24", 
                 n["substantive"] += outcome == "substantive"
 
             # --- state update ---
+            # inputs to the 0-100 score move with the case
+            if outcome != "unreached":
+                s.at[cid, "total_hearings"] += 1
+            if outcome == "attendance":
+                s.at[cid, "attendance_factor"] = 0.8
+            elif happens(outcome):
+                s.at[cid, "attendance_factor"] = 1.0
+            if outcome == "substantive":
+                s.at[cid, "urgency_value"] = 0.0
             # attendance history: a no-show makes the next no-show likelier, a hearing less so
             if outcome == "preparation":                  # unprepared again -> likelier next time too
                 s.at[cid, "prep_mult"] = min(2.0, s.at[cid, "prep_mult"] * 1.2)

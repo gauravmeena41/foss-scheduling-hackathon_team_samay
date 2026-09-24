@@ -106,6 +106,10 @@ def build_brief(case) -> str:
         "",
         "**Flags:** " + (" · ".join(flags) if flags else "none"),
         "",
+        (f"**Priority:** {case['score_100']:.0f}/100 — age {case['pts_age']:.0f} · ready {case['pts_readiness']:.0f} · "
+         f"near the end {case['pts_disposal']:.0f} · churn {case['pts_churn']:.0f} · court-set urgency {case['pts_urgency']:.0f}"
+         if "score_100" in case else ""),
+        "",
         f"**Waiting on:** {case.get('waiting_on', 'none')} · last order classified as "
         f"*{str(case.get('last_event', 'listed')).replace('_', ' ')}* · "
         f"≈{case.get('remaining_hearings_est', 0):.0f} hearings to disposal",

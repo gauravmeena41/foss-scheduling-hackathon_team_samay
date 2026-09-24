@@ -156,6 +156,10 @@ with st.sidebar:
 
     st.header("Judge's rules")
     preset = st.selectbox("Preset", list(PRESETS))
+    ranking = st.radio("Ranking", ["hybrid", "samay", "teammate"], horizontal=True,
+                       format_func={"hybrid": "Hybrid", "samay": "Value/min", "teammate": "0-100 score"}.get,
+                       help="Hybrid = 0-100 priority × P(moves forward) ÷ minutes (default). "
+                            "Value/min = most effective hearings. 0-100 score = most disposals and 5+ yr movement.")
     base = make_config(preset, enforce_guardrails=False)
     overbook = st.slider("Overbooking factor", 0.8, 2.0, float(base["overbook_factor"]), 0.05,
                          help="Listed expected minutes ÷ sitting minutes (~315). Above 1 = planned no-shows.")
@@ -188,6 +192,7 @@ cfg = make_config(preset, enforce_guardrails=enforce, overbook_factor=overbook, 
                   age_weight=age_w, gate_prerequisites=gate, cluster_by_advocate=cluster,
                   carry_forward_weekly=weekly, summary_mandate=summary, readiness_confirmation=confirm,
                   agents=agents_on, reminders=reminders, adjournment_cost=cost, changeover_minutes=changeover,
+                  ranking=ranking,
                   leave_dates=[str(d) for d in leave])
 key = freeze(cfg)
 bh, bd, bl, bs, bm, _ = simulate(path, "baseline", key, days, seed)
@@ -214,7 +219,7 @@ for i, (k, lower_better) in enumerate(KEY):
     cols[i % 4].metric(k, fmt(k, sm[k]), f"{d} vs baseline", delta_color="inverse" if lower_better else "normal")
 
 tabs = st.tabs(["Workflow", "Calendar", "Three judges", "Backlog & drift", "Why hearings fail",
-                "Causelist what-if", "Case brief", "At-risk cases", "Advocates (L3)", "All metrics"])
+                "Causelist what-if", "Case brief", "At-risk cases", "Advocates (L3)", "Rankers", "All metrics"])
 
 # ---------------------------------------------------------------- workflow
 with tabs[0]:
@@ -232,7 +237,9 @@ with tabs[0]:
             "Every row checked against the case schema (validate_cases).",
             f"{initial['last_event'].nunique()} kinds of order recognised; {int((initial['next_purpose'] == 'DISPOSED').sum())} already disposed.",
             "Waiting on: " + ", ".join(f"{k} {v}" for k, v in blocked["prereq_reason"].value_counts().items()),
-            "Score = age × P(moves forward) ÷ expected minutes (+ part-heard, purpose-day boosts).",
+            {"hybrid": "0-100 priority (age, readiness, near the end, churn, urgency) × P(moves forward) ÷ minutes; bail first; overdue 30+ days forced in.",
+             "samay": "Age × P(moves forward) ÷ expected minutes (+ part-heard, purpose-day boosts).",
+             "teammate": "0-100 priority: age 35, readiness 25, near the end 15, churn 15, urgency 10."}[ranking],
             f"Packed into the sittings at ~{day1['exp_minutes'].sum():.0f} expected minutes; "
             f"{int(day1['is_old'].sum())} are 4+ years old.",
         ]})
@@ -244,7 +251,7 @@ with tabs[0]:
                  .rename(columns={"case_number": "case", "purpose_of_next_hearing": "next purpose"}),
                  hide_index=True, width="stretch")
     c2.markdown(f"**After — Samay's causelist for {first_day}**")
-    c2.dataframe(day1[["est_start", "case_id", "purpose", "visit", "reason"]].head(20)
+    c2.dataframe(day1.join(initial[["score_100"]], on="case_id")[["est_start", "case_id", "purpose", "score_100", "reason"]].head(20)
                  .rename(columns={"est_start": "starts ~", "case_id": "case", "reason": "why listed"}),
                  hide_index=True, width="stretch")
     st.download_button("Download the proposed schedule (CSV)", sl.to_csv(index=False).encode(),
@@ -290,7 +297,7 @@ with tabs[1]:
 with tabs[2]:
     st.subheader("Same docket, each judge's rules — and what they cost")
     rows = []
-    shared = dict(agents=agents_on, changeover_minutes=changeover, leave_dates=[str(d) for d in leave])
+    shared = dict(agents=agents_on, changeover_minutes=changeover, leave_dates=[str(d) for d in leave], ranking=ranking)
     for name in PRESETS:
         for guarded in ([True, False] if "Joshi" in name else [True]):
             c = make_config(name, enforce_guardrails=guarded, **shared)
@@ -373,11 +380,13 @@ with tabs[5]:
     today = today.join(initial[["waiting_on", "readiness", "last_event"]], on="case_id")
     today.insert(0, "keep", True)
     st.caption("Untick cases to see what moving them does to the day. Expected figures from the case model.")
-    view = today[["keep", "block", "est_start", "case_id", "purpose", "visit", "advocate_id", "age_years",
+    today = today.join(initial[["score_100"]], on="case_id")
+    view = today[["keep", "block", "est_start", "case_id", "purpose", "visit", "score_100", "age_years",
                   "p_sub_eff", "exp_minutes", "reason"]]
     edited = st.data_editor(
         view, hide_index=True, width="stretch", disabled=[c for c in view.columns if c != "keep"],
-        column_config={"est_start": "starts ~", "age_years": st.column_config.NumberColumn("age (yrs)", format="%.1f"),
+        column_config={"score_100": st.column_config.ProgressColumn("priority /100", min_value=0, max_value=100, format="%.0f"),
+                       "est_start": "starts ~", "age_years": st.column_config.NumberColumn("age (yrs)", format="%.1f"),
                        "p_sub_eff": st.column_config.ProgressColumn("P(moves forward)", min_value=0, max_value=1,
                                                                     format="percent"),
                        "exp_minutes": st.column_config.NumberColumn("exp. min", format="%.0f"),
@@ -438,8 +447,26 @@ with tabs[8]:
         early = int((~sh["listed"]).sum())
         st.metric("'Not prepared' discovered on the day vs admitted early", f"{on_day:,} vs {early:,}")
 
-# ---------------------------------------------------------------- all metrics
+# ---------------------------------------------------------------- rankers
 with tabs[9]:
+    st.subheader("Three ways to rank the same docket")
+    st.markdown("**Value per minute** (ours) maximises hearings that move a case forward. **0-100 priority** "
+                "(teammate) maximises cases finished and old-case movement. **Hybrid** — the teammate's priority, "
+                "counted only if the hearing moves the case, per minute — keeps most of both.")
+    rk = []
+    for mode, label in [("samay", "Value per minute"), ("teammate", "0-100 priority"), ("hybrid", "Hybrid (default)")]:
+        _, _, _, _, m, _ = simulate(path, "samay", freeze(dict(cfg, ranking=mode)), days, seed)
+        rk.append({"ranker": label, **{k: m[k] for k in ["Effective / day", "Backlog 5+ advanced", "Disposed",
+                                                        "Wasted trips", "Reach rate"]}})
+    rk = pd.DataFrame(rk).set_index("ranker")
+    st.dataframe(rk.style.format({"Backlog 5+ advanced": "{:.0%}", "Reach rate": "{:.0%}", "Effective / day": "{:.1f}"}),
+                 width="stretch")
+    r = HERE / "rankers.md"
+    if r.exists():
+        st.markdown(r.read_text())
+
+# ---------------------------------------------------------------- all metrics
+with tabs[10]:
     st.dataframe(pd.DataFrame({"metric": list(sm), "baseline": [fmt(k, bm[k]) for k in sm],
                                "samay": [fmt(k, sm[k]) for k in sm]}), hide_index=True, width="stretch")
     res = HERE / "results.md"

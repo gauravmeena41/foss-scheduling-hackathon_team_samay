@@ -64,3 +64,15 @@ def test_simulation_beats_baseline_on_effective_hearings():
     _, bd, _, _ = run(cases, "baseline", cfg, days=20)
     _, sd, _, _ = run(cases, "samay", cfg, days=20)
     assert sd["substantive"].sum() > bd["substantive"].sum()
+
+
+def test_teammate_score_matches_worked_examples():
+    c = load_cases().set_index("case_id")
+    for cid, expected in {"ST/1261/2017": 91.3, "ST/608/2017": 69.9, "ST/7/2025": 12.5, "ST/293/2026": 7.2}.items():
+        assert abs(c.at[cid, "score_100"] - expected) < 0.05
+
+
+def test_age_weight_never_below_floor():
+    import score100
+    assert score100.weights({"age": 0})["age"] == score100.AGE_WEIGHT_FLOOR
+    assert abs(sum(score100.weights({"age": 0}).values()) - 100) < 1e-9

@@ -20,7 +20,11 @@ DEFAULT_CONFIG = {
     "day_minutes": 315,                   # expected sitting minutes (derived in make_config)
     "overbook_factor": 1.15,          # list up to 115% of the day's EXPECTED minutes
     "mention_minutes": 2,             # time a non-happening listing still costs the court
-    "changeover_minutes": 2,          # average gap between hearings: calling the case, parties stepping up
+    "changeover_minutes": 2,
+    "ranking": "hybrid",              # samay (value per minute) | teammate (0-100 priority) | hybrid (priority per minute)
+    "bail_liberty_lane": True,        # bail matters always listed first (personal liberty)
+    "max_overdue_days": 30,           # no case waits forever: overdue this long -> forced onto the list ...
+    "overdue_share": 0.2,             # ... using at most this share of the day          # average gap between hearings: calling the case, parties stepping up
     "old_case_min_share": 0.50,       # clamped to GUARDRAILS floor (tuned: beats baseline on 4+ and 5+)
     "age_weight": 0.35,               # score multiplier per year of age
     "gate_prerequisites": True,       # don't list cases whose process hasn't returned
@@ -66,7 +70,8 @@ PRESETS = {
     },
     "Justice Joshi (fresh first)": {
         "old_case_min_share": 0.0,    # he'd like 0 -> guardrail clamps to the floor
-        "age_weight": -0.15,          # prefers young cases
+        "age_weight": -0.15,          # prefers young cases (ranking "samay")
+        "score_weights": {"age": 0, "readiness": 45, "disposal": 25, "churn": 5, "urgency": 10},  # age floor -> 20
         "cluster_by_advocate": False,
     },
 }

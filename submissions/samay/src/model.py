@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 
 import efiling
+import score100
 from orders import classify
 
 DATA_DIR = Path(__file__).resolve().parents[3] / "data"
@@ -69,6 +70,8 @@ CASE_COLUMNS = [
     "last_event", "waiting_on", "readiness", "prep_mult", "part_heard", "last_chance", "non_compliance",
     "absent_parties", "adjournments_est", "remaining_hearings_est", "remaining_minutes_est", "data_note",
     "process_wait_mult", "has_efiling", "visit",
+    "full_points_age", "attendance_factor", "urgency_value",
+    "pts_age", "pts_readiness", "pts_disposal", "pts_churn", "pts_urgency", "score_100",
 ]
 
 CASE_SCHEMA = {
@@ -96,6 +99,9 @@ CASE_SCHEMA = {
     "process_wait_mult": "case-specific multiplier on summons/warrant return time from e-filing signals (1 = no signals)",
     "has_efiling": "True when the roster carries e-filing columns (efiling.EFILING_COLUMNS)",
     "visit": "'first at stage' or 'repeat #N' - how many times this purpose has been heard before",
+    "score_100, pts_*": "teammate's 0-100 priority score and its five factor points (score100.py)",
+    "full_points_age": "age at which a case earns full age points - computed once per roster",
+    "attendance_factor, urgency_value": "inputs to the 0-100 score (who was present; 'last chance' / 'for judgment')",
 }
 
 # Stages every case passes through (delay condonation and warrant are conditional)
@@ -231,6 +237,13 @@ def load_cases(roster_path: Path | str | None = None, as_of: str = "2026-09-24",
     df["last_heard"] = pd.NaT
     df["last_summary"] = summary
     df["visit"] = visit_label(df["hearings_in_stage"]).values
+    # teammate's 0-100 priority score (score100.py); full-points age fixed once for this roster
+    df["full_points_age"] = score100.full_points_age(df["age_years"])
+    df["attendance_factor"] = [score100.attendance_factor(t, p) for t, p in zip(summary, df["next_purpose"])]
+    df["urgency_value"] = summary.map(score100.urgency_value).values
+    pts = score100.score(df, ref)
+    for c in pts.columns:
+        df[c] = pts[c].values
     stages_done = (r[[c for c in r.columns if c.startswith("hearings_")]] > 0).sum(axis=1)
     df["adjournments_est"] = (df["total_hearings"] - stages_done).clip(lower=0).values
     rem = [remaining_work(p, st, n, ref) for p, st, n in zip(df["next_purpose"], df["stage"], df["hearings_in_stage"])]

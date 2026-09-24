@@ -37,12 +37,32 @@ def select(ranked: pd.DataFrame, cfg: dict) -> pd.DataFrame:
     # age preference (e.g. fresh-first) can't starve the 5+ year cases inside the quota.
     guard_w = GUARDRAILS["guardrail_age_weight"]
     old_part = ranked[ranked["is_old"]]
-    judge_age = (1 + cfg["age_weight"] * old_part["age_years"]).clip(lower=0.1)
-    guard_age = (1 + max(guard_w, cfg["age_weight"]) * old_part["age_years"])
-    # keep every other signal in the judge's score (readiness, part-heard, purpose days); swap only the age term
-    guard_order = (old_part["score"] / judge_age * guard_age).sort_values(ascending=False).index
+    if cfg.get("ranking", "hybrid") == "samay":
+        judge_age = (1 + cfg["age_weight"] * old_part["age_years"]).clip(lower=0.1)
+        guard_age = (1 + max(guard_w, cfg["age_weight"]) * old_part["age_years"])
+        # keep every other signal in the judge's score (readiness, part-heard, purpose days); swap only the age term
+        guard_order = (old_part["score"] / judge_age * guard_age).sort_values(ascending=False).index
+    else:   # the 0-100 score already carries a fixed 35-point age factor
+        guard_order = old_part["score"].sort_values(ascending=False).index
     chosen, taken, used = [], set(), 0.0
+    # Liberty lane (teammate's R3): bail matters are always listed, ahead of everything else
+    if cfg.get("bail_liberty_lane", True):
+        for k in ranked.index[ranked["next_purpose"] == "BAIL"]:
+            m = ranked.at[k, "exp_minutes"]
+            if used + m <= cap:
+                chosen.append(k); taken.add(k); used += m
+    # No case waits forever (teammate's R7): overdue by max_overdue_days -> listed, up to a share of the day
+    max_over = cfg.get("max_overdue_days")
+    if max_over and "overdue_days" in ranked:
+        forced_cap = used + cap * cfg.get("overdue_share", 0.2)
+        for k in ranked.index[(ranked["overdue_days"] >= max_over) & ~ranked.index.isin(list(taken))]:
+            m = ranked.at[k, "exp_minutes"]
+            if used + m <= forced_cap:
+                chosen.append(k); taken.add(k); used += m
+    old_cap = used + old_cap
     for k in guard_order:                                          # guardrail quota
+        if k in taken:
+            continue
         m = ranked.at[k, "exp_minutes"]
         if used + m <= old_cap:
             chosen.append(k); taken.add(k); used += m
