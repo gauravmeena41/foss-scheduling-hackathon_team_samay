@@ -10,6 +10,7 @@ import copy
 
 GUARDRAILS = {
     "old_case_min_share_floor": 0.30,  # >= 30% of expected minutes go to 4+ yr cases, always
+    "guardrail_age_weight": 0.35,      # the quota is filled oldest-first, whatever the judge's own age weight
 }
 
 DEFAULT_CONFIG = {
@@ -32,8 +33,8 @@ DEFAULT_CONFIG = {
     "confirm_reveals_absence": 0.4,   # share of would-be no-shows they flag in advance
     "declined_gap_days": 7,           # "need time" -> relisted after this many days
     "blocks": [                       # time blocks; filter picks which cases go where
-        {"name": "Fresh & short", "start": "10:30", "end": "13:30", "filter": "not_old"},
-        {"name": "Old matters", "start": "14:30", "end": "18:30", "filter": "old"},
+        {"name": "Morning (fresh & short first)", "start": "10:30", "end": "13:30", "filter": "not_old"},
+        {"name": "Afternoon (oldest matters)", "start": "14:30", "end": "18:30", "filter": "old"},
     ],
     "use_efiling_signals": True,      # predict process-return dates per case when e-filing data exists
     "leave_dates": [],                # judge's personal leave (YYYY-MM-DD)

@@ -10,6 +10,8 @@ from __future__ import annotations
 
 import pandas as pd
 
+from config import GUARDRAILS
+
 CAUSELIST_COLUMNS = ["date", "block", "slot", "est_start", "case_id", "purpose", "est_minutes",
                      "exp_minutes", "advocate_id", "age_years", "is_old", "p_sub_eff", "reason"]
 
@@ -31,17 +33,25 @@ def _fits(block: dict, is_old: bool) -> bool:
 def select(ranked: pd.DataFrame, cfg: dict) -> pd.DataFrame:
     cap = cfg["day_minutes"] * cfg["overbook_factor"]
     old_cap = cap * cfg["old_case_min_share"]
+    # The guardrail quota is filled by its OWN fixed ranking - oldest-weighted - so a judge's
+    # age preference (e.g. fresh-first) can't starve the 5+ year cases inside the quota.
+    guard_w = GUARDRAILS["guardrail_age_weight"]
+    old_part = ranked[ranked["is_old"]]
+    judge_age = (1 + cfg["age_weight"] * old_part["age_years"]).clip(lower=0.1)
+    guard_age = (1 + max(guard_w, cfg["age_weight"]) * old_part["age_years"])
+    # keep every other signal in the judge's score (readiness, part-heard, purpose days); swap only the age term
+    guard_order = (old_part["score"] / judge_age * guard_age).sort_values(ascending=False).index
+    chosen, taken, used = [], set(), 0.0
+    for k in guard_order:                                          # guardrail quota
+        m = ranked.at[k, "exp_minutes"]
+        if used + m <= old_cap:
+            chosen.append(k); taken.add(k); used += m
     idx = ranked.index.tolist()
     em = ranked["exp_minutes"].tolist()
-    old = ranked["is_old"].tolist()
-    chosen, taken, used = [], set(), 0.0
-    for i, (k, m, o) in enumerate(zip(idx, em, old)):             # guardrail quota
-        if o and used + m <= old_cap:
-            chosen.append(k); taken.add(i); used += m
-    for i, (k, m) in enumerate(zip(idx, em)):                     # best of the rest
+    for k, m in zip(idx, em):                                      # best of the rest, judge's ranking
         if used >= cap - 2:
             break
-        if i not in taken and used + m <= cap:
+        if k not in taken and used + m <= cap:
             chosen.append(k); used += m
     return ranked.loc[chosen]
 
