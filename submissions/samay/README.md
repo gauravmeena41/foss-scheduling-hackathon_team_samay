@@ -39,14 +39,14 @@ Make a 3,000-case roster with `cd ../../scripts && python generate_roster.py --n
 
 | | Baseline | Samay |
 |---|---|---|
-| Listed → heard → effective / day | 60 → 12.3 → 8.4 | 22.1 → 15.2 → 14.3 |
-| Cases disposed in 60 days | 127 | 407 |
+| Listed → heard → effective / day | 60 → 12.3 → 8.4 | 21.4 → 14.9 → 13.9 |
+| Cases disposed in 60 days | 127 | 419 |
 | Reach rate | 37% | 86% |
-| 5+ yr cases advanced | 12% | 37% |
-| Started within slot | 9% | 77% |
-| Next date sensible | 8% | 95% |
-| Wasted trips | 2,862 | 415 |
+| 5+ yr cases advanced | 12% | 39% |
+| Started within slot | 9% | 75% |
+| Next date sensible | 8% | 96% |
+| Wasted trips | 2,862 | 388 |
 
-Ranking = teammate's 0-100 priority (`src/score100.py`) × P(moves forward) ÷ minutes; see `rankers.md` for the three-way comparison.
+Ranking = teammate's 0-100 priority (`src/score100.py`) × P(moves forward)^1.5 ÷ minutes; see `rankers.md` for the three-way comparison.
 
 Dashboard: `streamlit run app.py` → sidebar **Upload Excel / CSV** → `samples/sample_docket_3000.xlsx` (3,000 cases) or `samples/sample_cases.xlsx` (100-row template). Screenshots in `docs/`.
