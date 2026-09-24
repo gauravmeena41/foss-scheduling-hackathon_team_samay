@@ -35,13 +35,34 @@ FAILURE_GROUPS = {
 PENDING_PROCESS = re.compile(r"\b(?:nbw|warrant|summons|notice|take steps|process)\b", re.I)
 LAST_CHANCE = re.compile(r"last chance", re.I)
 
+# Attendance history -> multiplier on the observed no-show rate for THIS case
+ATT_ACCUSED_ABSENT = 1.4
+ATT_BOTH_ABSENT = 1.8
+ATT_ALL_PRESENT = 0.7
+ATT_MIN, ATT_MAX = 0.5, 2.5
+
+
+def attendance_multiplier(summary: str) -> float:
+    """From the last order sheet's Present/Absent lines. Parties matter more than advocates."""
+    absent = next((l.split(":", 1)[1].lower() for l in str(summary).split("\n")
+                   if l.lower().startswith("absent")), "")
+    parties = [p.strip() for p in absent.split(",") if p.strip()]
+    accused = any(p == "accused" for p in parties)
+    complainant = any(p == "complainant" for p in parties)
+    if accused and complainant:
+        return ATT_BOTH_ABSENT
+    if accused or complainant:
+        return ATT_ACCUSED_ABSENT
+    return ATT_ALL_PRESENT if not parties else 1.0   # only advocates absent -> neutral
+
+
 AGE_BINS = [0, 1, 2, 3, 4, 5, 100]
 AGE_LABELS = ["<1", "1-2", "2-3", "3-4", "4-5", "5+"]
 
 CASE_COLUMNS = [
     "case_id", "advocate_id", "party_id", "filing_date", "age_years", "age_bucket",
     "stage", "next_purpose", "hearings_in_stage", "total_hearings", "est_minutes",
-    "p_substantive", "fail_attendance", "fail_preparation", "fail_process", "fail_other",
+    "p_substantive", "fail_attendance", "fail_preparation", "fail_process", "fail_other", "att_mult",
     "p_happen", "prereq_ok", "prereq_reason", "is_old", "is_stuck", "repeat_adj",
     "first_scheduled", "last_heard", "last_summary", "history",
 ]
@@ -116,6 +137,8 @@ def load_cases(roster_path: Path | str | None = None, as_of: str = "2026-09-24",
                       zip(df.p_substantive, df.fail_attendance, df.fail_process, df.fail_other)]
 
     summary = r["last_hearing_summary"].fillna("")
+    df["att_mult"] = summary.map(attendance_multiplier)
+    df["att_mult"] /= df["att_mult"].mean()   # relative: keeps the roster-wide no-show rate as observed
     last_line = summary.str.split("\n").str[-1]
     pending = last_line.str.contains(PENDING_PROCESS) | (df["next_purpose"] == "WARRANT")
     df["prereq_ok"] = ~pending
@@ -152,7 +175,7 @@ def outcome_probs(case, cfg: dict, prereq_ready: bool, attendance_mult: float = 
         return {"substantive": 0.0, "attendance": 0.0, "preparation": 0.0, "process": 1.0, "other": 0.0}
     ps = case["p_substantive"]
     q = 1 - ps
-    att = q * case["fail_attendance"] * attendance_mult
+    att = q * case["fail_attendance"] * case.get("att_mult", 1.0) * attendance_mult
     prep = q * case["fail_preparation"]
     other = q * case["fail_other"]
     if cfg.get("summary_mandate") and needs_brief(case):
@@ -167,7 +190,7 @@ def outcome_probs_df(df: pd.DataFrame, cfg: dict, ready: pd.Series) -> pd.DataFr
     """Vectorised outcome_probs for ranking thousands of cases per day (same maths)."""
     ps = df["p_substantive"].astype(float)
     q = 1 - ps
-    att = q * df["fail_attendance"]
+    att = q * df["fail_attendance"] * (df["att_mult"] if "att_mult" in df else 1.0)
     prep = q * df["fail_preparation"]
     other = q * df["fail_other"]
     if cfg.get("summary_mandate"):

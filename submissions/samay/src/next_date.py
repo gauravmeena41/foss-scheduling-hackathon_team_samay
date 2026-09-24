@@ -37,17 +37,35 @@ class Calendar:
         return self.on_or_after(day + pd.Timedelta(days=max(1, int(round(days)))))
 
 
+def least_loaded(target: pd.Timestamp, cal: Calendar, load: dict | None, cap: float, need: float,
+                 max_shift: int = 5) -> pd.Timestamp:
+    """First working day from `target` whose already-booked expected minutes leave room for `need`."""
+    if load is None:
+        return target
+    d = target
+    for _ in range(max_shift):
+        if load.get(d, 0.0) + need <= cap:
+            return d
+        d = cal.after(d, 1)
+    return target   # everything nearby is full: keep the procedurally right date
+
+
 def next_date(purpose: str, outcome: str, day: pd.Timestamp, cal: Calendar, ref: pd.DataFrame,
-              cfg: dict, ready_date: pd.Timestamp | None = None) -> pd.Timestamp:
-    """Recommended next hearing date for a case whose NEXT purpose is `purpose`."""
+              cfg: dict, ready_date: pd.Timestamp | None = None, load: dict | None = None,
+              need: float = 0.0) -> pd.Timestamp:
+    """Recommended next hearing date for a case whose NEXT purpose is `purpose`.
+
+    `load` = {date: expected minutes already booked}; when given, the date slides forward
+    (max 5 working days) past days that are already full.
+    """
+    cap = cfg["day_minutes"] * cfg["overbook_factor"]
     if outcome == "unreached":
         if cfg.get("carry_forward_weekly"):
-            return cal.after(day, 7)            # Sehgal: same weekday next week
-        return cal.after(day, 1)
+            return cal.after(day, 7)            # Sehgal: same weekday next week (fixed by design)
+        return cal.after(day, 1)                # carried forward: goes to the top tomorrow
     if outcome == "process":
         # nothing useful can happen until the process returns
         base = ready_date if ready_date is not None and ready_date > day else day + pd.Timedelta(days=7)
-        return cal.on_or_after(base)
+        return least_loaded(cal.on_or_after(base), cal, load, cap, need)
     gap = ref.at[purpose, "gap_days"] if purpose in ref.index else 14
-    # TODO(Dev 1): load-aware — skip days already over expected capacity
-    return cal.after(day, gap * OUTCOME_GAP.get(outcome, 1.0))
+    return least_loaded(cal.after(day, gap * OUTCOME_GAP.get(outcome, 1.0)), cal, load, cap, need)

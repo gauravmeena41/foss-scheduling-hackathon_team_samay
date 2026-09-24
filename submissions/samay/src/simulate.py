@@ -14,7 +14,7 @@ import pandas as pd
 
 import agents
 from baseline import BASELINE, baseline_causelist
-from model import DATA_DIR, OUTCOMES, SIDE_TYPES, advance, happens, load_reference, needs_brief, outcome_probs
+from model import ATT_MAX, ATT_MIN, DATA_DIR, OUTCOMES, SIDE_TYPES, advance, happens, load_reference, needs_brief, outcome_probs
 from next_date import Calendar, next_date
 from packer import _mins, build_causelist
 from priority import rank
@@ -93,6 +93,7 @@ def run(cases: pd.DataFrame, policy: str, cfg: dict, start: str = "2026-09-24", 
     blocks = {b["name"]: _mins(b["start"]) for b in cfg["blocks"]}
 
     hearings, daily, lists = [], [], []
+    booked: dict = {}      # expected minutes already booked per future date (load-aware next dates)
     workdays = [d for d in cal.days if d >= start_ts][:days]
     for day in workdays:
         predrawn, declined = {}, []
@@ -156,6 +157,11 @@ def run(cases: pd.DataFrame, policy: str, cfg: dict, start: str = "2026-09-24", 
                 n["substantive"] += outcome == "substantive"
 
             # --- state update ---
+            # attendance history: a no-show makes the next no-show likelier, a hearing less so
+            if outcome == "attendance":
+                s.at[cid, "att_mult"] = min(ATT_MAX, s.at[cid, "att_mult"] * 1.3)
+            elif happens(outcome):
+                s.at[cid, "att_mult"] = max(ATT_MIN, s.at[cid, "att_mult"] * 0.85)
             if happens(outcome):
                 s.at[cid, "last_heard"] = day
                 if pd.isna(s.at[cid, "first_heard"]):
@@ -177,7 +183,10 @@ def run(cases: pd.DataFrame, policy: str, cfg: dict, start: str = "2026-09-24", 
             elif policy == "baseline":
                 nd = cal.after(day, BASELINE["flat_gap_days"])
             else:
-                nd = next_date(nxt_purpose, outcome, day, cal, ref, cfg, s.at[cid, "ready_date"])
+                need = 0.6 * s.at[cid, "est_minutes"]      # rough expected minutes of the next listing
+                nd = next_date(nxt_purpose, outcome, day, cal, ref, cfg, s.at[cid, "ready_date"],
+                               load=booked, need=need)
+                booked[nd] = booked.get(nd, 0.0) + need
             s.at[cid, "due_date"] = nd if not pd.isna(nd) else pd.Timestamp("2100-01-01")
             rec["next_date"] = None if pd.isna(nd) else nd.date()
             rec["next_gap_days"] = None if pd.isna(nd) else (nd - day).days
