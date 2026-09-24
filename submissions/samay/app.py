@@ -231,7 +231,7 @@ with tabs[0]:
         "what happens": [
             "Every row checked against the case schema (validate_cases).",
             f"{initial['last_event'].nunique()} kinds of order recognised; {int((initial['next_purpose'] == 'DISPOSED').sum())} already disposed.",
-            "Waiting on: " + ", ".join(f"{k} {v}" for k, v in blocked["waiting_on"].value_counts().items()),
+            "Waiting on: " + ", ".join(f"{k} {v}" for k, v in blocked["prereq_reason"].value_counts().items()),
             "Score = age × P(moves forward) ÷ expected minutes (+ part-heard, purpose-day boosts).",
             f"Packed into the sittings at ~{day1['exp_minutes'].sum():.0f} expected minutes; "
             f"{int(day1['is_old'].sum())} are 4+ years old.",
@@ -338,9 +338,16 @@ with tabs[3]:
 with tabs[4]:
     st.subheader("Why listed hearings didn't move the case — per sitting day")
 
+    SHORT = {"Awaiting Process / Summons / Warrant Return": "Awaiting summons / warrant",
+             "Evidence / Filing Not Ready": "Evidence / filing not ready",
+             "Respondent Absence / Non-Compliance": "Accused absent", "Petitioner Absence / Non-Compliance": "Complainant absent",
+             "Both Parties Unready / Absent": "Both parties absent", "Party Sought Time / Adjournment": "Party sought time",
+             "Court Administrative Issue": "Court administrative", "Court Holiday / No Sitting": "Court didn't sit",
+             "External Dependency": "External (mediation, report)", "Unclear": "Unclear from order"}
+
     def reasons(h, d, label):
         L = h[h["listed"]]
-        r = L["failure_detail"].where(L["reached"], "Not reached before 17:00").dropna()
+        r = L["failure_detail"].where(L["reached"], "Not reached before 17:00").dropna().replace(SHORT)
         return (r.value_counts() / max(1, len(d))).rename(label)
 
     early = (sh.loc[~sh["listed"], "failure_reason"].value_counts() / max(1, len(sd))).rename("Samay")
