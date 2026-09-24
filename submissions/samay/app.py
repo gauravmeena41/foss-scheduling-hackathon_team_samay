@@ -31,6 +31,9 @@ from simulate import DURATION_SIGMA, run  # noqa: E402
 
 st.set_page_config(page_title="Samay — court scheduler", layout="wide")
 
+# Cached results must be thrown away whenever the engine changes, not only when app.py does.
+ENGINE_VERSION = hashlib.md5(b"".join(p.read_bytes() for p in sorted((HERE / "src").glob("*.py")))).hexdigest()[:12]
+
 REQUIRED_INPUT = ["case_number", "filing_date", "advocate_id", "party_id", "current_stage",
                   "last_hearing_summary", "purpose_of_next_hearing", "total_hearings_held"]
 SAMPLE_XLSX = HERE / "samples" / "sample_cases.xlsx"
@@ -39,7 +42,7 @@ START = "2026-09-24"
 
 # ---------------------------------------------------------------- inputs
 @st.cache_data(show_spinner=False)
-def sample_roster(n_cases: int, efiling: bool) -> str:
+def sample_roster(n_cases: int, efiling: bool, engine: str = ENGINE_VERSION) -> str:
     base = DATA_DIR / "roster_sample_100.csv"
     if n_cases == 100:
         df = pd.read_csv(base)
@@ -91,7 +94,7 @@ def thaw(items: tuple) -> dict:
 
 
 @st.cache_data(show_spinner="Simulating the court…", max_entries=64)
-def simulate(path: str, policy: str, cfg_items: tuple, days: int, seed: int):
+def simulate(path: str, policy: str, cfg_items: tuple, days: int, seed: int, engine: str = ENGINE_VERSION):
     cfg = thaw(cfg_items)
     h, d, lists, s = run(load_cases(path, as_of=START), policy, cfg, start=START, days=days, seed=seed)
     pool = s.attrs.get("agents")
@@ -106,7 +109,7 @@ def simulate(path: str, policy: str, cfg_items: tuple, days: int, seed: int):
 
 
 @st.cache_data(show_spinner=False)
-def initial_cases(path: str) -> pd.DataFrame:
+def initial_cases(path: str, engine: str = ENGINE_VERSION) -> pd.DataFrame:
     return load_cases(path, as_of=START).set_index("case_id", drop=False)
 
 
@@ -142,7 +145,7 @@ with st.sidebar:
     else:
         n_cases = st.select_slider("Roster size", [100, 500, 1000, 3000], value=3000,
                                    help="3,000 = the case study's docket. Smaller rosters leave the baseline court idle.")
-        path = sample_roster(n_cases, efiling_on)
+        path = sample_roster(n_cases, efiling_on, ENGINE_VERSION)
     days = st.slider("Working days to simulate", 10, 80, 60)
     seed = int(st.number_input("Seed", value=42, step=1))
     cal_all = Calendar(DATA_DIR / "court_calendar.csv")
@@ -195,9 +198,9 @@ cfg = make_config(preset, enforce_guardrails=enforce, overbook_factor=overbook, 
                   ranking=ranking,
                   leave_dates=[str(d) for d in leave])
 key = freeze(cfg)
-bh, bd, bl, bs, bm, _ = simulate(path, "baseline", key, days, seed)
-sh, sd, sl, ss, sm, agents_df = simulate(path, "samay", key, days, seed)
-initial = initial_cases(path)
+bh, bd, bl, bs, bm, _ = simulate(path, "baseline", key, days, seed, ENGINE_VERSION)
+sh, sd, sl, ss, sm, agents_df = simulate(path, "samay", key, days, seed, ENGINE_VERSION)
+initial = initial_cases(path, ENGINE_VERSION)
 
 st.caption(f"One judge · {len(initial):,} cases · {len(sd)} sitting days"
            + (f" ({len(leave)} on leave)" if leave else "")
@@ -301,7 +304,7 @@ with tabs[2]:
     for name in PRESETS:
         for guarded in ([True, False] if "Joshi" in name else [True]):
             c = make_config(name, enforce_guardrails=guarded, **shared)
-            _, _, _, _, m, _ = simulate(path, "samay", freeze(c), days, seed)
+            _, _, _, _, m, _ = simulate(path, "samay", freeze(c), days, seed, ENGINE_VERSION)
             rows.append({"rules": name + ("" if guarded else " — guardrail off"),
                          **{k: m[k] for k in ["Effective / day", "Reach rate", "Backlog 5+ advanced",
                                               "Backlog 4+ heard", "Date slippage (days)", "Started within slot",
@@ -455,7 +458,7 @@ with tabs[9]:
                 "counted only if the hearing moves the case, per minute — keeps most of both.")
     rk = []
     for mode, label in [("samay", "Value per minute"), ("teammate", "0-100 priority"), ("hybrid", "Hybrid (default)")]:
-        _, _, _, _, m, _ = simulate(path, "samay", freeze(dict(cfg, ranking=mode)), days, seed)
+        _, _, _, _, m, _ = simulate(path, "samay", freeze(dict(cfg, ranking=mode)), days, seed, ENGINE_VERSION)
         rk.append({"ranker": label, **{k: m[k] for k in ["Effective / day", "Backlog 5+ advanced", "Disposed",
                                                         "Wasted trips", "Reach rate"]}})
     rk = pd.DataFrame(rk).set_index("ranker")
