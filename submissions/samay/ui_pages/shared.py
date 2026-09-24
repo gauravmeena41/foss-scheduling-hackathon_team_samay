@@ -112,6 +112,7 @@ def sidebar():
         if u:
             st.markdown(f"<div class='who'><b>{u['name']}</b></div><div class='role'>{u['role']}</div>",
                         unsafe_allow_html=True)
+            st.page_link("ui_pages/dashboard.py", label="Analytics dashboard (what-ifs, 3 judges, metrics)")
             if st.button("Sign out", **FULL):
                 st.session_state.pop("user", None)
                 st.switch_page("ui_pages/login.py")

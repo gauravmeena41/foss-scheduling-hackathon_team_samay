@@ -19,3 +19,4 @@ with mid:
     if st.button("Sign in", type="primary", **FULL):
         st.session_state.user = {"role": role, "name": name.strip() or role}
         st.switch_page("ui_pages/judge.py" if role == "Judge" else "ui_pages/court_master.py")
+    st.page_link("ui_pages/dashboard.py", label="Or open the full analytics dashboard →")
