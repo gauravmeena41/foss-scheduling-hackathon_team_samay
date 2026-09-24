@@ -186,8 +186,8 @@ with tabs[2]:
             c = cases.loc[cid]
             st.markdown(f"**{cid}**, score **{c.score_100:.0f}**  \nAge {c.pts_age:.0f}, readiness {c.pts_readiness:.0f}, "
                         f"disposal {c.pts_disposal:.0f}, churn {c.pts_churn:.0f}, urgency {c.pts_urgency:.0f}  \n"
-                        f"{c.status}{': ' + str(c.prereq_reason) if not c.prereq_ok else ''}. {c.flags or 'No flags'}. "
-                        f"{c.visit.capitalize()} at this stage.")
+                        f"{c['status']}{': ' + str(c['prereq_reason']) if not c['prereq_ok'] else ''}. "
+                        f"Flags: {c['flags'] or 'none'}. Next hearing: {c['visit']}.")
             st.code(c.last_summary or "(no order text)", language=None)
             hist = rtl["history"][(rtl["history"]["case_id"] == cid) & rtl["history"]["listed"]].copy()
             hist["Outcome"] = hist["failure_reason"].map(

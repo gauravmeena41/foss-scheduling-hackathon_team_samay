@@ -132,8 +132,13 @@ def hearing_cols() -> list[str]:
     return [c for c in pd.read_csv(DATA_DIR / "roster_sample_100.csv", nrows=1).columns if c.startswith("hearings_")]
 
 
+def save_docket(name: str, raw: bytes):
+    """Uploaded file -> clean roster CSV via Samay's intake (cached per engine version)."""
+    return _save_docket(name, raw, ENGINE_VERSION)
+
+
 @st.cache_data(show_spinner="Reading the docket…", max_entries=16)
-def save_docket(name: str, raw: bytes, engine: str = ENGINE_VERSION):
+def _save_docket(name: str, raw: bytes, engine: str):
     """Uploaded file -> clean roster CSV via Samay's intake. Returns (path, n_cases, problems, notes)."""
     df, problems, notes = read_upload(name, raw, START, hearing_cols())
     if df is None:
@@ -177,8 +182,13 @@ def _listing(visit: str) -> str:
         return "second"
 
 
+def plans(path: str, judge: str, leave: tuple = ()):
+    """Samay and today's rules on a judge's docket (cached per engine version, so code changes are picked up)."""
+    return _plans(path, judge, tuple(leave), ENGINE_VERSION)
+
+
 @st.cache_data(show_spinner="Samay is planning the next 60 sitting days…", max_entries=12)
-def plans(path: str, judge: str, leave: tuple = (), engine: str = ENGINE_VERSION):
+def _plans(path: str, judge: str, leave: tuple, engine: str):
     """Run Samay and today's rules (baseline) on a judge's docket with that judge's rules."""
     cfg = make_config(PRESET_OF.get(judge, "Recommended"), leave_dates=list(leave))
     cases = load_cases(path, as_of=START)
