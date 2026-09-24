@@ -11,6 +11,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+import efiling
 from orders import classify
 
 DATA_DIR = Path(__file__).resolve().parents[3] / "data"
@@ -67,6 +68,7 @@ CASE_COLUMNS = [
     "first_scheduled", "last_heard", "last_summary", "history",
     "last_event", "waiting_on", "readiness", "prep_mult", "part_heard", "last_chance", "non_compliance",
     "absent_parties", "adjournments_est", "remaining_hearings_est", "remaining_minutes_est", "data_note",
+    "process_wait_mult", "has_efiling",
 ]
 
 CASE_SCHEMA = {
@@ -91,6 +93,8 @@ CASE_SCHEMA = {
     "adjournments_est": "total hearings minus stages completed",
     "remaining_hearings_est, remaining_minutes_est": "median work left to disposal",
     "data_note": "data-quality note (e.g. verdict already recorded)",
+    "process_wait_mult": "case-specific multiplier on summons/warrant return time from e-filing signals (1 = no signals)",
+    "has_efiling": "True when the roster carries e-filing columns (efiling.EFILING_COLUMNS)",
 }
 
 # Stages every case passes through (delay condonation and warrant are conditional)
@@ -167,6 +171,13 @@ def load_cases(roster_path: Path | str | None = None, as_of: str = "2026-09-24",
 
     summary = r["last_hearing_summary"].fillna("")
     df["att_mult"] = summary.map(attendance_multiplier)
+    df["has_efiling"] = efiling.has_signals(r)
+    if df["has_efiling"].iloc[0]:
+        m = efiling.process_wait_multiplier(r).values
+        df["process_wait_mult"] = m / m.mean()   # relative: keeps the observed average return time
+        df["att_mult"] *= efiling.attendance_multiplier(r).values
+    else:
+        df["process_wait_mult"] = 1.0
     df["att_mult"] /= df["att_mult"].mean()   # relative: keeps the roster-wide no-show rate as observed
 
     orders = pd.DataFrame([classify(t) for t in summary])

@@ -21,6 +21,7 @@ from simulate import run  # noqa: E402
 
 def main() -> None:
     p = argparse.ArgumentParser()
+    p.add_argument("--efiling", action="store_true", help="add synthetic e-filing signals to the roster first")
     p.add_argument("--roster", default=None, help="roster CSV (default: data/roster_sample_100.csv)")
     p.add_argument("--preset", default="Recommended", choices=list(PRESETS))
     p.add_argument("--days", type=int, default=60)
@@ -31,6 +32,15 @@ def main() -> None:
     a = p.parse_args()
 
     t0 = time.time()
+    if a.efiling:
+        import tempfile
+
+        import pandas as pd
+        from efiling import enrich
+        from model import DATA_DIR
+        tmp = Path(tempfile.gettempdir()) / "samay_roster_efiling.csv"
+        enrich(pd.read_csv(a.roster or DATA_DIR / "roster_sample_100.csv")).to_csv(tmp, index=False)
+        a.roster = str(tmp)
     cases = load_cases(a.roster, as_of=a.start)
     cfg = make_config(a.preset, agents=a.agents)
     if cfg["guardrail_clamped"]:

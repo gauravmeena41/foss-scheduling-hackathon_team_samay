@@ -35,6 +35,7 @@ DEFAULT_CONFIG = {
         {"name": "Fresh & short", "start": "10:30", "end": "13:30", "filter": "not_old"},
         {"name": "Old matters", "start": "14:30", "end": "18:30", "filter": "old"},
     ],
+    "use_efiling_signals": True,      # predict process-return dates per case when e-filing data exists
     "leave_dates": [],                # judge's personal leave (YYYY-MM-DD)
     "agents": False,                  # L3: advocate agents decide to appear / seek adjournment
 }

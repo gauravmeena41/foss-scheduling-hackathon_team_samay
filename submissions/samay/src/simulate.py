@@ -23,19 +23,34 @@ DURATION_SIGMA = 0.35    # lognormal spread around the reference minutes
 PROCESS_PURPOSES = {"APPEARANCE", "WARRANT"}   # entering these needs a process to return first
 
 
-def _process_wait(rng, ref, purpose):
-    return pd.Timedelta(days=float(rng.exponential(1.5 * ref.at[purpose, "gap_days"])))
+def _mean_wait(ref, purpose) -> float:
+    return 1.5 * ref.at[purpose, "gap_days"]
 
 
-def init_state(cases: pd.DataFrame, start: pd.Timestamp, ref: pd.DataFrame, rng) -> pd.DataFrame:
+def _process_wait(rng, ref, purpose, mult: float = 1.0):
+    """TRUE time for a summons / warrant to come back (case-specific when e-filing signals exist)."""
+    return pd.Timedelta(days=float(rng.exponential(_mean_wait(ref, purpose) * mult)))
+
+
+def _expected_wait(ref, purpose, mult: float, cfg: dict):
+    """What the PLANNER expects: case-specific with e-filing signals, roster average without."""
+    m = mult if cfg.get("use_efiling_signals", True) else 1.0
+    return pd.Timedelta(days=_mean_wait(ref, purpose) * m)
+
+
+def init_state(cases: pd.DataFrame, start: pd.Timestamp, ref: pd.DataFrame, rng, cfg: dict | None = None) -> pd.DataFrame:
     s = cases.copy().set_index("case_id", drop=False)
     s.index.name = None
     s["due_date"] = start
-    s["ready_date"] = [start - pd.Timedelta(days=1) if ok else start + _process_wait(rng, ref, p)
-                       for ok, p in zip(s["prereq_ok"], s["next_purpose"])]
+    if "process_wait_mult" not in s:
+        s["process_wait_mult"] = 1.0
+    s["ready_date"] = [start - pd.Timedelta(days=1) if ok else start + _process_wait(rng, ref, p, m)
+                       for ok, p, m in zip(s["prereq_ok"], s["next_purpose"], s["process_wait_mult"])]
     s["first_heard"] = pd.NaT
     s["times_listed"] = 0
     s["stages_advanced"] = 0
+    s["ready_est"] = [start - pd.Timedelta(days=1) if ok else start + _expected_wait(ref, p, m, cfg or {})
+                      for ok, p, m in zip(s["prereq_ok"], s["next_purpose"], s["process_wait_mult"])]
     s["disposed_on"] = pd.NaT
     s["times_declined"] = 0
     return s
@@ -81,14 +96,17 @@ def _set_purpose(s, cid, purpose, stage, ref):
         s.at[cid, "hearings_in_stage"] = 0
 
 
-def run(cases: pd.DataFrame, policy: str, cfg: dict, start: str = "2026-09-24", days: int = 60,
+def run(cases: pd.DataFrame, policy: str, cfg: dict, start: str = "2026-09-24", days: int = 60,  # noqa: C901
         seed: int = 42, data_dir: Path = DATA_DIR):
     """policy: 'samay' | 'baseline'. Returns (hearings_log, daily_log, causelists, final_state)."""
     rng = np.random.default_rng(seed)
     ref = load_reference(data_dir)
     cal = Calendar(data_dir / "court_calendar.csv", cfg.get("leave_dates", []))
     start_ts = cal.on_or_after(pd.Timestamp(start))
-    s = init_state(cases, start_ts, ref, rng)
+    s = init_state(cases, start_ts, ref, rng, cfg)
+    if policy == "samay":   # blocked cases get a tentative date at the expected process return
+        blocked = ~s["prereq_ok"].astype(bool)
+        s.loc[blocked, "due_date"] = [cal.on_or_after(d) for d in s.loc[blocked, "ready_est"]]
     sim_cfg = cfg if policy == "samay" else {**cfg, "summary_mandate": False, "agents": cfg.get("agents")}
     blocks = {b["name"]: _mins(b["start"]) for b in cfg["blocks"]}
 
@@ -129,7 +147,9 @@ def run(cases: pd.DataFrame, policy: str, cfg: dict, start: str = "2026-09-24", 
             block_start = blocks.get(row["block"], _mins(row["est_start"]))
             clock = block_start if clock is None else max(clock, block_start)
             purpose = s.at[cid, "next_purpose"]
+            promised = s.at[cid, "due_date"]
             rec = {"date": day.date(), "case_id": cid, "purpose": purpose, "block": row["block"],
+                   "promised_date": promised.date(), "slippage_days": (day - promised).days,
                    "est_start": row["est_start"], "actual_start": None, "listed": True, "reached": False,
                    "happened": False, "substantive": False, "minutes_used": 0.0, "failure_reason": "unreached",
                    "is_old": bool(s.at[cid, "is_old"]), "age_years": float(s.at[cid, "age_years"])}
@@ -180,7 +200,9 @@ def run(cases: pd.DataFrame, policy: str, cfg: dict, start: str = "2026-09-24", 
                 else:
                     _set_purpose(s, cid, new_p, new_stage, ref)
                     if new_p in PROCESS_PURPOSES:
-                        s.at[cid, "ready_date"] = day + _process_wait(rng, ref, new_p)
+                        m = s.at[cid, "process_wait_mult"]
+                        s.at[cid, "ready_date"] = day + _process_wait(rng, ref, new_p, m)
+                        s.at[cid, "ready_est"] = day + _expected_wait(ref, new_p, m, cfg)
             nxt_purpose = s.at[cid, "next_purpose"]
             if nxt_purpose == "DISPOSED":
                 nd = pd.NaT
@@ -188,8 +210,10 @@ def run(cases: pd.DataFrame, policy: str, cfg: dict, start: str = "2026-09-24", 
                 nd = cal.after(day, BASELINE["flat_gap_days"])
             else:
                 need = 0.6 * s.at[cid, "est_minutes"]      # rough expected minutes of the next listing
-                nd = next_date(nxt_purpose, outcome, day, cal, ref, cfg, s.at[cid, "ready_date"],
+                nd = next_date(nxt_purpose, outcome, day, cal, ref, cfg, s.at[cid, "ready_est"],
                                load=booked, need=need)
+                if outcome == "substantive" and nxt_purpose in PROCESS_PURPOSES:
+                    nd = max(nd, cal.on_or_after(s.at[cid, "ready_est"]))   # not before process is expected back
                 booked[nd] = booked.get(nd, 0.0) + need
             s.at[cid, "due_date"] = nd if not pd.isna(nd) else pd.Timestamp("2100-01-01")
             rec["next_date"] = None if pd.isna(nd) else nd.date()

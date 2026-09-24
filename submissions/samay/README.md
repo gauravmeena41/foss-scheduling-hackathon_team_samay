@@ -7,6 +7,7 @@ pip install -r requirements.txt
 python run.py                          # 100 cases, baseline vs Samay, writes proposed_schedule.csv
 python run.py --roster <3000.csv>      # scale test (~12s)
 python ablation.py --roster <3000.csv>  # what each lever adds, by stage (early / middle / late)
+python run.py --efiling                 # same, with synthetic e-filing signals added to the roster
 streamlit run app.py                   # dashboard
 ```
 
@@ -14,7 +15,8 @@ streamlit run app.py                   # dashboard
 
 | File | Set | Owner | v0 does | Your TODO |
 |---|---|---|---|---|
-| `src/model.py` + `src/orders.py` | A | Dev 1 | **Done.** Roster + reference tables → one row per case (`CASE_SCHEMA` documents every field). Order-sheet classifier (11 events, who the case waits on, last-chance / non-compliance), readiness, case-level no-show and unpreparedness multipliers, part-heard, adjournments, work left to disposal, data-quality notes, `validate_cases()` | e-filing features if time |
+| `src/model.py` + `src/orders.py` | A | Dev 1 | **Done.** Roster + reference tables → one row per case (`CASE_SCHEMA` documents every field). Order-sheet classifier (11 events, who the case waits on, last-chance / non-compliance), readiness, case-level no-show and unpreparedness multipliers, part-heard, adjournments, work left to disposal, data-quality notes, `validate_cases()` | — |
+| `src/efiling.py` | A | Dev 1 | Synthetic e-filing columns (addresses, contact known, prepaid summons/e-post, in-jurisdiction, ADR, complainant type) → per-case process-return time and no-show multipliers | — |
 | `src/priority.py` | B | Dev 1 | Score = age factor × P(moves) ÷ expected min; prereq gate; purpose-day boost | Tune weights; urgency (bail, custody) |
 | `src/packer.py` | C | Dev 1 | Guardrail quota for 4+ yr cases, fill to expected capacity, blocks, advocate clustering, est. start times | Short-first within block; party clustering |
 | `src/next_date.py` | D | Dev 1 | Gap by next purpose × today's outcome; process → return date; weekly carry-forward | Load-aware dates (skip full days) |
@@ -62,3 +64,5 @@ Effective hearings per day:
 | All levers | 9.9 | 5.0 | 6.6 | 26.4 | 53% |
 
 The process gate fixes the early stages; the readiness check lifts the middle; the case brief is what moves late-stage and 5+ year cases.
+
+**E-filing signals** (`--efiling`, synthetic): all levers 26.6 vs 26.2 effective/day without them, wasted trips 1,046 vs 1,061. Small in simulation, because the prerequisite gate already stops unready cases being listed; the real value is operational: flag cases with no known contact for alternative service early, and give parties a realistic tentative date.

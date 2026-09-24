@@ -44,6 +44,8 @@ def compute(hearings: pd.DataFrame, daily: pd.DataFrame, state: pd.DataFrame, cf
         "Backlog 5+ advanced": float(((old5["stages_advanced"] > 0) | old5["disposed_on"].notna()).mean())
         if len(old5) else 0.0,
         "Predictability (days to hearing)": float(wait.mean()) if len(wait) else float("nan"),
+        "Date slippage (days)": float(hearings.loc[hearings["happened"], "slippage_days"].mean())
+        if "slippage_days" in hearings and hearings["happened"].any() else float("nan"),
         "Started within slot": on_slot,
         "Next-date sensible": sensible,
         "Listed / day": listed / n_days,

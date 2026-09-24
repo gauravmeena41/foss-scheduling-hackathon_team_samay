@@ -30,15 +30,27 @@ SCENARIOS = {
     "+ Readiness confirmation": ("samay", {"summary_mandate": False, "readiness_confirmation": True}),
     "+ Case brief": ("samay", {"summary_mandate": True, "readiness_confirmation": False}),
     "All levers (Samay)": ("samay", {"summary_mandate": True, "readiness_confirmation": True}),
+    "All levers, no e-filing signals": ("samay", {"summary_mandate": True, "readiness_confirmation": True,
+                                                  "use_efiling_signals": False}),
 }
 
 
 def main() -> None:
     p = argparse.ArgumentParser()
+    p.add_argument("--efiling", action="store_true", help="add synthetic e-filing signals to the roster first")
     p.add_argument("--roster", default=None)
     p.add_argument("--days", type=int, default=60)
     p.add_argument("--seed", type=int, default=42)
     a = p.parse_args()
+    if a.efiling:
+        import tempfile
+
+        import pandas as pd
+        from efiling import enrich
+        from model import DATA_DIR
+        tmp = Path(tempfile.gettempdir()) / "samay_roster_efiling.csv"
+        enrich(pd.read_csv(a.roster or DATA_DIR / "roster_sample_100.csv")).to_csv(tmp, index=False)
+        a.roster = str(tmp)
     cases = load_cases(a.roster)
     rows = []
     for name, (policy, over) in SCENARIOS.items():
