@@ -14,7 +14,7 @@ streamlit run app.py                   # dashboard
 
 | File | Set | Owner | v0 does | Your TODO |
 |---|---|---|---|---|
-| `src/model.py` | A | Dev 1 | Loads roster + reference tables; parses order text for pending process / "last chance"; old / stuck / repeat flags; `outcome_probs` | Richer summary parsing (who was absent → per-party attendance); e-filing features (see below) |
+| `src/model.py` + `src/orders.py` | A | Dev 1 | **Done.** Roster + reference tables → one row per case (`CASE_SCHEMA` documents every field). Order-sheet classifier (11 events, who the case waits on, last-chance / non-compliance), readiness, case-level no-show and unpreparedness multipliers, part-heard, adjournments, work left to disposal, data-quality notes, `validate_cases()` | e-filing features if time |
 | `src/priority.py` | B | Dev 1 | Score = age factor × P(moves) ÷ expected min; prereq gate; purpose-day boost | Tune weights; urgency (bail, custody) |
 | `src/packer.py` | C | Dev 1 | Guardrail quota for 4+ yr cases, fill to expected capacity, blocks, advocate clustering, est. start times | Short-first within block; party clustering |
 | `src/next_date.py` | D | Dev 1 | Gap by next purpose × today's outcome; process → return date; weekly carry-forward | Load-aware dates (skip full days) |
@@ -28,7 +28,7 @@ streamlit run app.py                   # dashboard
 
 ## Contracts (don't change without telling the others)
 
-- **Case** columns: `model.CASE_COLUMNS`
+- **Case** columns: `model.CASE_COLUMNS` (meanings in `model.CASE_SCHEMA`; check any roster with `model.validate_cases`)
 - **Causelist** columns: `packer.CAUSELIST_COLUMNS`
 - **Hearing log** keys: see `simulate.run` (`rec` dict)
 - **Config** keys: `config.DEFAULT_CONFIG`
@@ -55,10 +55,10 @@ Effective hearings per day:
 
 | Scenario | Early | Middle | Late | Total | 5+ yr advanced |
 |---|---|---|---|---|---|
-| Baseline | 2.7 | 3.5 | 3.9 | 12.3 | 23% |
-| + Packing & process gate | 10.4 | 4.2 | 5.7 | 25.3 | 40% |
-| + Readiness check | 10.7 | 4.9 | 5.8 | 26.3 | 41% |
-| + Case brief | 10.2 | 4.4 | 6.1 | 25.9 | 53% |
-| All levers | 10.0 | 5.2 | 6.5 | 26.8 | 59% |
+| Baseline | 3.0 | 3.4 | 3.7 | 12.3 | 19% |
+| + Packing & process gate | 10.7 | 4.9 | 4.8 | 25.3 | 35% |
+| + Readiness check | 11.4 | 5.6 | 4.8 | 26.7 | 34% |
+| + Case brief | 9.1 | 4.6 | 6.5 | 25.2 | 52% |
+| All levers | 9.9 | 5.0 | 6.6 | 26.4 | 53% |
 
-The process gate fixes the early stages; the readiness check and case brief are what move middle- and late-stage cases.
+The process gate fixes the early stages; the readiness check lifts the middle; the case brief is what moves late-stage and 5+ year cases.

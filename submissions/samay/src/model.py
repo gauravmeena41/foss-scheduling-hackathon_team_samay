@@ -11,6 +11,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from orders import classify
+
 DATA_DIR = Path(__file__).resolve().parents[3] / "data"
 
 # Fixed lifecycle order (case study, section 5.1). Side types sit outside it.
@@ -32,8 +34,6 @@ FAILURE_GROUPS = {
 }
 
 # Order-text keywords that mean a prerequisite (process return) is still pending.
-PENDING_PROCESS = re.compile(r"\b(?:nbw|warrant|summons|notice|take steps|process)\b", re.I)
-LAST_CHANCE = re.compile(r"last chance", re.I)
 
 # Attendance history -> multiplier on the observed no-show rate for THIS case
 ATT_ACCUSED_ABSENT = 1.4
@@ -65,7 +65,36 @@ CASE_COLUMNS = [
     "p_substantive", "fail_attendance", "fail_preparation", "fail_process", "fail_other", "att_mult",
     "p_happen", "prereq_ok", "prereq_reason", "is_old", "is_stuck", "repeat_adj",
     "first_scheduled", "last_heard", "last_summary", "history",
+    "last_event", "waiting_on", "readiness", "prep_mult", "part_heard", "last_chance", "non_compliance",
+    "absent_parties", "adjournments_est", "remaining_hearings_est", "remaining_minutes_est", "data_note",
 ]
+
+CASE_SCHEMA = {
+    "case_id": "case number (anonymised)",
+    "advocate_id / party_id": "for clustering",
+    "filing_date, age_years, age_bucket": "age of the case; buckets <1 … 5+",
+    "stage": "current lifecycle stage (UPPER_SNAKE)",
+    "next_purpose": "purpose of the next hearing; DISPOSED once judgment is delivered",
+    "hearings_in_stage, total_hearings": "hearings held at the next purpose's stage / overall",
+    "est_minutes": "reference minutes for the next purpose",
+    "p_substantive": "P(moves forward) for the purpose (substantiveness table)",
+    "fail_attendance / preparation / process / other": "share of non-substantive outcomes by cause (failure table)",
+    "att_mult": "case-level no-show multiplier from who was absent last time (roster mean = 1)",
+    "prep_mult": "case-level unpreparedness multiplier from the last order (roster mean = 1)",
+    "p_happen": "P(hearing actually happens) at reference rates",
+    "prereq_ok, prereq_reason": "False = blocked until process / mediation / higher-court order returns",
+    "last_event, waiting_on": "classified last order (orders.py) and who the case now waits on",
+    "readiness": "0-1 readiness of the next hearing implied by the last order",
+    "part_heard": "arguments/evidence begun - list soon, same bench memory",
+    "last_chance, non_compliance": "order-text flags",
+    "is_old, is_stuck, repeat_adj": "4+ yrs · at/above median hearings at stage with no movement last time · repeated adjournment",
+    "adjournments_est": "total hearings minus stages completed",
+    "remaining_hearings_est, remaining_minutes_est": "median work left to disposal",
+    "data_note": "data-quality note (e.g. verdict already recorded)",
+}
+
+# Stages every case passes through (delay condonation and warrant are conditional)
+CORE_PATH = [p for p in LIFECYCLE if p not in ("DELAY_CONDONATION_HEARING", "WARRANT")]
 
 # Stages where the judge needs the file re-read -> the case brief pays off here
 LATE_STAGES = {"EVIDENCE_COMPLAINANT", "EVIDENCE_ACCUSED", "ARGUMENTS", "JUDGEMENT"}
@@ -129,7 +158,7 @@ def load_cases(roster_path: Path | str | None = None, as_of: str = "2026-09-24",
         for i, p in enumerate(df["next_purpose"])
     ]
 
-    per = ref.loc[df["next_purpose"]].reset_index(drop=True)
+    per = ref.reindex(df["next_purpose"]).reset_index(drop=True)
     for col in ["est_minutes", "p_substantive", "fail_attendance", "fail_preparation",
                 "fail_process", "fail_other"]:
         df[col] = per[col].values
@@ -139,18 +168,42 @@ def load_cases(roster_path: Path | str | None = None, as_of: str = "2026-09-24",
     summary = r["last_hearing_summary"].fillna("")
     df["att_mult"] = summary.map(attendance_multiplier)
     df["att_mult"] /= df["att_mult"].mean()   # relative: keeps the roster-wide no-show rate as observed
-    last_line = summary.str.split("\n").str[-1]
-    pending = last_line.str.contains(PENDING_PROCESS) | (df["next_purpose"] == "WARRANT")
-    df["prereq_ok"] = ~pending
-    df["prereq_reason"] = np.where(pending, "awaiting process return", "")
+
+    orders = pd.DataFrame([classify(t) for t in summary])
+    for col in ["last_event", "waiting_on", "readiness", "last_chance", "non_compliance", "absent_parties"]:
+        df[col] = orders[col].values
+    df["readiness"] = np.where(df["last_chance"], np.minimum(df["readiness"], 0.5), df["readiness"])
+    df["part_heard"] = df["last_event"] == "part_heard"
+    # warrant stage: blocked until the warrant is executed, unless the order says served
+    warrant_wait = (df["next_purpose"] == "WARRANT") & ~df["last_event"].isin(["process_served", "external_pending"])
+    blocked = orders["blocked"].values | warrant_wait
+    df["prereq_ok"] = ~blocked
+    df["prereq_reason"] = np.where(warrant_wait & ~orders["blocked"].values, "warrant execution",
+                                   np.where(blocked, df["waiting_on"], ""))
+    df["readiness"] = np.where(blocked, 0.0, df["readiness"])
+    df["prep_mult"] = 1.5 - df["readiness"]
+    df["prep_mult"] /= df["prep_mult"].mean()
+
+    # verdict already on record but next purpose still says judgement -> treat as disposed
+    done = (df["last_event"] == "verdict_recorded") & (df["next_purpose"] == "JUDGEMENT")
+    df["data_note"] = np.where(done, "verdict already recorded; next purpose said JUDGEMENT - treated as disposed", "")
+    df.loc[done, "next_purpose"] = DISPOSED
+    df.loc[done, "stage"] = DISPOSED
 
     df["is_old"] = df["age_years"] >= 4
-    df["is_stuck"] = df["hearings_in_stage"] > per["median_hearings"].values
-    df["repeat_adj"] = last_line.str.contains(LAST_CHANCE) | (
+    # stuck = already at/above the typical number of hearings for this stage, and the last one didn't move it
+    moving = df["last_event"].isin(["progressed", "part_heard", "heard_for_judgment", "process_served"])
+    df["is_stuck"] = (df["hearings_in_stage"] >= np.maximum(2, per["median_hearings"].values)) & ~moving
+    df["repeat_adj"] = df["last_chance"] | df["non_compliance"] | (
         df["hearings_in_stage"] >= 2 * per["median_hearings"].values)
     df["first_scheduled"] = pd.NaT
     df["last_heard"] = pd.NaT
     df["last_summary"] = summary
+    stages_done = (r[[c for c in r.columns if c.startswith("hearings_")]] > 0).sum(axis=1)
+    df["adjournments_est"] = (df["total_hearings"] - stages_done).clip(lower=0).values
+    rem = [remaining_work(p, st, n, ref) for p, st, n in zip(df["next_purpose"], df["stage"], df["hearings_in_stage"])]
+    df["remaining_hearings_est"] = [h for h, _ in rem]
+    df["remaining_minutes_est"] = [m for _, m in rem]
     order = LIFECYCLE + sorted(SIDE_TYPES)
     df["history"] = [
         "|".join(f"{p}:{int(r.at[i, 'hearings_' + p.lower()])}" for p in order
@@ -158,6 +211,41 @@ def load_cases(roster_path: Path | str | None = None, as_of: str = "2026-09-24",
         for i in range(len(r))
     ]
     return df[CASE_COLUMNS]
+
+
+def remaining_work(purpose: str, stage: str, done_here: int, ref: pd.DataFrame) -> tuple[float, float]:
+    """Median hearings and minutes left to disposal along the core path."""
+    if purpose == DISPOSED:
+        return 0.0, 0.0
+    main = purpose if purpose in LIFECYCLE else (stage if stage in LIFECYCLE else "ADMISSION")
+    path = [p for p in CORE_PATH if LIFECYCLE.index(p) > LIFECYCLE.index(main)]
+    here = max(1.0, ref.at[main, "median_hearings"] - done_here)
+    hearings = here + sum(ref.at[p, "median_hearings"] for p in path)
+    minutes = here * ref.at[main, "est_minutes"] + sum(ref.at[p, "median_hearings"] * ref.at[p, "est_minutes"] for p in path)
+    if purpose in SIDE_TYPES:
+        hearings += 1
+        minutes += ref.at[purpose, "est_minutes"]
+    return float(hearings), float(minutes)
+
+
+def validate_cases(df: pd.DataFrame) -> list[str]:
+    """Contract check for any roster fed to the engine. Empty list = OK."""
+    problems = [f"missing column: {c}" for c in CASE_COLUMNS if c not in df.columns]
+    if problems:
+        return problems
+    active = df[df["next_purpose"] != DISPOSED]
+    unknown = set(active["next_purpose"]) - set(LIFECYCLE) - SIDE_TYPES
+    if unknown:
+        problems.append(f"unknown purposes: {sorted(unknown)}")
+    for c in ["p_substantive", "readiness", "fail_attendance", "fail_preparation", "fail_process", "fail_other"]:
+        bad = active[(active[c] < 0) | (active[c] > 1) | active[c].isna()]
+        if len(bad):
+            problems.append(f"{c} outside [0,1] for {len(bad)} cases")
+    if df["case_id"].duplicated().any():
+        problems.append("duplicate case_id")
+    if (df["age_years"] < 0).any():
+        problems.append("filing_date in the future")
+    return problems
 
 
 OUTCOMES = ["substantive", "attendance", "preparation", "process", "other"]
@@ -176,7 +264,7 @@ def outcome_probs(case, cfg: dict, prereq_ready: bool, attendance_mult: float = 
     ps = case["p_substantive"]
     q = 1 - ps
     att = q * case["fail_attendance"] * case.get("att_mult", 1.0) * attendance_mult
-    prep = q * case["fail_preparation"]
+    prep = q * case["fail_preparation"] * case.get("prep_mult", 1.0)
     other = q * case["fail_other"]
     if cfg.get("summary_mandate") and needs_brief(case):
         moved = prep * cfg.get("summary_prep_reduction", 0.5)
@@ -191,7 +279,7 @@ def outcome_probs_df(df: pd.DataFrame, cfg: dict, ready: pd.Series) -> pd.DataFr
     ps = df["p_substantive"].astype(float)
     q = 1 - ps
     att = q * df["fail_attendance"] * (df["att_mult"] if "att_mult" in df else 1.0)
-    prep = q * df["fail_preparation"]
+    prep = q * df["fail_preparation"] * (df["prep_mult"] if "prep_mult" in df else 1.0)
     other = q * df["fail_other"]
     if cfg.get("summary_mandate"):
         mask = (df["is_old"] | df["next_purpose"].isin(LATE_STAGES)).astype(float)

@@ -36,11 +36,14 @@ def rank(state: pd.DataFrame, day: pd.Timestamp, cfg: dict) -> pd.DataFrame:
 
     elig["p_sub_eff"] = probs["substantive"]
     elig["exp_minutes"] = exp_min
-    elig["score"] = age_factor * probs["substantive"] / exp_min * boost
+    part_heard = elig["part_heard"].astype(bool) if "part_heard" in elig else False
+    continuity = np.where(part_heard, cfg.get("part_heard_boost", 1.3), 1.0)   # bench still remembers it
+    elig["score"] = age_factor * probs["substantive"] / exp_min * boost * continuity
     elig["reason"] = (
         np.where(elig["is_old"], elig["age_years"].round().astype(int).astype(str) + "y old; ", "")
         + np.where(elig["repeat_adj"], "repeat adjournment; ", "")
         + np.where(boost > 1, "purpose day; ", "")
+        + np.where(continuity > 1, "part-heard; ", "")
         + "P(moves)=" + (probs["substantive"] * 100).round().astype(int).astype(str) + "%"
     )
     return elig.sort_values("score", ascending=False)

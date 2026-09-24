@@ -158,6 +158,10 @@ def run(cases: pd.DataFrame, policy: str, cfg: dict, start: str = "2026-09-24", 
 
             # --- state update ---
             # attendance history: a no-show makes the next no-show likelier, a hearing less so
+            if outcome == "preparation":                  # unprepared again -> likelier next time too
+                s.at[cid, "prep_mult"] = min(2.0, s.at[cid, "prep_mult"] * 1.2)
+            if outcome == "substantive":                   # new stage, clean slate on preparation
+                s.at[cid, "prep_mult"], s.at[cid, "part_heard"] = 1.0, False
             if outcome == "attendance":
                 s.at[cid, "att_mult"] = min(ATT_MAX, s.at[cid, "att_mult"] * 1.3)
             elif happens(outcome):

@@ -32,7 +32,7 @@ CHECKLIST = {
     "ARGUMENTS": [("Evidence closed", r"evidence closed|for arguments", None),
                   ("Case brief confirmed by both sides", None, None),
                   ("Written arguments filed", r"written arguments", None)],
-    "JUDGEMENT": [("Arguments closed", r"heard|for judgment", None)],
+    "JUDGEMENT": [("Arguments closed (both sides heard)", r"for judgment", r"for the hearing of|further hearing")],
     "BAIL": [("Bail application + surety ready", r"surety", None)],
     "REPORTS": [("Mediation / report received", r"report received|settled", r"referred|mediation")],
     "APPLICATION_REVIEW": [("Objections to application filed", r"objection", None)],
@@ -87,7 +87,13 @@ def build_brief(case) -> str:
     if case["repeat_adj"]:
         flags.append("repeatedly adjourned")
     if case["is_stuck"]:
-        flags.append(f"{int(case['hearings_in_stage'])} hearings at this stage — above typical")
+        flags.append(f"stuck: {int(case['hearings_in_stage'])} hearings at this stage")
+    if case.get("part_heard"):
+        flags.append("part-heard")
+    if case.get("non_compliance"):
+        flags.append("directions not complied with")
+    if case.get("data_note"):
+        flags.append(f"data: {case['data_note']}")
     icon = {"done": "✅", "pending": "⛔", "confirm": "❓"}
     items = checklist(case)
     stage_no = LIFECYCLE.index(purpose) + 1 if purpose in LIFECYCLE else None
@@ -99,6 +105,9 @@ def build_brief(case) -> str:
         f"advocate {case['advocate_id']}",
         "",
         "**Flags:** " + (" · ".join(flags) if flags else "none"),
+        f"**Waiting on:** {case.get('waiting_on', 'none')} · last order classified as "
+        f"*{str(case.get('last_event', 'listed')).replace('_', ' ')}* · "
+        f"≈{case.get('remaining_hearings_est', 0):.0f} hearings to disposal",
         "",
         f"**Journey:** {_journey(case.get('history', ''), purpose)}",
         "",

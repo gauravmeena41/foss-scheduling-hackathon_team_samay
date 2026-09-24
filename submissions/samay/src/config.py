@@ -23,6 +23,7 @@ DEFAULT_CONFIG = {
     "carry_forward_weekly": False,    # Sehgal: unreached case -> same weekday next week
     "purpose_days": {},               # {"Mon": ["ARGUMENTS"], ...} -> score boost on that day
     "purpose_day_boost": 1.5,
+    "part_heard_boost": 1.3,          # part-heard matters first: the bench still remembers them
     "summary_mandate": True,          # case brief for old / late-stage cases (Dimakar's cover page, auto-drafted)
     "summary_prep_reduction": 0.5,    # ...halves "not prepared" failures on those cases (assumption)
     "brief_time_saving": 0.2,         # ...and cuts their hearing time 20%: no re-reading the file (assumption)
