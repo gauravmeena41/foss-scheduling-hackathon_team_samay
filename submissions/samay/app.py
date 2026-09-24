@@ -147,8 +147,12 @@ with st.sidebar:
     seed = int(st.number_input("Seed", value=42, step=1))
     cal_all = Calendar(DATA_DIR / "court_calendar.csv")
     horizon = [d for d in cal_all.days if d >= pd.Timestamp(START)][:days + 10]
-    leave = st.multiselect("Judge's leave days", [d.date() for d in horizon],
-                           help="The court doesn't sit; hearings and next dates move to working days.")
+    hol = pd.read_csv(DATA_DIR / "court_calendar.csv", parse_dates=["date"])
+    hol = hol[(hol["is_holiday"] == "Yes") & (hol["date"] >= pd.Timestamp(START))]
+    st.caption("Government holidays are non-sitting days already: "
+               + ", ".join(f"{r.holiday_name.split(' (')[0]} {r.date:%d %b}" for r in hol.itertuples()))
+    leave = st.multiselect("Judge's personal leave (extra days off)", [d.date() for d in horizon],
+                           help="On top of weekends and government holidays. Hearings and next dates move to sitting days.")
 
     st.header("Judge's rules")
     preset = st.selectbox("Preset", list(PRESETS))
@@ -261,7 +265,7 @@ with tabs[1]:
         color=alt.Color("purpose:N", legend=alt.Legend(orient="bottom", columns=4)),
         tooltip=["case_id", "purpose", "visit", "est_start", alt.Tooltip("exp_minutes", format=".0f"), "reason"])
     st.markdown("**Planned** — each case's expected slot (hover for details)")
-    st.altair_chart(band + bars, use_container_width=True)
+    st.altair_chart(band + bars, width="stretch")
     ran = sh[(sh["date"] == cday) & sh["listed"] & sh["reached"]].copy()
     if len(ran):
         ran["start"] = ran["actual_start"].map(lambda t: hm(to_min(t)))
@@ -278,7 +282,7 @@ with tabs[1]:
             tooltip=["case_id", "purpose", "visit", "actual_start", alt.Tooltip("minutes_used", format=".0f"), "result", "why"])
         st.markdown("**What happened (simulated)** — actual start between 10:30 and 11:00, "
                     f"{cfg['changeover_minutes']:g}-min changeovers, lunch as a hard break")
-        st.altair_chart(band + bars2, use_container_width=True)
+        st.altair_chart(band + bars2, width="stretch")
         unreached = int((sh["date"] == cday).sum() - len(ran) - (~sh.loc[sh["date"] == cday, "listed"]).sum())
         st.caption(f"{len(ran)} reached · {unreached} not reached before 17:00")
 
