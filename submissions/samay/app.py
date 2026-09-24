@@ -228,7 +228,7 @@ for i, (k, lower_better) in enumerate(KEY):
     cols[i % 4].metric(k, fmt(k, sm[k]), f"{d} vs baseline", delta_color="inverse" if lower_better else "normal")
 
 tabs = st.tabs(["Workflow", "Calendar", "Three judges", "Backlog & drift", "Why hearings fail",
-                "Causelist what-if", "Case brief", "At-risk cases", "Advocates (L3)", "Rankers", "All metrics"])
+                "Edit & approve", "Case brief", "At-risk cases", "Advocates (L3)", "Rankers", "All metrics"])
 
 # ---------------------------------------------------------------- workflow
 with tabs[0]:
@@ -253,6 +253,13 @@ with tabs[0]:
             f"{int(day1['is_old'].sum())} are 4+ years old.",
         ]})
     st.dataframe(steps, hide_index=True, width="stretch")
+    with st.expander("Step 3-4 in full — every case's 0-100 priority score and why", expanded=False):
+        sc = initial[initial["next_purpose"] != "DISPOSED"][
+            ["case_id", "age_years", "next_purpose", "visit", "prereq_reason", "score_100", "pts_age", "pts_readiness",
+             "pts_disposal", "pts_churn", "pts_urgency"]].rename(columns={
+                "prereq_reason": "held back for", "score_100": "score /100", "pts_age": "age", "pts_readiness": "ready",
+                "pts_disposal": "near end", "pts_churn": "churn", "pts_urgency": "urgent"})
+        st.dataframe(sc.sort_values("score /100", ascending=False).round(1), hide_index=True, width="stretch")
     c1, c2 = st.columns(2)
     c1.markdown("**Before — as uploaded**")
     raw = pd.read_csv(path)
@@ -271,16 +278,19 @@ with tabs[1]:
     cday = st.selectbox("Day", sorted(sl["date"].unique()), key="cal_day")
     plan = sl[sl["date"] == cday].copy()
     plan["start"] = plan["est_start"].map(lambda t: hm(to_min(t)))
-    plan["end"] = [hm(to_min(t) + m) for t, m in zip(plan["est_start"], plan["exp_minutes"])]
+    co = float(cfg["changeover_minutes"])
+    plan["end"] = [hm(to_min(t) + max(1.0, m - co)) for t, m in zip(plan["est_start"], plan["exp_minutes"])]
     plan["lane"] = plan["block"]
     lunch = pd.DataFrame({"start": [hm(750)], "end": [hm(810)], "label": ["Lunch"]})
     x = alt.X("start:T", title=None, axis=alt.Axis(format="%H:%M"), scale=alt.Scale(domain=[hm(630), hm(1030)]))
-    band = alt.Chart(lunch).mark_rect(opacity=0.15, color="gray").encode(x=x, x2="end:T")
+    band = alt.Chart(lunch).mark_rect(opacity=0.15, color="gray").encode(x=x, x2="end:T") + \
+        alt.Chart(lunch).mark_text(dy=0, color="gray", fontSize=12).encode(x=alt.X("mid:T"), text="label:N") \
+        .transform_calculate(mid="datum.start + (datum.end - datum.start) / 2")
     bars = alt.Chart(plan).mark_bar(cornerRadius=2, stroke="white", strokeWidth=0.5).encode(
         x=x, x2="end:T", y=alt.Y("lane:N", title=None),
         color=alt.Color("purpose:N", legend=alt.Legend(orient="bottom", columns=4)),
         tooltip=["case_id", "purpose", "visit", "est_start", alt.Tooltip("exp_minutes", format=".0f"), "reason"])
-    st.markdown("**Planned** — each case's expected slot (hover for details)")
+    st.markdown(f"**Planned** — each case's expected slot; the gaps between blocks are the {co:g}-min changeovers (hover for details)")
     st.altair_chart(band + bars, width="stretch")
     ran = sh[(sh["date"] == cday) & sh["listed"] & sh["reached"]].copy()
     if len(ran):
@@ -305,26 +315,30 @@ with tabs[1]:
 # ---------------------------------------------------------------- three judges
 with tabs[2]:
     st.subheader("Same docket, each judge's rules — and what they cost")
-    rows = []
-    shared = dict(agents=agents_on, changeover_minutes=changeover, leave_dates=[str(d) for d in leave], ranking=ranking)
-    for name in PRESETS:
-        for guarded in ([True, False] if "Joshi" in name else [True]):
-            c = make_config(name, enforce_guardrails=guarded, **shared)
-            _, _, _, _, m, _ = simulate(path, "samay", freeze(c), days, seed, ENGINE_VERSION)
-            rows.append({"rules": name + ("" if guarded else " — guardrail off"),
-                         **{k: m[k] for k in ["Effective / day", "Reach rate", "Backlog 5+ advanced",
-                                              "Backlog 4+ heard", "Date slippage (days)", "Started within slot",
-                                              "Wasted trips"]}})
-    rows.append({"rules": "Baseline court", **{k: bm[k] for k in rows[0] if k != "rules"}})
-    comp = pd.DataFrame(rows).set_index("rules")
-    c1, c2 = st.columns(2)
-    c1.caption("Effective hearings per day")
-    c1.bar_chart(comp["Effective / day"], horizontal=True)
-    c2.caption("5+ year cases that moved at least one stage")
-    c2.bar_chart(comp["Backlog 5+ advanced"], horizontal=True)
-    st.dataframe(comp.style.format({k: "{:.0%}" for k in comp.columns if k in PERCENT} |
-                                   {k: "{:,.1f}" for k in comp.columns if k not in PERCENT}), width="stretch")
-    st.caption("Fresh-first (Joshi) buys throughput with the old backlog; the guardrail puts a floor under that trade.")
+    run_judges = st.toggle("Run the comparison (simulates every preset — takes a minute on 3,000 cases)", key="run_judges")
+    if not run_judges:
+        st.caption("Turn on to compare Recommended, Sehgal, Dimakar and Joshi (with and without the guardrail) on this docket.")
+    else:
+        rows = []
+        shared = dict(agents=agents_on, changeover_minutes=changeover, leave_dates=[str(d) for d in leave], ranking=ranking)
+        for name in PRESETS:
+            for guarded in ([True, False] if "Joshi" in name else [True]):
+                c = make_config(name, enforce_guardrails=guarded, **shared)
+                _, _, _, _, m, _ = simulate(path, "samay", freeze(c), days, seed, ENGINE_VERSION)
+                rows.append({"rules": name + ("" if guarded else " — guardrail off"),
+                             **{k: m[k] for k in ["Effective / day", "Reach rate", "Backlog 5+ advanced",
+                                                  "Backlog 4+ heard", "Date slippage (days)", "Started within slot",
+                                                  "Wasted trips"]}})
+        rows.append({"rules": "Baseline court", **{k: bm[k] for k in rows[0] if k != "rules"}})
+        comp = pd.DataFrame(rows).set_index("rules")
+        c1, c2 = st.columns(2)
+        c1.caption("Effective hearings per day")
+        c1.bar_chart(comp["Effective / day"], horizontal=True)
+        c2.caption("5+ year cases that moved at least one stage")
+        c2.bar_chart(comp["Backlog 5+ advanced"], horizontal=True)
+        st.dataframe(comp.style.format({k: "{:.0%}" for k in comp.columns if k in PERCENT} |
+                                       {k: "{:,.1f}" for k in comp.columns if k not in PERCENT}), width="stretch")
+        st.caption("Fresh-first (Joshi) buys throughput with the old backlog; the guardrail puts a floor under that trade.")
 
 # ---------------------------------------------------------------- backlog & drift
 with tabs[3]:
@@ -388,7 +402,7 @@ with tabs[5]:
     today = sl[sl["date"] == day].copy()
     today = today.join(initial[["waiting_on", "readiness", "last_event"]], on="case_id")
     today.insert(0, "keep", True)
-    st.caption("Untick cases to see what moving them does to the day. Expected figures from the case model.")
+    st.caption("The judge's review: untick cases to drop them, add cases from the waiting list, see what it does to the day, then approve.")
     today = today.join(initial[["score_100"]], on="case_id")
     view = today[["keep", "block", "est_start", "case_id", "purpose", "visit", "score_100", "age_years",
                   "p_sub_eff", "exp_minutes", "reason"]]
@@ -413,13 +427,45 @@ with tabs[5]:
         total = np.where(heard, dur, mention).sum(axis=1) + co * len(df)
         return df["exp_minutes"].sum(), df["p_sub_eff"].sum(), float((total <= cfg["day_minutes"] + 10).mean()), int(df["is_old"].sum())
 
+    # waiting list: ready cases not on today's list, best 0-100 score first
+    pool = initial[(initial["next_purpose"] != "DISPOSED") & initial["prereq_ok"].astype(bool)
+                   & ~initial["case_id"].isin(today["case_id"])].sort_values("score_100", ascending=False).head(40)
+    add_ids = st.multiselect("Add from the waiting list (best priority first)", pool["case_id"].tolist(),
+                             format_func=lambda c: f"{c} · {pool.at[c, 'next_purpose'].replace('_', ' ').title()} · "
+                                                   f"{pool.at[c, 'score_100']:.0f}/100 · {pool.at[c, 'age_years']:.1f}y")
+    co = float(cfg["changeover_minutes"])
+    added = pd.DataFrame({
+        "case_id": add_ids, "purpose": [pool.at[c, "next_purpose"] for c in add_ids],
+        "est_minutes": [float(pool.at[c, "est_minutes"]) for c in add_ids],
+        "exp_minutes": [float(pool.at[c, "est_minutes"] * pool.at[c, "p_happen"] + cfg["mention_minutes"]
+                              * (1 - pool.at[c, "p_happen"]) + co) for c in add_ids],
+        "p_sub_eff": [float(pool.at[c, "p_substantive"]) for c in add_ids],
+        "is_old": [bool(pool.at[c, "is_old"]) for c in add_ids],
+        "reason": ["added by the judge" for _ in add_ids]})
+    final = pd.concat([kept, added], ignore_index=True)
     b = day_stats(today)
-    a = day_stats(kept)
+    a = day_stats(final)
     m1, m2, m3, m4 = st.columns(4)
     m1.metric("Expected minutes", f"{a[0]:.0f} / {cfg['day_minutes']:.0f}", f"{a[0] - b[0]:+.0f}")
     m2.metric("Expected effective hearings", f"{a[1]:.1f}", f"{a[1] - b[1]:+.1f}")
     m3.metric("P(everyone listed is reached)", f"{a[2]:.0%}", f"{a[2] - b[2]:+.0%}")
     m4.metric("4+ yr cases today", a[3], a[3] - b[3])
+    if a[0] > cfg["day_minutes"] * cfg["overbook_factor"]:
+        st.warning("Overbooked: the expected minutes exceed the sittings — some cases will not be reached.")
+
+    if st.button("Approve this causelist", type="primary"):
+        t, rows_out = 645.0, []
+        for _, r in final.iterrows():            # re-time: 10:45 start, lunch 12:30-13:30
+            if t < 750 <= t + r["exp_minutes"]:
+                t = 810.0
+            rows_out.append({"date": day, "starts ~": f"{int(t) // 60:02d}:{int(t) % 60:02d}", "case": r["case_id"],
+                             "purpose": r["purpose"], "why": r["reason"]})
+            t += r["exp_minutes"]
+        approved = pd.DataFrame(rows_out)
+        st.success(f"Approved: {len(approved)} cases for {day}.")
+        st.dataframe(approved, hide_index=True, width="stretch")
+        st.download_button("Download the approved causelist (CSV)", approved.to_csv(index=False).encode(),
+                           file_name=f"causelist_{day}.csv")
 
 # ---------------------------------------------------------------- case brief
 with tabs[6]:
@@ -462,14 +508,15 @@ with tabs[9]:
     st.markdown("**Value per minute** (ours) maximises hearings that move a case forward. **0-100 priority** "
                 "(teammate) maximises cases finished and old-case movement. **Hybrid** — the teammate's priority, "
                 "counted only if the hearing moves the case, per minute — keeps most of both.")
-    rk = []
-    for mode, label in [("samay", "Value per minute"), ("teammate", "0-100 priority"), ("hybrid", "Hybrid (default)")]:
-        _, _, _, _, m, _ = simulate(path, "samay", freeze(dict(cfg, ranking=mode)), days, seed, ENGINE_VERSION)
-        rk.append({"ranker": label, **{k: m[k] for k in ["Effective / day", "Backlog 5+ advanced", "Disposed",
-                                                        "Wasted trips", "Reach rate"]}})
-    rk = pd.DataFrame(rk).set_index("ranker")
-    st.dataframe(rk.style.format({"Backlog 5+ advanced": "{:.0%}", "Reach rate": "{:.0%}", "Effective / day": "{:.1f}"}),
-                 width="stretch")
+    if st.toggle("Run the three rankers on this docket", key="run_rankers"):
+        rk = []
+        for mode, label in [("samay", "Value per minute"), ("teammate", "0-100 priority"), ("hybrid", "Hybrid (default)")]:
+            _, _, _, _, m, _ = simulate(path, "samay", freeze(dict(cfg, ranking=mode)), days, seed, ENGINE_VERSION)
+            rk.append({"ranker": label, **{k: m[k] for k in ["Effective / day", "Backlog 5+ advanced", "Disposed",
+                                                            "Wasted trips", "Reach rate"]}})
+        rk = pd.DataFrame(rk).set_index("ranker")
+        st.dataframe(rk.style.format({"Backlog 5+ advanced": "{:.0%}", "Reach rate": "{:.0%}", "Effective / day": "{:.1f}"}),
+                     width="stretch")
     r = HERE / "rankers.md"
     if r.exists():
         st.markdown(r.read_text())
