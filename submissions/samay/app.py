@@ -21,6 +21,12 @@ import streamlit as st
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE / "src"))
 
+# Streamlit keeps imported modules alive between reruns; reload the engine so a `git pull` is always picked up.
+for _m in ["score100", "orders", "efiling", "model", "config", "priority", "packer", "next_date", "agents",
+           "baseline", "metrics", "brief", "simulate"]:
+    if _m in sys.modules:
+        importlib.reload(sys.modules[_m])
+
 from brief import build_brief  # noqa: E402
 from config import GUARDRAILS, PRESETS, make_config  # noqa: E402
 from efiling import enrich  # noqa: E402
