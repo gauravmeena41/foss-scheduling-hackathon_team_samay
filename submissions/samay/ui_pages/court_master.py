@@ -66,6 +66,7 @@ with tabs[1]:
                 cur = docket(jname)
                 if cur is None or cur["path"] != path:
                     dockets()[jname] = {"path": path, "name": up.name, "cases": n}
+                    st.rerun()          # refresh the Judges cards and Run a day with the new docket
                 st.success(f"Docket for {jname}: {n:,} cases from {up.name}.")
                 if notes:
                     st.info(" ".join(notes))

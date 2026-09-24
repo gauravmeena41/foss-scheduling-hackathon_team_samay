@@ -159,6 +159,10 @@ def docket(judge):
 
 
 def leave_of(judge) -> list[str]:
+    """The judge's leave: the Files tab widget's current value if it exists, else what was saved."""
+    widget = st.session_state.get(f"leave_{judge}")
+    if widget is not None:
+        return list(widget)
     return st.session_state.setdefault("leave", {}).get(judge, [])
 
 
