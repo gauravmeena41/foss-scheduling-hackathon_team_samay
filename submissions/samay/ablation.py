@@ -45,7 +45,6 @@ def main() -> None:
     if a.efiling:
         import tempfile
 
-        import pandas as pd
         from efiling import enrich
         from model import DATA_DIR
         tmp = Path(tempfile.gettempdir()) / "samay_roster_efiling.csv"
