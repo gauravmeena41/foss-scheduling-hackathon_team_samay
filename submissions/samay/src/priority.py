@@ -57,7 +57,9 @@ def rank(state: pd.DataFrame, day: pd.Timestamp, cfg: dict) -> pd.DataFrame:
     elif mode == "teammate":
         elig["score"] = pts["score_100"]
     else:   # hybrid: the teammate's priority, counted only if the hearing moves the case, per minute of court time
-        elig["score"] = pts["score_100"] * probs["substantive"] / exp_min * boost * continuity
+        # P(moves) is raised to a power > 1 (tuned: 1.5) so likely-to-fail listings don't look cheap
+        power = cfg.get("hybrid_readiness_power", 1.5)
+        elig["score"] = pts["score_100"] * probs["substantive"] ** power / exp_min * boost * continuity
     elig["overdue_days"] = (day - elig["due_date"]).dt.days
     n_here = elig["hearings_in_stage"].fillna(0).astype(int)
     elig["visit"] = np.where(n_here == 0, "first at stage", "repeat #" + (n_here + 1).astype(str))

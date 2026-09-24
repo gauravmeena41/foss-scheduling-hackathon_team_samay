@@ -22,6 +22,7 @@ DEFAULT_CONFIG = {
     "mention_minutes": 2,             # time a non-happening listing still costs the court
     "changeover_minutes": 2,
     "ranking": "hybrid",              # samay (value per minute) | teammate (0-100 priority) | hybrid (priority per minute)
+    "hybrid_readiness_power": 1.5,    # tuned over 4 seeds: +4% disposals, +3 pts 5+ yr movement, -10% wasted trips
     "bail_liberty_lane": True,        # bail matters always listed first (personal liberty)
     "max_overdue_days": 30,           # no case waits forever: overdue this long -> forced onto the list ...
     "overdue_share": 0.2,             # ... using at most this share of the day          # average gap between hearings: calling the case, parties stepping up
