@@ -32,13 +32,15 @@ Make a 3,000-case roster with `cd ../../scripts && python generate_roster.py --n
 | `src/metrics.py` | The five scoring dimensions and supporting metrics |
 | `app.py` | Streamlit dashboard |
 
-## Headline (3,000 cases, 60 working days, 10 seeds, court sits 10:30–11:00 → 12:30 and 13:30 → 17:00)
+## Headline (one judge, 3,000 cases, 60 sitting days, 10 seeds; court sits 10:30–11:00 → 12:30 and 13:30 → 17:00, 2-min changeover)
 
 | | Baseline | Samay |
 |---|---|---|
-| Listed → heard → effective / day | 60 → 14.3 → 9.8 | 33.9 → 20.8 → 20.0 |
-| Reach rate | 43% | 89% |
-| 5+ yr cases advanced | 14% | 39% |
-| Started within slot | 9% | 78% |
-| Next date sensible | 8% | 79% |
-| Wasted trips | 2,742 | 785 |
+| Listed → heard → effective / day | 60 → 12.3 → 8.4 | 23.5 → 16.8 → 16.2 |
+| Reach rate | 37% | 87% |
+| 5+ yr cases advanced | 12% | 39% |
+| Started within slot | 9% | 80% |
+| Next date sensible | 8% | 93% |
+| Wasted trips | 2,862 | 401 |
+
+Dashboard: `streamlit run app.py` → sidebar **Upload Excel / CSV** → `samples/sample_docket_3000.xlsx` (3,000 cases) or `samples/sample_cases.xlsx` (100-row template). Screenshots in `docs/`.
