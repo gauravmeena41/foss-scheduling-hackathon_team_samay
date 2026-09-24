@@ -20,7 +20,7 @@ from packer import _mins, build_causelist
 from priority import rank
 
 DURATION_SIGMA = 0.35
-DAY_END_GRACE = 10       # minutes a started hearing may run past the end of the day    # lognormal spread around the reference minutes
+DAY_END_GRACE = 10       # minutes a started hearing may run past lunch / the end of the day    # lognormal spread around the reference minutes
 PROCESS_PURPOSES = {"APPEARANCE", "WARRANT"}   # entering these needs a process to return first
 
 
@@ -134,7 +134,11 @@ def run(cases: pd.DataFrame, policy: str, cfg: dict, start: str = "2026-09-24", 
                 ranked, predrawn, declined = confirm_readiness(ranked, s, day, cfg, sim_cfg, rng, pool)
             cl = build_causelist(ranked, day, cfg)
         lists.append(cl)
-        used, clock, n = 0.0, None, dict.fromkeys(["listed", "reached", "happened", "substantive"], 0)
+        used, n = 0.0, dict.fromkeys(["listed", "reached", "happened", "substantive"], 0)
+        # the bench sits somewhere in the start window; lunch is a hard break; the court rises at the end
+        w0, w1 = (_mins(t) for t in cfg["start_window"])
+        (m_start, m_end), (a_start, a_end) = [(_mins(a), _mins(b)) for a, b in cfg["court_sittings"]]
+        clock = float(rng.uniform(w0, w1))
         n["declined"] = len(declined)
         for cid, why in declined:                       # slot freed 2 days ahead, no trip made
             s.at[cid, "times_declined"] += 1
@@ -155,8 +159,10 @@ def run(cases: pd.DataFrame, policy: str, cfg: dict, start: str = "2026-09-24", 
             s.at[cid, "times_listed"] += 1
             if pd.isna(s.at[cid, "first_scheduled"]):
                 s.at[cid, "first_scheduled"] = day
-            block_start = blocks.get(row["block"], _mins(row["est_start"]))
-            clock = block_start if clock is None else max(clock, block_start)
+            if blocks.get(row["block"], 0) >= a_start:        # afternoon block: not before lunch ends
+                clock = max(clock, a_start)
+            if m_end <= clock < a_start:                        # a morning hearing ran into lunch
+                clock = a_start
             purpose = s.at[cid, "next_purpose"]
             promised = s.at[cid, "due_date"]
             rec = {"date": day.date(), "case_id": cid, "purpose": purpose, "block": row["block"],
@@ -165,8 +171,10 @@ def run(cases: pd.DataFrame, policy: str, cfg: dict, start: str = "2026-09-24", 
                    "happened": False, "substantive": False, "minutes_used": 0.0, "failure_reason": "unreached",
                    "is_old": bool(s.at[cid, "is_old"]), "age_years": float(s.at[cid, "age_years"])}
 
-            # court rises at day_minutes: don't start a hearing that is expected to run past it (10-min grace)
-            if used + s.at[cid, "est_minutes"] > cfg["day_minutes"] + DAY_END_GRACE:
+            est_here = s.at[cid, "est_minutes"]
+            if clock < m_end and clock + est_here > m_end + DAY_END_GRACE:
+                clock = a_start                                 # won't finish before lunch: take it after
+            if clock + est_here > a_end + DAY_END_GRACE:      # court rises at 17:00
                 outcome = "unreached"
             else:
                 att_m, prep_m = 1.0, 1.0
@@ -187,6 +195,8 @@ def run(cases: pd.DataFrame, policy: str, cfg: dict, start: str = "2026-09-24", 
                            minutes_used=round(mins, 1), failure_reason=outcome, actual_start=f"{int(clock)//60:02d}:{int(clock)%60:02d}")
                 used += mins
                 clock += mins
+                if m_end <= clock < a_start:
+                    clock = a_start
                 n["reached"] += 1
                 n["happened"] += happens(outcome)
                 n["substantive"] += outcome == "substantive"

@@ -8,7 +8,7 @@
 
 ## 2. One-line summary
 
-Samay lists only hearings that are ready to happen and likely to move the case forward, packs them into real time slots up to the day's *expected* capacity, guarantees ageing cases a fixed share of every day, and makes the next date match the work the next step needs — so a 60 → 20 → 10 day becomes ~45 → 27 → 26.
+Samay lists only hearings that are ready to happen and likely to move the case forward, packs them into real time slots up to the day's *expected* capacity, guarantees ageing cases a fixed share of every day, and makes the next date match the work the next step needs — so a 60 → 14 → 10 day becomes ~34 → 21 → 20 on the court's real sitting hours.
 
 ## 3. The approach
 
@@ -18,7 +18,7 @@ Samay lists only hearings that are ready to happen and likely to move the case f
 
 1. **Case model** (`model.py`, `orders.py`). One row per case. The last order sheet is classified into 11 events (process awaiting / served, mediation or higher-court order pending, objections pending, not ready, absent, part-heard, heard for judgment, progressed, verdict recorded) and *who the case is waiting on*. From that: a prerequisite gate, readiness, case-level no-show and unpreparedness multipliers (from who was absent / what was pending), part-heard priority, adjournments so far, and hearings/minutes left to disposal. Every field is documented in `CASE_SCHEMA`; `validate_cases()` checks any roster.
 2. **Rank** (`priority.py`). Score = age factor × P(moves forward | listed) ÷ expected minutes, × part-heard and purpose-day boosts. Cases still waiting on process, mediation or a higher court are not eligible.
-3. **Pack** (`packer.py`). Capacity = 420 min × overbooking factor, in *expected* minutes (a no-show costs a 2-minute mention, not the slot). The **guardrail** fills its share of the day first with 4+ year cases using its *own* oldest-weighted ranking, so no judge's rules can starve them; the rest goes to the judge's ranking. Cases are placed in time blocks, each advocate's matters back to back, each with an estimated start time.
+3. **Pack** (`packer.py`). The court sits 10:30–11:00 (start varies) to 12:30, breaks for lunch, and sits again 13:30–17:00 — about 315 expected minutes. Capacity = expected sitting minutes × overbooking factor, in *expected* minutes (a no-show costs a 2-minute mention, not the slot). The **guardrail** fills its share of the day first with 4+ year cases using its *own* oldest-weighted ranking, so no judge's rules can starve them; the rest goes to the judge's ranking. Cases are placed in time blocks, each advocate's matters back to back, each with an estimated start time.
 4. **Readiness check** (`simulate.confirm_readiness`). Two days before, advocates confirm "ready" or "need time"; freed slots go to the next case. Two "need time"s flag the case.
 5. **Case brief** (`brief.py`). One page per case for 4+ year and evidence / arguments / judgement matters: journey through the stages, last order, who was absent, what it waits on, the checklist for this hearing, work left to disposal.
 6. **Next date** (`next_date.py`). Reference gap for the next purpose, shortened after an absence, set at the expected process return after a summons/warrant, next working day if unreached (or same weekday next week for a Sehgal-style court) — and slid past days that are already full.
@@ -26,6 +26,7 @@ Samay lists only hearings that are ready to happen and likely to move the case f
 **Key decisions.** Expected-minutes packing (airline-style overbooking) over counting cases. A guardrail the judge can raise but not lower, with its own ranking. Greedy over a solver, so every listing carries a plain-language `reason`. Stage-specific fixes, because hearings fail for different reasons at different stages (below).
 
 **Assumptions (all in code as named constants):**
+- Court timings: the bench starts anywhere between 10:30 and 11:00 (uniform), lunch 12:30–13:30 is a hard break, the court rises at 17:00; a hearing that won't finish before lunch is taken after it. The plan assumes a 10:45 start.
 - Hearing durations lognormal around the reference minutes (σ = 0.35).
 - Each listing's outcome drawn from P(substantive) + the failure-reason shares for its hearing type; once process has returned, process failures drop out and the rest renormalise.
 - Process return time ~ Exponential(mean 1.5 × reference gap) × the case's e-filing multiplier.
@@ -43,48 +44,49 @@ Samay lists only hearings that are ready to happen and likely to move the case f
 
   | Scenario | Effective / day | On-the-day "not prepared" | Admitted early | Wasted trips |
   |---|---|---|---|---|
-  | Baseline court | 13.7 | 305 | 0 | 2,471 |
-  | Samay, no incentives | 26.1 | 79 | 278 | 1,003 |
-  | + reminders | 26.0 | 65 | 232 | 1,062 |
-  | + cost for on-the-day adjournment | 26.4 | 46 | 323 | 1,020 |
-  | + both | 26.5 | 30 | 294 | 997 |
+  | Baseline court | 10.6 | 249 | 0 | 2,716 |
+  | Samay, no incentives | 20.1 | 71 | 212 | 773 |
+  | + reminders | 20.2 | 47 | 147 | 768 |
+  | + cost for on-the-day adjournment | 20.3 | 26 | 271 | 757 |
+  | + both | 20.5 | 21 | 219 | 753 |
 
   The cost barely moves throughput; it moves unpreparedness out of the courtroom and into the readiness check, where the slot can still be refilled. Learning drift is small in 60 days (each advocate appears a handful of times) but has the right sign.
 
 ## 5. Results
 
-**3,000 cases, 60 working days, 10 seeds (mean ± sd), Recommended rules** — `python results.py`, full table in `results.md`:
+**3,000 cases, 60 working days, 10 seeds (mean ± sd), Recommended rules, real court timings** — `python results.py`, full table in `results.md`:
 
 | Metric | Baseline (60/day, flat 60-day gap) | Samay |
 |---|---|---|
-| Utilisation (minutes used ÷ 420) | 102% ± 0% | 99% ± 0% |
-| Reach rate | 56% ± 1% | 89% ± 0% |
-| Substantiveness (effective ÷ heard) | 68% ± 1% | 95% ± 0% |
-| Effective hearings / day | 12.9 ± 0.2 | 25.8 ± 0.3 |
-| 4+ yr cases heard at least once | 38% ± 1% | 50% ± 1% |
-| 5+ yr cases advanced ≥ 1 stage | 18% ± 1% | 50% ± 1% |
-| Days from first listing to hearing | 9.1 ± 0.5 | 3.4 ± 0.2 |
-| Date slippage (heard vs date given) | 32.9 ± 0.4 | 9.6 ± 0.4 |
-| Started within slot (± 30 min) | 10% ± 0% | 89% ± 2% |
-| Next date within 0.5–2× procedural gap | 8% ± 0% | 81% ± 1% |
-| Wasted trips (listed, not heard) | 2,472 | 1,069 |
-| Disposed in 60 days | 186 | 347 |
+| Utilisation (minutes used ÷ sitting minutes) | 102% ± 1% | 99% ± 1% |
+| Reach rate | 43% ± 1% | 89% ± 1% |
+| Substantiveness (effective ÷ heard) | 68% ± 1% | 96% ± 0% |
+| Heard / day | 14.3 ± 0.4 | 20.8 ± 0.2 |
+| Effective hearings / day | 9.8 ± 0.3 | 20.0 ± 0.3 |
+| 4+ yr cases heard at least once | 27% ± 1% | 44% ± 1% |
+| 5+ yr cases advanced ≥ 1 stage | 14% ± 1% | 39% ± 1% |
+| Days from first listing to hearing | 9.0 ± 0.6 | 2.7 ± 0.2 |
+| Date slippage (heard vs date given) | 33.1 ± 0.3 | 14.6 ± 0.5 |
+| Started within slot (± 30 min) | 9% ± 1% | 78% ± 2% |
+| Next date within 0.5–2× procedural gap | 8% ± 0% | 79% ± 1% |
+| Wasted trips (listed, not heard) | 2,742 | 785 |
+| Disposed in 60 days | 144 | 313 |
 
-The baseline reproduces the case study's ~60 → 20 → 10 day — our calibration check.
+The baseline reproduces the case study's day — 60 listed, ~14 heard, ~10 effective — our calibration check. The random 10:30–11:00 start is why slot adherence is 78%, not higher.
 
 **Why the levers differ by stage** (`python ablation.py`, effective hearings/day):
 
 | Scenario | Early | Middle | Late | 5+ yr advanced |
 |---|---|---|---|---|
-| Baseline | 3.3 | 3.6 | 3.4 | 18% |
-| + Packing & prerequisite gate | 10.4 | 5.0 | 4.8 | 36% |
-| + Readiness check | 10.8 | 5.1 | 4.8 | 34% |
-| + Case brief | 9.5 | 4.4 | 6.2 | 48% |
-| All levers | 9.6 | 4.9 | 6.4 | 50% |
+| Baseline | 2.7 | 2.4 | 2.6 | 12% |
+| + Packing & prerequisite gate | 7.9 | 2.5 | 4.4 | 28% |
+| + Readiness check | 8.2 | 2.8 | 4.3 | 28% |
+| + Case brief | 6.4 | 2.4 | 5.3 | 37% |
+| All levers | 6.8 | 2.7 | 5.4 | 38% |
 
 Early stages fail on process (summons/warrants not back) — the gate fixes them. Evidence and arguments fail because counsel aren't prepared and the bench re-reads the file — the readiness check and the case brief target those.
 
-**Three judges, one engine** (dashboard tab 1, 3,000 cases): fresh-first rules (Justice Joshi) reach 34 effective hearings a day but advance **0%** of 5+ year cases; with the guardrail on, 31 a day and 33%. That is the trade-off the guardrail makes visible and bounds.
+**Three judges, one engine** (dashboard tab 1, 3,000 cases): fresh-first rules (Justice Joshi) reach 26.8 effective hearings a day but advance **0%** of 5+ year cases; with the guardrail on, 25.1 a day and 24%. That is the trade-off the guardrail makes visible and bounds.
 
 **E-filing signals** (synthetic): no measurable gain in this simulation, because the prerequisite gate already keeps unready cases off the list. Their value is operational — flagging cases with no known contact for alternative service early, and giving parties realistic tentative dates.
 

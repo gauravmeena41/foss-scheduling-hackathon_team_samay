@@ -94,7 +94,7 @@ with st.sidebar:
     preset = st.selectbox("Preset", list(PRESETS))
     base = make_config(preset, enforce_guardrails=False)
     overbook = st.slider("Overbooking factor", 0.8, 2.0, float(base["overbook_factor"]), 0.05,
-                         help="Listed expected minutes ÷ 420. Above 1 = planned no-shows.")
+                         help="Listed expected minutes ÷ sitting minutes (~315). Above 1 = planned no-shows.")
     old_share = st.slider("Share of day for 4+ yr cases", 0.0, 0.9, float(base["old_case_min_share"]), 0.05)
     age_w = st.slider("Age weight in ranking", -0.3, 1.0, float(base["age_weight"]), 0.05)
     gate = st.toggle("Don't list until prerequisites are met", base["gate_prerequisites"])
@@ -122,7 +122,8 @@ initial = initial_cases(path)
 
 # ---------------------------------------------------------------- header
 st.title("Samay — a court day that runs to plan")
-st.caption(f"{n_cases:,} cases · {len(sd)} working days · preset **{preset}** · "
+st.caption(f"{n_cases:,} cases · {len(sd)} working days · sittings 10:30–11:00 start → 12:30, lunch, 13:30 → 17:00 "
+           f"(≈{cfg['day_minutes'] / 60:.2f} h) · preset **{preset}** · "
            "baseline = list 60 a day, whatever gets listed gets attempted, flat 60-day next date")
 if cfg["guardrail_clamped"]:
     st.warning(f"Guardrail: ageing-case share raised to {cfg['old_case_min_share']:.0%}. "
@@ -225,7 +226,7 @@ with tabs[2]:
     b = day_stats(today)
     a = day_stats(kept)
     m1, m2, m3, m4 = st.columns(4)
-    m1.metric("Expected minutes", f"{a[0]:.0f} / {cfg['day_minutes']}", f"{a[0] - b[0]:+.0f}")
+    m1.metric("Expected minutes", f"{a[0]:.0f} / {cfg['day_minutes']:.0f}", f"{a[0] - b[0]:+.0f}")
     m2.metric("Expected effective hearings", f"{a[1]:.1f}", f"{a[1] - b[1]:+.1f}")
     m3.metric("P(everyone listed is reached)", f"{a[2]:.0%}", f"{a[2] - b[2]:+.0%}")
     m4.metric("4+ yr cases today", a[3], a[3] - b[3])

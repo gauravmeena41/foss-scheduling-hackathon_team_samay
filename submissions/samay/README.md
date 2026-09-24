@@ -32,13 +32,13 @@ Make a 3,000-case roster with `cd ../../scripts && python generate_roster.py --n
 | `src/metrics.py` | The five scoring dimensions and supporting metrics |
 | `app.py` | Streamlit dashboard |
 
-## Headline (3,000 cases, 60 working days, 10 seeds)
+## Headline (3,000 cases, 60 working days, 10 seeds, court sits 10:30–11:00 → 12:30 and 13:30 → 17:00)
 
 | | Baseline | Samay |
 |---|---|---|
-| Effective hearings / day | 12.9 | 25.8 |
-| Reach rate | 56% | 89% |
-| 5+ yr cases advanced | 18% | 50% |
-| Started within slot | 10% | 89% |
-| Next date sensible | 8% | 81% |
-| Wasted trips | 2,472 | 1,069 |
+| Listed → heard → effective / day | 60 → 14.3 → 9.8 | 33.9 → 20.8 → 20.0 |
+| Reach rate | 43% | 89% |
+| 5+ yr cases advanced | 14% | 39% |
+| Started within slot | 9% | 78% |
+| Next date sensible | 8% | 79% |
+| Wasted trips | 2,742 | 785 |

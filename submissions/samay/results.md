@@ -2,18 +2,18 @@
 
 | Metric | Baseline (60/day, 60-day gap) | Samay |
 |---|---|---|
-| Utilisation | 102% ± 0% | 99% ± 0% |
-| Reach rate | 56% ± 1% | 89% ± 0% |
-| Substantiveness | 68% ± 1% | 95% ± 0% |
-| Backlog 4+ heard | 38% ± 1% | 50% ± 1% |
-| Backlog 5+ advanced | 18% ± 1% | 50% ± 1% |
-| Predictability (days to hearing) | 9.1 ± 0.5 | 3.4 ± 0.2 |
-| Date slippage (days) | 32.9 ± 0.4 | 9.6 ± 0.4 |
-| Started within slot | 10% ± 0% | 89% ± 2% |
-| Next-date sensible | 8% ± 0% | 81% ± 1% |
-| Listed / day | 60.0 ± 0.0 | 44.8 ± 0.3 |
-| Heard / day | 18.8 ± 0.2 | 27.0 ± 0.3 |
-| Effective / day | 12.9 ± 0.2 | 25.8 ± 0.3 |
-| Wasted trips | 2,471.6 ± 12.3 | 1,069.0 ± 32.4 |
-| Declined in advance | 0.0 ± 0.0 | 387.2 ± 20.2 |
-| Disposed | 186.2 ± 3.2 | 347.3 ± 3.7 |
+| Utilisation | 102% ± 1% | 99% ± 1% |
+| Reach rate | 43% ± 1% | 89% ± 1% |
+| Substantiveness | 68% ± 1% | 96% ± 0% |
+| Backlog 4+ heard | 27% ± 1% | 44% ± 1% |
+| Backlog 5+ advanced | 14% ± 1% | 39% ± 1% |
+| Predictability (days to hearing) | 9.0 ± 0.6 | 2.7 ± 0.2 |
+| Date slippage (days) | 33.1 ± 0.3 | 14.6 ± 0.5 |
+| Started within slot | 9% ± 1% | 78% ± 2% |
+| Next-date sensible | 8% ± 0% | 79% ± 1% |
+| Listed / day | 60.0 ± 0.0 | 33.9 ± 0.4 |
+| Heard / day | 14.3 ± 0.4 | 20.8 ± 0.2 |
+| Effective / day | 9.8 ± 0.3 | 20.0 ± 0.3 |
+| Wasted trips | 2,742.0 ± 21.2 | 784.6 ± 30.2 |
+| Declined in advance | 0.0 ± 0.0 | 289.3 ± 23.2 |
+| Disposed | 144.3 ± 5.0 | 313.2 ± 2.4 |

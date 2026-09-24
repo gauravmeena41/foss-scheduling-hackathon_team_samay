@@ -14,7 +14,10 @@ GUARDRAILS = {
 }
 
 DEFAULT_CONFIG = {
-    "day_minutes": 420,
+    # Court timings: bench sits from 10:30-11:00 (start varies) to 12:30, lunch 12:30-13:30, then 13:30-17:00.
+    "court_sittings": [["10:30", "12:30"], ["13:30", "17:00"]],
+    "start_window": ["10:30", "11:00"],   # actual start is anywhere in this window; the plan assumes the midpoint
+    "day_minutes": 315,                   # expected sitting minutes (derived in make_config)
     "overbook_factor": 1.15,          # list up to 115% of the day's EXPECTED minutes
     "mention_minutes": 2,             # time a non-happening listing still costs the court
     "old_case_min_share": 0.50,       # clamped to GUARDRAILS floor (tuned: beats baseline on 4+ and 5+)
@@ -33,8 +36,8 @@ DEFAULT_CONFIG = {
     "confirm_reveals_absence": 0.4,   # share of would-be no-shows they flag in advance
     "declined_gap_days": 7,           # "need time" -> relisted after this many days
     "blocks": [                       # time blocks; filter picks which cases go where
-        {"name": "Morning (fresh & short first)", "start": "10:30", "end": "13:30", "filter": "not_old"},
-        {"name": "Afternoon (oldest matters)", "start": "14:30", "end": "18:30", "filter": "old"},
+        {"name": "Morning (fresh & short first)", "start": "10:45", "end": "12:30", "filter": "not_old"},
+        {"name": "Afternoon (oldest matters)", "start": "13:30", "end": "17:00", "filter": "old"},
     ],
     "use_efiling_signals": True,      # predict process-return dates per case when e-filing data exists
     "leave_dates": [],                # judge's personal leave (YYYY-MM-DD)
@@ -48,10 +51,10 @@ PRESETS = {
     "Justice Sehgal (block scheduler)": {
         "carry_forward_weekly": True,
         "old_case_min_share": 0.40,
-        # His morning-fresh / afternoon-oldest split, stretched to the 420-min day
+        # His split - fresh & notice matters before lunch, oldest matters after - on the court's timings
         "blocks": [
-            {"name": "Fresh & notice", "start": "10:30", "end": "14:00", "filter": "not_old"},
-            {"name": "Oldest matters", "start": "14:30", "end": "18:00", "filter": "old"},
+            {"name": "Fresh & notice", "start": "10:45", "end": "12:30", "filter": "not_old"},
+            {"name": "Oldest matters", "start": "13:30", "end": "17:00", "filter": "old"},
         ],
     },
     "Justice Dimakar (clusterer)": {
@@ -68,10 +71,25 @@ PRESETS = {
 }
 
 
+def _m(hhmm: str) -> int:
+    h, m = hhmm.split(":")
+    return int(h) * 60 + int(m)
+
+
+def expected_sitting_minutes(cfg: dict) -> float:
+    """Sitting minutes in a day, taking the expected (midpoint) start of the first sitting."""
+    (s1, e1), *rest = cfg["court_sittings"]
+    w0, w1 = (_m(t) for t in cfg["start_window"])
+    first = _m(e1) - (w0 + w1) / 2
+    return first + sum(_m(e) - _m(s) for s, e in rest)
+
+
 def make_config(preset: str = "Recommended", enforce_guardrails: bool = True, **overrides) -> dict:
     cfg = copy.deepcopy(DEFAULT_CONFIG)
     cfg.update(copy.deepcopy(PRESETS.get(preset, {})))
     cfg.update(overrides)
+    if "day_minutes" not in overrides:
+        cfg["day_minutes"] = expected_sitting_minutes(cfg)
     cfg["guardrail_clamped"] = False
     if enforce_guardrails and cfg["old_case_min_share"] < GUARDRAILS["old_case_min_share_floor"]:
         cfg["old_case_min_share"] = GUARDRAILS["old_case_min_share_floor"]
