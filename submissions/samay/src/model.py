@@ -71,7 +71,7 @@ CASE_COLUMNS = [
     "absent_parties", "adjournments_est", "remaining_hearings_est", "remaining_minutes_est", "data_note",
     "process_wait_mult", "has_efiling", "visit",
     "full_points_age", "attendance_factor", "urgency_value",
-    "pts_age", "pts_readiness", "pts_disposal", "pts_churn", "pts_urgency", "score_100",
+    "pts_age", "pts_readiness", "pts_disposal", "pts_churn", "pts_urgency", "score_100", "status", "flags",
 ]
 
 CASE_SCHEMA = {
@@ -212,15 +212,26 @@ def load_cases(roster_path: Path | str | None = None, as_of: str = "2026-09-24",
         df[col] = orders[col].values
     df["readiness"] = np.where(df["last_chance"], np.minimum(df["readiness"], 0.5), df["readiness"])
     df["part_heard"] = df["last_event"] == "part_heard"
-    # warrant stage: blocked until the warrant is executed, unless the order says served
-    warrant_wait = (df["next_purpose"] == "WARRANT") & ~df["last_event"].isin(["process_served", "external_pending"])
-    blocked = orders["blocked"].values | warrant_wait
+    # R1 of case_priority_scoring.md: Conditional (not listed) while a summons, warrant or notice is out
+    blocked = summary.map(score100.needs_service).values
     df["prereq_ok"] = ~blocked
-    df["prereq_reason"] = np.where(warrant_wait & ~orders["blocked"].values, "warrant execution",
-                                   np.where(blocked, df["waiting_on"], ""))
+    df["prereq_reason"] = np.where(blocked, "confirm service (summons / warrant / notice)", "")
+    df["status"] = np.where(blocked, "Conditional", "Eligible")
     df["readiness"] = np.where(blocked, 0.0, df["readiness"])
     df["prep_mult"] = 1.5 - df["readiness"]
     df["prep_mult"] /= df["prep_mult"].mean()
+
+    # 0-100 priority score exactly as case_priority_scoring.md (score100.py), on the case as filed;
+    # full-points age computed once for this roster, then fixed
+    df["full_points_age"] = score100.full_points_age(df["age_years"])
+    df["attendance_factor"] = [score100.attendance_factor(t, p) for t, p in zip(summary, df["next_purpose"])]
+    df["urgency_value"] = summary.map(score100.urgency_value).values
+    pts = score100.score(df, ref)
+    for c in pts.columns:
+        df[c] = pts[c].values
+    df["flags"] = [score100.flags(t, p, a, ch, u, b) for t, p, a, ch, u, b in
+                   zip(summary, df["next_purpose"], df["age_years"], df["pts_churn"] / score100.WEIGHTS["churn"],
+                       df["urgency_value"], blocked)]
 
     # verdict already on record but next purpose still says judgement -> treat as disposed
     done = (df["last_event"] == "verdict_recorded") & (df["next_purpose"] == "JUDGEMENT")
@@ -238,13 +249,6 @@ def load_cases(roster_path: Path | str | None = None, as_of: str = "2026-09-24",
     df["last_heard"] = pd.NaT
     df["last_summary"] = summary
     df["visit"] = visit_label(df["hearings_in_stage"]).values
-    # teammate's 0-100 priority score (score100.py); full-points age fixed once for this roster
-    df["full_points_age"] = score100.full_points_age(df["age_years"])
-    df["attendance_factor"] = [score100.attendance_factor(t, p) for t, p in zip(summary, df["next_purpose"])]
-    df["urgency_value"] = summary.map(score100.urgency_value).values
-    pts = score100.score(df, ref)
-    for c in pts.columns:
-        df[c] = pts[c].values
     stages_done = (r[[c for c in r.columns if c.startswith("hearings_")]] > 0).sum(axis=1)
     df["adjournments_est"] = (df["total_hearings"] - stages_done).clip(lower=0).values
     rem = [remaining_work(p, st, n, ref) for p, st, n in zip(df["next_purpose"], df["stage"], df["hearings_in_stage"])]

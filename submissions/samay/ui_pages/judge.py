@@ -157,16 +157,12 @@ with tabs[1]:
 with tabs[2]:
     open_ = cases[cases["next_purpose"] != "DISPOSED"]
     end = rtl["cases"]
-    flags = (pd.Series("", index=open_.index)
-             + open_["is_old"].map({True: "Backlog 4y+ · ", False: ""})
-             + (open_["age_years"] >= 5).map({True: "Ageing 5y+ · ", False: ""})
-             + open_["repeat_adj"].map({True: "Churning · ", False: ""})
-             + open_["is_stuck"].map({True: "Stuck at stage · ", False: ""})).str.rstrip(" ·")
+    flags = open_["flags"].replace("", "—")
     listed = j.groupby("case_number").size()
     moved = j[j.outcome == "substantive"].groupby("case_number").size()
     dkv = pd.DataFrame({
         "Case": open_["case_id"], "Score": open_["score_100"].round(0),
-        "Status": open_["prereq_ok"].map({True: "Eligible", False: "Conditional"}), "Flags": flags,
+        "Status": open_["status"], "Flags": flags,
         "Next hearing": open_["next_purpose"].map(hearing_label), "Age (years)": open_["age_years"].round(1),
         "Advocate": open_["advocate_id"], "Listings": open_["case_id"].map(listed).fillna(0).astype(int),
         "Moved forward": open_["case_id"].map(moved).fillna(0).astype(int),
@@ -190,7 +186,7 @@ with tabs[2]:
             c = cases.loc[cid]
             st.markdown(f"**{cid}**, score **{c.score_100:.0f}**  \nAge {c.pts_age:.0f}, readiness {c.pts_readiness:.0f}, "
                         f"disposal {c.pts_disposal:.0f}, churn {c.pts_churn:.0f}, urgency {c.pts_urgency:.0f}  \n"
-                        f"{'Eligible' if c.prereq_ok else 'Conditional: waiting on ' + str(c.prereq_reason)}. "
+                        f"{c.status}{': ' + str(c.prereq_reason) if not c.prereq_ok else ''}. {c.flags or 'No flags'}. "
                         f"{c.visit.capitalize()} at this stage.")
             st.code(c.last_summary or "(no order text)", language=None)
             hist = rtl["history"][(rtl["history"]["case_id"] == cid) & rtl["history"]["listed"]].copy()
@@ -225,7 +221,7 @@ with tabs[3]:
                             "Readiness": pts["pts_readiness"].round(1), "Disposal": pts["pts_disposal"].round(1),
                             "Churn": pts["pts_churn"].round(1), "Urgency": pts["pts_urgency"].round(1),
                             "Years": open_["age_years"].round(1),
-                            "Status": open_["prereq_ok"].map({True: "Eligible", False: "Conditional"}), "Flags": flags})
+                            "Status": open_["status"], "Flags": flags})
         st.dataframe(tbl.sort_values("Score", ascending=False), hide_index=True, height=560, **FULL)
 
 # ---------------------------------------------------------------- insight

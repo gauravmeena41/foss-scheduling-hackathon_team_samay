@@ -3,7 +3,7 @@ from datetime import date, timedelta
 import pandas as pd
 import streamlit as st
 
-from ui_pages.shared import (COURT_OF, FULL, GAP_DAYS, JUDGES, LISTING, OUTCOME, SAMPLE_XLSX, day_list, docket,
+from ui_pages.shared import (COURT_OF, FULL, JUDGES, next_date_text, LISTING, OUTCOME, SAMPLE_XLSX, day_list, docket,
                              dockets, hearing_label, hearing_table, leave_of, page_setup, plans, require, save_docket,
                              sidebar)
 
@@ -100,16 +100,12 @@ with tabs[1]:
             {"Column": "hearings_<type>", "Meaning": "hearings held per type (optional)"}]),
             hide_index=True, height=330, **FULL)
         st.markdown("<div class='eyebrow'>How the rows look</div>", unsafe_allow_html=True)
-        st.dataframe(pd.DataFrame([
-            {"case_number": "ST/819/2023", "filing_date": "2023-01-09", "advocate_id": "ADV-005",
-             "current_stage": "Evidence Accused", "purpose_of_next_hearing": "Evidence Accused",
-             "last_hearing_summary": "Present: Complainant, Complainant's Advocate, Accused Advocate. Absent: Accused. "
-                                     "For defence evidence, last chance.", "total_hearings_held": 35},
-            {"case_number": "ST/7/2025", "filing_date": "2025-08-14", "advocate_id": "ADV-011",
-             "current_stage": "Appearance", "purpose_of_next_hearing": "Warrant",
-             "last_hearing_summary": "Present: Complainant's Advocate. Absent: Accused. Issue NBW to accused. "
-                                     "Take steps. For return of warrant.", "total_hearings_held": 6}]),
-            hide_index=True, height=110, **FULL)
+        src = docket(jname) or next(iter(dockets().values()), None)
+        if src is not None:
+            st.dataframe(pd.read_csv(src["path"])[["case_number", "filing_date", "advocate_id", "current_stage",
+                                                   "purpose_of_next_hearing", "last_hearing_summary",
+                                                   "total_hearings_held"]].head(2),
+                         hide_index=True, height=110, **FULL)
 
 # ---------------------------------------------------------------- run a day
 with tabs[2]:
@@ -153,16 +149,9 @@ with tabs[2]:
                 marks.pop((key, last))
                 st.rerun()
         with left:
-            from model import load_reference
-            ref = load_reference()
-            outcome_text = {}
-            for r in todays.itertuples():
-                mark = marks.get((key, r.case_number))
-                if mark == "substantive":
-                    outcome_text[r.case_number] = (OUTCOME[mark], "reference gap for the next purpose")
-                elif mark:
-                    gap = GAP_DAYS[mark] if mark != "unready" else int(ref.at[r.hearing_type, "gap_days"])
-                    outcome_text[r.case_number] = (OUTCOME[mark], f"{gap} days" + (", or when process returns" if mark == "process" else ""))
+            outcome_text = {r.case_number: (OUTCOME[marks[(key, r.case_number)]],
+                                            next_date_text(marks[(key, r.case_number)], r.hearing_type))
+                            for r in todays.itertuples() if (key, r.case_number) in marks}
             st.markdown(hearing_table(todays, cfg, height=560, show_why=False, show_outcome=outcome_text),
                         unsafe_allow_html=True)
 

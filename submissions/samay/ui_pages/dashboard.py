@@ -157,8 +157,9 @@ with st.sidebar:
         if up is not None:
             path, problems, notes = uploaded_roster(up.name, up.getvalue(), efiling_on, ENGINE_VERSION)
     else:
-        n_cases = st.select_slider("Roster size", [100, 500, 1000, 3000], value=3000,
-                                   help="3,000 = the case study's docket. Smaller rosters leave the baseline court idle.")
+        n_cases = st.select_slider("Roster size", [100, 500, 1000, 3000], value=100,
+                                   help="100 = the hackathon's real cases (data/roster_sample_100.csv). Larger sizes "
+                                        "resample those real cases (scripts/generate_roster.py) to test scale.")
         path = sample_roster(n_cases, efiling_on, ENGINE_VERSION)
     days = st.slider("Working days to simulate", 10, 80, 60)
     seed = int(st.number_input("Seed", value=42, step=1))

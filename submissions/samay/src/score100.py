@@ -50,11 +50,42 @@ def attendance_factor(summary: str, purpose: str) -> float:
 
 def urgency_value(summary: str) -> float:
     t = str(summary).lower()
-    if re.search(r"last[\s-]chance", t):
+    if "last chance" in t:
         return 1.0
     if re.search(r"for judg(e)?ment", t):
         return 0.8
     return 0.0
+
+
+SERVICE_PHRASES = ["return of summons", "return of warrant", "return of notice", "await notice", "issue nbw",
+                   "issue summons", "issue warrant", "take steps"]
+
+
+def needs_service(summary: str) -> bool:
+    """R1: a summons, warrant or notice is out and not yet returned -> Conditional (flag: Confirm service)."""
+    t = str(summary).lower()
+    return any(p in t for p in SERVICE_PHRASES)
+
+
+def flags(summary: str, purpose: str, age_years: float, churn_value: float, urgency: float, conditional: bool) -> str:
+    """Flags shown beside the score (R1, R3, R4 and the document's labels). They never change the score."""
+    t = str(summary).lower()
+    out = []
+    if conditional:
+        out.append("Confirm service")
+    if "mediation" in t:
+        out.append("Mediation report pending")
+    if urgency >= 1.0:
+        out.append("Last chance")
+    if churn_value >= 0.5:          # 1.5x the hearings normally needed by this stage
+        out.append("Churning")
+    if purpose == "BAIL":
+        out.append("Liberty lane")
+    if age_years >= 5:
+        out.append("Ageing 5y+")
+    elif age_years >= 4:
+        out.append("Backlog 4y+")
+    return ", ".join(out)
 
 
 def expected_hearings(ref: pd.DataFrame) -> dict:

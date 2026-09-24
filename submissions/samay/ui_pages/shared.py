@@ -35,10 +35,9 @@ OUTCOME = {"substantive": "Moved forward", "absence": "A party absent", "unready
            "process": "Summons or warrant not back", "court": "Court could not reach it", "unclear": "Adjourned"}
 OUTCOME_OF_ENGINE = {"substantive": "substantive", "attendance": "absence", "preparation": "unready",
                      "process": "process", "unreached": "court", "other": "unclear"}
-GAP_DAYS = {"absence": 7, "unready": 14, "process": 21, "court": 1, "unclear": 7}
 BLUE, ORANGE, INK, MUTED = "#1B2A41", "#C08A2D", "#111925", "#56627A"
 LISTING_COLOR = {"first": "#1B2A41", "second": "#3D6FD9", "deferred": "#C08A2D"}
-SAMPLE_DOCKET = HERE / "samples" / "sample_docket_3000.xlsx"
+REAL_DOCKET = DATA_DIR / "roster_sample_100.csv"      # the hackathon's real 100 cases
 SAMPLE_XLSX = HERE / "samples" / "sample_cases.xlsx"
 ENGINE_VERSION = hashlib.md5(b"".join(p.read_bytes() for p in sorted((HERE / "src").glob("*.py")))).hexdigest()[:12]
 _V = tuple(int(x) for x in st.__version__.split(".")[:2] if x.isdigit())
@@ -145,11 +144,11 @@ def save_docket(name: str, raw: bytes, engine: str = ENGINE_VERSION):
 
 
 def dockets() -> dict:
-    """{judge: {"path", "name", "cases"}}. Justice Sehgal's docket is pre-loaded with the 3,000-case sample."""
+    """{judge: {"path", "name", "cases"}}. Justice Sehgal's docket is pre-loaded with the real 100 cases."""
     d = st.session_state.get("dockets")
     if d is None:
-        path, n, _, _ = save_docket(SAMPLE_DOCKET.name, SAMPLE_DOCKET.read_bytes())
-        d = {"Justice Sehgal": {"path": path, "name": "sample_docket_3000.xlsx (hackathon sample)", "cases": n}}
+        path, n, _, _ = save_docket(REAL_DOCKET.name, REAL_DOCKET.read_bytes())
+        d = {"Justice Sehgal": {"path": path, "name": "roster_sample_100.csv (real cases, hackathon repository)", "cases": n}}
         st.session_state.dockets = d
     return d
 
@@ -263,6 +262,22 @@ def holidays() -> dict:
     cal = pd.read_csv(DATA_DIR / "court_calendar.csv")
     cal = cal[cal["is_holiday"] == "Yes"]
     return {pd.Timestamp(r.date).date(): r.holiday_name for r in cal.itertuples()}
+
+
+def next_date_text(outcome: str, purpose: str) -> str:
+    """The engine's next-date rule for a recorded outcome, in days (from next_date.py and the reference table)."""
+    from next_date import DETAIL_GAP, OUTCOME_GAP
+    ref = reference()
+    gap = float(ref.at[purpose, "gap_days"]) if purpose in ref.index else float(ref["gap_days"].median())
+    if outcome == "substantive":
+        return "reference gap for the next purpose"
+    if outcome == "court":
+        return "next working day"
+    if outcome == "process":
+        return f"when the process is expected back (~{1.5 * gap:.0f} days)"
+    mult = {"absence": OUTCOME_GAP["attendance"], "unready": OUTCOME_GAP["preparation"],
+            "unclear": DETAIL_GAP["Unclear"]}[outcome]
+    return f"{max(1, round(mult * gap))} days"
 
 
 def live_scores(cases: pd.DataFrame, w: dict) -> pd.DataFrame:
