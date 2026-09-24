@@ -19,7 +19,8 @@ from next_date import Calendar, next_date
 from packer import _mins, build_causelist
 from priority import rank
 
-DURATION_SIGMA = 0.35    # lognormal spread around the reference minutes
+DURATION_SIGMA = 0.35
+DAY_END_GRACE = 10       # minutes a started hearing may run past the end of the day    # lognormal spread around the reference minutes
 PROCESS_PURPOSES = {"APPEARANCE", "WARRANT"}   # entering these needs a process to return first
 
 
@@ -154,7 +155,8 @@ def run(cases: pd.DataFrame, policy: str, cfg: dict, start: str = "2026-09-24", 
                    "happened": False, "substantive": False, "minutes_used": 0.0, "failure_reason": "unreached",
                    "is_old": bool(s.at[cid, "is_old"]), "age_years": float(s.at[cid, "age_years"])}
 
-            if used >= cfg["day_minutes"]:
+            # court rises at day_minutes: don't start a hearing that is expected to run past it (10-min grace)
+            if used + s.at[cid, "est_minutes"] > cfg["day_minutes"] + DAY_END_GRACE:
                 outcome = "unreached"
             else:
                 mult = 1.0
